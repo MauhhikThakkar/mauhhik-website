@@ -1,0 +1,17 @@
+import { type SchemaTypeDefinition } from 'sanity'
+
+import { blockContentType } from './blockContentType'
+import { categoryType } from './categoryType'
+import { postType } from './postType'
+import { authorType } from './authorType'
+import { project } from './project'   // 👈 IMPORTANT
+
+export const schema: { types: SchemaTypeDefinition[] } = {
+  types: [
+    blockContentType,
+    categoryType,
+    postType,
+    authorType,
+    project, // 👈 THIS fixes the error
+  ],
+}
