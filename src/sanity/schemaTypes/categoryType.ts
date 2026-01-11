@@ -1,26 +1,15 @@
-import {TagIcon} from '@sanity/icons'
-import {defineField, defineType} from 'sanity'
+import { defineType, defineField } from 'sanity'
 
-export const categoryType = defineType({
+export default defineType({
   name: 'category',
-  title: 'Category',
   type: 'document',
-  icon: TagIcon,
+  title: 'Category',
   fields: [
     defineField({
       name: 'title',
       type: 'string',
-    }),
-    defineField({
-      name: 'slug',
-      type: 'slug',
-      options: {
-        source: 'title',
-      },
-    }),
-    defineField({
-      name: 'description',
-      type: 'text',
+      title: 'Title',
     }),
   ],
 })
+

@@ -1,6 +1,6 @@
 import { defineType, defineField } from 'sanity'
 
-export const project = defineType({
+export default defineType({
   name: 'project',
   title: 'Project',
   type: 'document',
@@ -8,61 +8,61 @@ export const project = defineType({
   fields: [
     defineField({
       name: 'title',
-      title: 'Project Title',
       type: 'string',
-      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
       name: 'slug',
-      title: 'Slug',
       type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-      },
-      validation: (Rule) => Rule.required(),
+      options: { source: 'title' },
     }),
 
     defineField({
       name: 'shortDescription',
-      title: 'Short Description',
-      type: 'text',
-      rows: 3,
-      validation: (Rule) => Rule.required(),
+      type: 'string',
     }),
 
     defineField({
-      name: 'tags',
-      title: 'Tags',
+      name: 'categories',
       type: 'array',
-      of: [{ type: 'string' }],
+      of: [{ type: 'reference', to: [{ type: 'category' }] }],
     }),
 
     defineField({
-      name: 'coverImage',
-      title: 'Cover Image',
-      type: 'image',
-      options: { hotspot: true },
+      name: 'context',
+      type: 'richText',
     }),
 
     defineField({
-      name: 'caseStudy',
-      title: 'Case Study',
+      name: 'problem',
+      type: 'richText',
+    }),
+
+    defineField({
+      name: 'solution',
+      type: 'richText',
+    }),
+
+    defineField({
+      name: 'strategy',
+      type: 'richText',
+    }),
+
+    defineField({
+      name: 'learnings',
+      type: 'richText',
+    }),
+
+    defineField({
+      name: 'goals',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [{ type: 'metric' }],
     }),
 
     defineField({
-      name: 'liveUrl',
-      title: 'Live URL',
-      type: 'url',
-    }),
-
-    defineField({
-      name: 'githubUrl',
-      title: 'GitHub URL',
-      type: 'url',
+      name: 'impact',
+      type: 'array',
+      of: [{ type: 'metric' }],
     }),
   ],
 })
