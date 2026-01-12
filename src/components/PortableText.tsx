@@ -4,31 +4,33 @@ import { urlFor } from "@/sanity/lib/image"
 
 /**
  * Reusable PortableText renderer for blog posts and portfolio case studies
- * Handles rich text content from Sanity with custom styling
+ * Premium design with excellent readability
  */
 
 const components: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
-      <p className="text-gray-300 leading-relaxed mb-6">{children}</p>
+      <p className="text-[17px] leading-[1.8] text-zinc-400 mb-8 max-w-2xl">
+        {children}
+      </p>
     ),
     h2: ({ children }) => (
-      <h2 className="text-3xl md:text-4xl font-bold text-white mt-12 mb-6 first:mt-0">
+      <h2 className="text-3xl font-bold text-white mt-16 mb-6 first:mt-0 tracking-tight">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-2xl md:text-3xl font-semibold text-white mt-10 mb-4">
+      <h3 className="text-2xl font-semibold text-white mt-12 mb-5 tracking-tight">
         {children}
       </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-xl md:text-2xl font-semibold text-white mt-8 mb-3">
+      <h4 className="text-xl font-semibold text-zinc-200 mt-10 mb-4">
         {children}
       </h4>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-zinc-700 pl-6 py-2 my-8 italic text-zinc-400">
+      <blockquote className="border-l-2 border-zinc-800 pl-6 py-3 my-10 italic text-zinc-400 text-lg">
         {children}
       </blockquote>
     ),
@@ -36,29 +38,38 @@ const components: PortableTextComponents = {
 
   list: {
     bullet: ({ children }) => (
-      <ul className="list-disc list-outside ml-6 space-y-3 mb-6 text-gray-300">
+      <ul className="space-y-4 mb-10 text-zinc-400 max-w-2xl">
         {children}
       </ul>
     ),
     number: ({ children }) => (
-      <ol className="list-decimal list-outside ml-6 space-y-3 mb-6 text-gray-300">
+      <ol className="space-y-4 mb-10 text-zinc-400 max-w-2xl">
         {children}
       </ol>
     ),
   },
 
   listItem: {
-    bullet: ({ children }) => <li className="leading-relaxed pl-2">{children}</li>,
-    number: ({ children }) => <li className="leading-relaxed pl-2">{children}</li>,
+    bullet: ({ children }) => (
+      <li className="flex gap-3 leading-[1.8] text-[17px]">
+        <span className="text-zinc-600 mt-1">•</span>
+        <span className="flex-1">{children}</span>
+      </li>
+    ),
+    number: ({ children }) => (
+      <li className="flex gap-3 leading-[1.8] text-[17px] ml-6 list-decimal">
+        <span className="flex-1">{children}</span>
+      </li>
+    ),
   },
 
   marks: {
     strong: ({ children }) => (
-      <strong className="font-semibold text-white">{children}</strong>
+      <strong className="font-semibold text-zinc-200">{children}</strong>
     ),
-    em: ({ children }) => <em className="italic">{children}</em>,
+    em: ({ children }) => <em className="italic text-zinc-300">{children}</em>,
     code: ({ children }) => (
-      <code className="bg-zinc-800 text-emerald-400 px-2 py-0.5 rounded text-sm font-mono">
+      <code className="bg-zinc-900 text-emerald-400 px-2 py-1 rounded text-[15px] font-mono border border-zinc-800">
         {children}
       </code>
     ),
@@ -71,7 +82,7 @@ const components: PortableTextComponents = {
           href={value?.href}
           target={target}
           rel={rel}
-          className="text-blue-400 hover:text-blue-300 underline underline-offset-4 transition-colors"
+          className="text-zinc-300 underline decoration-zinc-700 underline-offset-4 hover:text-white hover:decoration-zinc-500 transition-colors"
         >
           {children}
         </a>
@@ -81,30 +92,36 @@ const components: PortableTextComponents = {
 
   types: {
     image: ({ value }) => {
-      if (!value?.asset?._ref) {
+      // Handle both referenced (_ref) and dereferenced (asset object) formats
+      if (!value?.asset) {
         return null
       }
 
-      const imageUrl = urlFor(value).width(1200).height(675).url()
+      try {
+        const imageUrl = urlFor(value).width(1200).height(675).url()
 
-      return (
-        <figure className="my-10 -mx-4 sm:mx-0">
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-zinc-900 border border-zinc-800">
-            <Image
-              src={imageUrl}
-              alt={value.alt || "Content image"}
-              fill
-              className="object-contain"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-            />
-          </div>
-          {value.alt && (
-            <figcaption className="text-center text-sm text-zinc-500 mt-3 px-4">
-              {value.alt}
-            </figcaption>
-          )}
-        </figure>
-      )
+        return (
+          <figure className="my-14 -mx-0">
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-zinc-950 border border-zinc-900">
+              <Image
+                src={imageUrl}
+                alt={value.alt || "Content image"}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              />
+            </div>
+            {value.alt && (
+              <figcaption className="text-center text-sm text-zinc-600 mt-4 px-4">
+                {value.alt}
+              </figcaption>
+            )}
+          </figure>
+        )
+      } catch (error) {
+        console.error("Failed to render image:", error, value)
+        return null
+      }
     },
   },
 }

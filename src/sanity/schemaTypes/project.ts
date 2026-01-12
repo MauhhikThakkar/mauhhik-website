@@ -64,5 +64,20 @@ export default defineType({
       type: 'array',
       of: [{ type: 'metric' }],
     }),
+
+    defineField({
+      name: 'wireframes',
+      type: 'array',
+      title: 'Featured Wireframes',
+      description: 'Curated wireframes to showcase in the case study',
+      of: [{ type: 'wireframe' }],
+    }),
+
+    defineField({
+      name: 'prototypeLink',
+      type: 'url',
+      title: 'Prototype Link',
+      description: 'Link to interactive prototype (Figma, Framer, etc.)',
+    }),
   ],
 })

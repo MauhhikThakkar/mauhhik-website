@@ -33,36 +33,96 @@ export const PROJECT_BY_SLUG_QUERY = `
     context[] {
       ...,
       _type == "image" => {
-        ...,
-        asset->
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
       }
     },
     problem[] {
       ...,
       _type == "image" => {
-        ...,
-        asset->
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
       }
     },
     solution[] {
       ...,
       _type == "image" => {
-        ...,
-        asset->
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
       }
     },
     strategy[] {
       ...,
       _type == "image" => {
-        ...,
-        asset->
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
       }
     },
     learnings[] {
       ...,
       _type == "image" => {
-        ...,
-        asset->
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
       }
     },
     goals[] {
@@ -75,6 +135,25 @@ export const PROJECT_BY_SLUG_QUERY = `
       value,
       context
     },
+    wireframes[] {
+      title,
+      caption,
+      image {
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
+      }
+    },
+    prototypeLink,
     "previousProject": *[_type == "project" && _createdAt < ^._createdAt] | order(_createdAt desc)[0] {
       title,
       "slug": slug.current
