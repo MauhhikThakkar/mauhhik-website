@@ -4,6 +4,7 @@ import Image from "next/image"
 import { client } from "@/sanity/lib/client"
 import { BLOG_POSTS_QUERY, BLOG_CATEGORIES_QUERY } from "@/sanity/lib/blogQueries"
 import { urlFor } from "@/sanity/lib/image"
+import { SITE_URL, SITE_NAME } from "@/lib/constants"
 
 interface BlogCategory {
   _id: string
@@ -79,8 +80,33 @@ export default async function BlogPage() {
       })
     }
 
+    // Separate posts into groups
     const featuredPosts = validPosts.filter(post => post.isFeatured).slice(0, 2)
-    const regularPosts = validPosts.filter(post => !post.isFeatured || !featuredPosts.includes(post))
+    const nonFeaturedPosts = validPosts.filter(post => !post.isFeatured || !featuredPosts.includes(post))
+    
+    // Latest posts (most recent, excluding featured, limit to 6)
+    const latestPosts = [...nonFeaturedPosts]
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+      .slice(0, 6)
+    
+    // Remaining posts for category grouping
+    const remainingPosts = nonFeaturedPosts.filter(post => !latestPosts.includes(post))
+    
+    // Group remaining posts by category
+    const postsByCategory = categories.reduce((acc, category) => {
+      const categoryPosts = remainingPosts.filter(
+        post => post.category?.slug === category.slug
+      )
+      if (categoryPosts.length > 0) {
+        acc[category.slug] = {
+          category,
+          posts: categoryPosts.sort(
+            (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+          ),
+        }
+      }
+      return acc
+    }, {} as Record<string, { category: BlogCategory; posts: BlogPost[] }>)
 
     return (
     <main className="bg-black text-white min-h-screen">
@@ -206,14 +232,15 @@ export default async function BlogPage() {
         </section>
       )}
 
-      {/* All Posts */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
-            All Posts
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularPosts.map((post) => {
+      {/* Latest Posts */}
+      {latestPosts.length > 0 && (
+        <section className="border-b border-zinc-900/50 py-16 md:py-20">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
+              Latest
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {latestPosts.map((post) => {
               const imageUrl = post.heroImage?.asset
                 ? urlFor(post.heroImage).width(600).height(400).fit('max').url()
                 : null
@@ -279,20 +306,98 @@ export default async function BlogPage() {
                   </article>
                 </Link>
               )
-            })}
+              })}
+            </div>
           </div>
+        </section>
+      )}
 
-          {/* Empty State */}
-          {regularPosts.length === 0 && featuredPosts.length === 0 && (
+      {/* Category-Based Grouping */}
+      {Object.keys(postsByCategory).length > 0 && (
+        <section className="py-16 md:py-20">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            {Object.values(postsByCategory).map(({ category, posts }) => (
+              <div key={category._id} className="mb-16 last:mb-0">
+                <div className="flex items-center gap-3 mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">
+                    {category.title}
+                  </h2>
+                  <span className="text-sm text-zinc-500">({posts.length})</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {posts.map((post) => {
+                    const imageUrl = post.heroImage?.asset
+                      ? urlFor(post.heroImage).width(600).height(400).fit('max').url()
+                      : null
+
+                    return (
+                      <Link
+                        key={post._id}
+                        href={`/blog/${post.slug}`}
+                        className="group block"
+                      >
+                        <article className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden transition-all duration-300 h-full flex flex-col hover:border-zinc-700 hover:shadow-lg hover:shadow-zinc-900/50 hover:-translate-y-1">
+                          {/* Image */}
+                          {imageUrl && (
+                            <div className="relative w-full aspect-[16/9] bg-zinc-950">
+                              <Image
+                                src={imageUrl}
+                                alt={post.heroImage?.alt || post.title}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              />
+                            </div>
+                          )}
+
+                          {/* Content */}
+                          <div className="p-6 flex-1 flex flex-col">
+                            {/* Meta */}
+                            <div className="flex items-center gap-2 mb-3 text-xs flex-wrap">
+                              <time className="text-zinc-500">
+                                {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </time>
+                              <span className="text-zinc-600">•</span>
+                              <span className="text-zinc-500">{post.readingTime} min</span>
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="text-xl font-bold text-white mb-2 leading-[1.3] group-hover:text-zinc-200 transition-colors line-clamp-2">
+                              {post.title}
+                            </h3>
+
+                            {/* Description */}
+                            <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3 flex-1 break-words">
+                              {post.shortDescription}
+                            </p>
+                          </div>
+                        </article>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Empty State */}
+      {validPosts.length === 0 && (
+        <section className="py-16 md:py-20">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="text-center py-20">
               <p className="text-zinc-500 text-lg mb-4">No blog posts found.</p>
               <p className="text-zinc-600 text-sm">
                 Make sure your blog posts in Sanity have all required fields: title, slug, short description, and category.
               </p>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* Bottom Spacing */}
       <div className="h-32"></div>
@@ -315,6 +420,31 @@ export default async function BlogPage() {
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Blog | Product Writing & Strategy',
-  description: 'Thoughts on product management, strategy, and building things that matter.',
+  title: 'Writing | Product Thinking & Strategy',
+  description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect. Thoughts on product management, strategy, and building things that matter.',
+  openGraph: {
+    title: 'Writing | Product Thinking & Strategy',
+    description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect.',
+    type: 'website',
+    url: `${SITE_URL}/blog`,
+    siteName: SITE_NAME,
+    images: [
+      {
+        url: `${SITE_URL}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Mauhhik — Writing',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Writing | Product Thinking & Strategy',
+    description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect.',
+    images: [`${SITE_URL}/og-image.jpg`],
+    creator: '@mauhhik',
+  },
+  alternates: {
+    canonical: `${SITE_URL}/blog`,
+  },
 }

@@ -100,7 +100,25 @@ export const BLOG_POST_BY_SLUG_QUERY = `
       shortDescription
     },
     publishedAt,
-    "author": author->{ name },
+    "author": author->{ 
+      name,
+      bio,
+      portfolioLink,
+      picture {
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
+      }
+    },
     ctas {
       customPosition,
       "inlineContent": inlineContent->{

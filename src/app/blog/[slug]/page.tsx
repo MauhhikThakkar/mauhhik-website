@@ -5,7 +5,10 @@ import { client } from "@/sanity/lib/client"
 import { BLOG_POST_BY_SLUG_QUERY, BLOG_SLUGS_QUERY } from "@/sanity/lib/blogQueries"
 import PortableText from "@/components/PortableText"
 import EmailCapture from "@/components/EmailCapture"
+import ReadingProgress from "@/components/ReadingProgress"
+import AuthorAttribution from "@/components/AuthorAttribution"
 import { urlFor } from "@/sanity/lib/image"
+import { SITE_URL, SITE_NAME } from "@/lib/constants"
 
 interface BlogPost {
   _id: string
@@ -37,6 +40,22 @@ interface BlogPost {
   publishedAt: string
   author?: {
     name: string
+    bio?: string
+    portfolioLink?: string
+    picture?: {
+      alt?: string
+      asset: {
+        _id: string
+        url: string
+        metadata?: {
+          dimensions?: {
+            width: number
+            height: number
+            aspectRatio: number
+          }
+        }
+      }
+    }
   }
   seo?: {
     metaTitle?: string
@@ -84,13 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <main className="bg-black text-white min-h-screen">
       {/* Reading Progress Indicator */}
-      <div className="fixed top-0 left-0 right-0 h-1 bg-zinc-900 z-50">
-        <div
-          id="reading-progress"
-          className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-150"
-          style={{ width: '0%' }}
-        />
-      </div>
+      <ReadingProgress />
 
       {/* Hero Section */}
       <article>
@@ -254,36 +267,10 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Email Capture */}
           <EmailCapture />
-        </div>
 
-        {/* Reading Progress Script */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                function updateProgress() {
-                  const article = document.querySelector('article');
-                  const progressBar = document.getElementById('reading-progress');
-                  if (!article || !progressBar) return;
-                  
-                  const articleTop = article.offsetTop;
-                  const articleHeight = article.offsetHeight;
-                  const windowHeight = window.innerHeight;
-                  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                  
-                  const articleBottom = articleTop + articleHeight - windowHeight;
-                  const progress = Math.min(100, Math.max(0, ((scrollTop - articleTop) / (articleBottom - articleTop)) * 100));
-                  
-                  progressBar.style.width = progress + '%';
-                }
-                
-                window.addEventListener('scroll', updateProgress, { passive: true });
-                window.addEventListener('resize', updateProgress, { passive: true });
-                updateProgress();
-              })();
-            `,
-          }}
-        />
+          {/* Author Attribution */}
+          <AuthorAttribution author={post.author} />
+        </div>
 
         {/* Related Projects */}
         {post.relatedProjects && post.relatedProjects.length > 0 && (
@@ -341,15 +328,43 @@ export async function generateMetadata({ params }: Props) {
     }
   }
 
+  // Build OpenGraph image URL from hero image or default
+  const ogImage = post.heroImage?.asset
+    ? urlFor(post.heroImage).width(1200).height(630).fit('max').url()
+    : `${SITE_URL}/og-image.jpg`
+
+  const title = post.seo?.metaTitle || post.title
+  const description = post.seo?.metaDescription || post.shortDescription
+
   return {
-    title: post.seo?.metaTitle || `${post.title} | Blog`,
-    description: post.seo?.metaDescription || post.shortDescription,
+    title: `${title} | Blog`,
+    description,
     openGraph: {
       title: post.title,
-      description: post.shortDescription,
+      description,
       type: 'article',
       publishedTime: post.publishedAt,
-      authors: post.author?.name ? [post.author.name] : undefined,
+      authors: post.author?.name ? [post.author.name] : [SITE_NAME],
+      url: `${SITE_URL}/blog/${post.slug}`,
+      siteName: SITE_NAME,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: post.heroImage?.alt || post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: [ogImage],
+      creator: '@mauhhik',
+    },
+    alternates: {
+      canonical: `${SITE_URL}/blog/${post.slug}`,
     },
   }
 }
