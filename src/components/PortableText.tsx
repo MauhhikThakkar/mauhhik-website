@@ -32,8 +32,11 @@ const components: PortableTextComponents = {
       </h4>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-l-2 border-zinc-800 pl-6 py-3 my-10 italic text-zinc-400 text-lg">
-        {children}
+      <blockquote className="relative border-l-4 border-zinc-700 pl-8 pr-6 py-6 my-12 bg-zinc-950/30 rounded-r-xl">
+        <div className="absolute top-4 left-4 text-6xl text-zinc-800 leading-none">"</div>
+        <div className="relative text-xl leading-relaxed text-zinc-200 font-normal italic">
+          {children}
+        </div>
       </blockquote>
     ),
   },
@@ -100,22 +103,23 @@ const components: PortableTextComponents = {
       }
 
       try {
-        const imageUrl = urlFor(value).width(1200).height(675).url()
+        const imageUrl = urlFor(value).width(1200).fit('max').url()
 
         return (
-          <figure className="my-14 -mx-0">
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-zinc-950 border border-zinc-900">
+          <figure className="my-16 -mx-0">
+            <div className="relative w-full rounded-xl overflow-hidden bg-zinc-950 border border-zinc-900/50">
               <Image
                 src={imageUrl}
                 alt={value.alt || "Content image"}
-                fill
-                className="object-contain"
+                width={1200}
+                height={800}
+                className="object-contain w-full h-auto"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               />
             </div>
-            {value.alt && (
-              <figcaption className="text-center text-sm text-zinc-600 mt-4 px-4">
-                {value.alt}
+            {(value.alt || value.caption) && (
+              <figcaption className="text-center text-sm text-zinc-500 mt-4 px-4 leading-relaxed">
+                {value.caption || value.alt}
               </figcaption>
             )}
           </figure>

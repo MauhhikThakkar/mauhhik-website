@@ -70,10 +70,11 @@ export default defineType({
       description: 'What kind of digital product is this?',
       options: {
         list: [
-          { title: 'Guide', value: 'guide' },
-          { title: 'Template', value: 'template' },
           { title: 'Course', value: 'course' },
+          { title: 'Playbook', value: 'playbook' },
+          { title: 'Template', value: 'template' },
           { title: 'Toolkit', value: 'toolkit' },
+          { title: 'Guide', value: 'guide' },
         ],
         layout: 'radio',
       },
@@ -140,6 +141,23 @@ export default defineType({
     }),
 
     defineField({
+      name: 'deliveryType',
+      type: 'string',
+      title: 'Delivery Type',
+      description: 'How the product is delivered to customers',
+      options: {
+        list: [
+          { title: 'Instant Download', value: 'instant-download' },
+          { title: 'Email Delivery', value: 'email' },
+          { title: 'Access Link', value: 'access-link' },
+          { title: 'Enrollment (Course)', value: 'enrollment' },
+        ],
+        layout: 'dropdown',
+      },
+      initialValue: 'instant-download',
+    }),
+
+    defineField({
       name: 'purchaseLink',
       type: 'url',
       title: 'Purchase Link',
@@ -148,6 +166,39 @@ export default defineType({
         Rule.uri({
           scheme: ['http', 'https'],
         }),
+    }),
+
+    defineField({
+      name: 'ctaCopy',
+      type: 'object',
+      title: 'CTA Copy',
+      description: 'Customize call-to-action text for different contexts',
+      fields: [
+        {
+          name: 'primary',
+          type: 'string',
+          title: 'Primary CTA',
+          description: 'Main purchase button text',
+          initialValue: 'Get Access Now',
+          validation: (Rule) => Rule.max(30),
+        },
+        {
+          name: 'secondary',
+          type: 'string',
+          title: 'Secondary CTA',
+          description: 'Alternative action (e.g., "Learn More", "See Preview")',
+          initialValue: 'Learn More',
+          validation: (Rule) => Rule.max(30),
+        },
+        {
+          name: 'freeDownload',
+          type: 'string',
+          title: 'Free Download CTA',
+          description: 'Text for free products',
+          initialValue: 'Download Free',
+          validation: (Rule) => Rule.max(30),
+        },
+      ],
     }),
 
     defineField({
@@ -282,6 +333,54 @@ export default defineType({
     }),
 
     defineField({
+      name: 'upsells',
+      type: 'object',
+      title: 'Upsells & Cross-sells',
+      description: 'Suggest related or upgraded products to increase revenue',
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+      fields: [
+        {
+          name: 'enableUpsells',
+          type: 'boolean',
+          title: 'Enable Upsells',
+          description: 'Show related product recommendations on this product page',
+          initialValue: true,
+        },
+        {
+          name: 'recommendedProducts',
+          type: 'array',
+          title: 'Recommended Products',
+          description: 'Products to suggest after purchase or on product page',
+          of: [
+            {
+              type: 'reference',
+              to: [{ type: 'product' }],
+            },
+          ],
+          validation: (Rule) => Rule.max(3).warning('Limit to 2-3 upsells for focus'),
+        },
+        {
+          name: 'bundleEligible',
+          type: 'boolean',
+          title: 'Bundle Eligible',
+          description: 'Can this product be included in product bundles?',
+          initialValue: true,
+        },
+        {
+          name: 'upgradeMessage',
+          type: 'text',
+          title: 'Upgrade Message',
+          description: 'Custom message for upsell (e.g., "Want the complete system? Check out...")',
+          rows: 2,
+          validation: (Rule) => Rule.max(150),
+        },
+      ],
+    }),
+
+    defineField({
       name: 'featured',
       type: 'boolean',
       title: 'Featured Product',
@@ -351,13 +450,6 @@ export default defineType({
           readOnly: true,
         },
         {
-          name: 'bundleEligible',
-          type: 'boolean',
-          title: 'Bundle Eligible',
-          description: 'Can this product be included in bundles?',
-          initialValue: true,
-        },
-        {
           name: 'tags',
           type: 'array',
           title: 'Internal Tags',
@@ -371,7 +463,7 @@ export default defineType({
       name: 'seo',
       type: 'object',
       title: 'SEO Settings',
-      description: 'Search engine optimization',
+      description: 'Search engine optimization (defaults to title and short description if not set)',
       options: {
         collapsible: true,
         collapsed: true,
@@ -381,14 +473,43 @@ export default defineType({
           name: 'metaTitle',
           type: 'string',
           title: 'Meta Title',
-          validation: (Rule) => Rule.max(60),
+          description: 'Override default title (defaults to product title)',
+          validation: (Rule) => Rule.max(60).warning('Keep under 60 characters for search engines'),
         },
         {
           name: 'metaDescription',
           type: 'text',
           title: 'Meta Description',
+          description: 'Override default description (defaults to short description)',
           rows: 2,
-          validation: (Rule) => Rule.max(160),
+          validation: (Rule) => Rule.max(160).warning('Keep under 160 characters for search engines'),
+        },
+        {
+          name: 'focusKeywords',
+          type: 'array',
+          title: 'Focus Keywords',
+          description: 'Keywords this product should rank for (e.g., "product strategy", "PM playbook")',
+          of: [{ type: 'string' }],
+          options: {
+            layout: 'tags',
+          },
+          validation: (Rule) => Rule.max(5).warning('Focus on 3-5 primary keywords'),
+        },
+        {
+          name: 'ogImage',
+          type: 'image',
+          title: 'Social Share Image',
+          description: 'Custom image for social media (defaults to hero image). Recommended: 1200x630px',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alt Text',
+            },
+          ],
         },
       ],
     }),

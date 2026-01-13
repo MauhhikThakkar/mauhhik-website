@@ -7,7 +7,9 @@ import wireframe from './wireframe'
 import blog from './blog'
 import blogCategory from './blogCategory'
 import product from './product'
+import productV1 from './productV1'
+import blogCTA from './blogCTA'
 
 export const schema = {
-  types: [project, category, author, metric, richText, wireframe, blog, blogCategory, product],
+  types: [project, category, author, metric, richText, wireframe, blog, blogCategory, product, productV1, blogCTA],
 }

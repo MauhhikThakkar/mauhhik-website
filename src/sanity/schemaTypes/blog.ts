@@ -77,6 +77,15 @@ export default defineType({
     }),
 
     defineField({
+      name: 'pmTakeaway',
+      type: 'text',
+      title: 'PM Takeaway (Optional)',
+      description: 'How this insight applies to real-world product management (2-4 sentences)',
+      rows: 3,
+      validation: (Rule) => Rule.max(400).warning('Keep it focused - 2-4 sentences recommended.'),
+    }),
+
+    defineField({
       name: 'readingTime',
       type: 'number',
       title: 'Reading Time',
@@ -117,6 +126,41 @@ export default defineType({
         },
       ],
       validation: (Rule) => Rule.max(3).warning('Limit to 3 related projects for focused recommendations'),
+    }),
+
+    defineField({
+      name: 'ctas',
+      type: 'object',
+      title: 'Call-to-Action Blocks',
+      description: 'Add CTAs for lead capture, product promotion, or content upgrades',
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+      fields: [
+        {
+          name: 'inlineContent',
+          type: 'reference',
+          title: 'Inline CTA (Mid-Content)',
+          description: 'Shows after ~50% of content (e.g., "Download the checklist")',
+          to: [{ type: 'blogCTA' }],
+        },
+        {
+          name: 'endOfPost',
+          type: 'reference',
+          title: 'End-of-Post CTA',
+          description: 'Shows after article conclusion (e.g., newsletter signup, product pitch)',
+          to: [{ type: 'blogCTA' }],
+        },
+        {
+          name: 'customPosition',
+          type: 'number',
+          title: 'Custom Inline Position (%)',
+          description: 'Override default 50% position (e.g., 25 = after 25% of content)',
+          validation: (Rule) => Rule.min(0).max(100).integer(),
+          initialValue: 50,
+        },
+      ],
     }),
 
     defineField({

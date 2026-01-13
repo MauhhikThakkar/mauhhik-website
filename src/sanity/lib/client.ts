@@ -6,5 +6,6 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  useCdn: false, // DISABLED: CDN caching was preventing new posts from appearing
+  // Set to true only if you configure proper revalidation
 })

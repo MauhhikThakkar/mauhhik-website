@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export default function Hero() {
     return (
       <section className="min-h-screen flex items-center justify-center px-6 pt-24">
@@ -21,19 +23,22 @@ export default function Hero() {
           </p>
   
           {/* CTAs */}
+          {/* Portfolio uses hash link (section on this page) */}
+          {/* CRITICAL: Blog changed from hash (#blog) to route (/blog) */}
+          {/* Hash links prevent Next.js data fetching, causing stale blog content in Chrome */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
+            <Link
               href="#portfolio"
               className="px-6 py-3 rounded-full bg-white text-black font-medium hover:bg-gray-200 transition"
             >
               View Portfolio
-            </a>
-            <a
-              href="#blog"
+            </Link>
+            <Link
+              href="/blog"
               className="px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 transition"
             >
               Read Blog
-            </a>
+            </Link>
           </div>
         </div>
       </section>

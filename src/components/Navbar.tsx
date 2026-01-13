@@ -11,10 +11,14 @@ export default function Navbar() {
 
         {/* Navigation */}
         <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
+          {/* Portfolio/Products use hash links (sections on homepage) */}
           <Link href="#portfolio" className="hover:text-white transition">
             Portfolio
           </Link>
-          <Link href="#blog" className="hover:text-white transition">
+          {/* CRITICAL FIX: Changed from hash (#blog) to proper Next.js route (/blog) */}
+          {/* Hash routing prevents Next.js from re-fetching data, causing stale blog posts */}
+          {/* This was causing blog posts to not appear when clicking nav in Chrome */}
+          <Link href="/blog" className="hover:text-white transition">
             Blog
           </Link>
           <Link href="#products" className="hover:text-white transition">
