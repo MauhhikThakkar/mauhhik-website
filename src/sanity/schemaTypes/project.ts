@@ -79,5 +79,18 @@ export default defineType({
       title: 'Prototype Link',
       description: 'Link to interactive prototype (Figma, Framer, etc.)',
     }),
+
+    defineField({
+      name: 'relatedBlogs',
+      type: 'array',
+      title: 'Related Blog Posts',
+      description: 'Blog posts that explore the thinking, frameworks, or concepts applied in this case study',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'blog' }],
+        },
+      ],
+    }),
   ],
 })

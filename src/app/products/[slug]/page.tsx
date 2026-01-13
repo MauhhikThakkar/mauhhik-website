@@ -161,14 +161,32 @@ export default async function ProductPage({ params }: Props) {
         </section>
       )}
 
-      {/* CTA Section (Placeholder - no pricing logic yet) */}
-      <section className="py-16 md:py-24">
+      {/* CTA Section - Coming Soon */}
+      <section className="py-16 md:py-24 border-t border-zinc-900/50">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
-          <div className="inline-block px-6 py-3 bg-zinc-900 text-zinc-400 rounded-lg border border-zinc-800">
-            <p className="text-sm">
+          <div className="inline-flex items-center gap-3 px-8 py-4 bg-zinc-950/50 text-zinc-300 rounded-xl border border-zinc-800">
+            <svg
+              className="w-5 h-5 text-zinc-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-base font-medium">
               {product.ctaText || 'Get Access'} — Coming soon
-            </p>
+            </span>
           </div>
+          {product.price && (
+            <p className="mt-4 text-sm text-zinc-500">
+              Price: ${product.price.toFixed(2)}
+            </p>
+          )}
         </div>
       </section>
 

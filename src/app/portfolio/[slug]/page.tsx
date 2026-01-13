@@ -36,6 +36,20 @@ interface Wireframe {
   image: WireframeImage
 }
 
+interface RelatedBlog {
+  _id: string
+  title: string
+  slug: string
+  shortDescription?: string
+  readingTime?: number
+  publishedAt?: string
+  category?: {
+    title: string
+    slug: string
+    color?: string
+  }
+}
+
 interface Project {
   _id: string
   title: string
@@ -51,6 +65,7 @@ interface Project {
   impact?: Metric[]
   wireframes?: Wireframe[]
   prototypeLink?: string
+  relatedBlogs?: RelatedBlog[]
   previousProject?: NavProject
   nextProject?: NavProject
 }
@@ -415,7 +430,7 @@ export default async function ProjectPage({ params }: Props) {
 
         {/* Learnings */}
         {project.learnings && Array.isArray(project.learnings) && project.learnings.length > 0 && (
-          <section className="py-24 md:py-32">
+          <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
                 {getSectionNumber()} — Learnings
@@ -426,6 +441,64 @@ export default async function ProjectPage({ params }: Props) {
             </div>
             <div className="prose-custom text-zinc-300 text-lg leading-relaxed max-w-3xl">
               <PortableText value={project.learnings} />
+            </div>
+          </section>
+        )}
+
+        {/* Related Blog Posts */}
+        {project.relatedBlogs && project.relatedBlogs.length > 0 && (
+          <section className="py-24 md:py-32">
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 leading-tight">
+                How this thinking shows up in practice
+              </h2>
+              <p className="text-base text-zinc-400 leading-relaxed max-w-2xl">
+                Related writing that explores the frameworks, concepts, or approaches applied in this case study.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {project.relatedBlogs.map((blog) => (
+                <Link
+                  key={blog._id}
+                  href={`/blog/${blog.slug}`}
+                  className="group block p-6 bg-zinc-950/30 border border-zinc-900 rounded-xl hover:border-zinc-800 hover:bg-zinc-950/50 transition-all duration-200"
+                >
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    {blog.category && (
+                      <span
+                        className="px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0"
+                        style={{
+                          backgroundColor: blog.category.color ? blog.category.color + '20' : '#27272a',
+                          color: blog.category.color || '#a1a1aa',
+                          borderWidth: '1px',
+                          borderColor: blog.category.color ? blog.category.color + '40' : '#3f3f46',
+                        }}
+                      >
+                        {blog.category.title}
+                      </span>
+                    )}
+                    {blog.readingTime && (
+                      <span className="text-xs text-zinc-500 flex-shrink-0">
+                        {blog.readingTime} min
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-zinc-100 transition-colors leading-snug">
+                    {blog.title}
+                  </h3>
+                  {blog.shortDescription && (
+                    <p className="text-sm text-zinc-400 leading-relaxed line-clamp-2 mb-3">
+                      {blog.shortDescription}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-2 text-xs text-zinc-500 group-hover:text-zinc-400 transition-colors">
+                    <span>Read article</span>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Link>
+              ))}
             </div>
           </section>
         )}

@@ -154,6 +154,19 @@ export const PROJECT_BY_SLUG_QUERY = `
       }
     },
     prototypeLink,
+    "relatedBlogs": relatedBlogs[]->{
+      _id,
+      title,
+      "slug": slug.current,
+      shortDescription,
+      readingTime,
+      publishedAt,
+      category->{
+        title,
+        "slug": slug.current,
+        color
+      }
+    },
     "previousProject": *[_type == "project" && _createdAt < ^._createdAt] | order(_createdAt desc)[0] {
       title,
       "slug": slug.current

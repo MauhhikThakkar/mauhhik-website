@@ -87,9 +87,9 @@ export default defineType({
     defineField({
       name: 'relatedProduct',
       type: 'reference',
-      to: [{ type: 'product' }],
+      to: [{ type: 'productV1' }],
       title: 'Related Product (Optional)',
-      description: 'Link to a product document for automatic price/image display',
+      description: 'Link to a product document for automatic price/image display and "coming soon" status',
     }),
 
     defineField({

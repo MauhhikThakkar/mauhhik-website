@@ -21,6 +21,9 @@ export default function Navbar() {
           <Link href="/blog" className="hover:text-white transition">
             Blog
           </Link>
+          <Link href="/about" className="hover:text-white transition">
+            About
+          </Link>
           <Link href="#products" className="hover:text-white transition">
             Products
           </Link>
