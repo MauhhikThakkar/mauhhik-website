@@ -14,15 +14,17 @@ const components: PortableTextComponents = {
         {children}
       </p>
     ),
+    // h2 and h3 are rendered as strong paragraphs to avoid duplicate headings
+    // Section titles are controlled by page.tsx layout
     h2: ({ children }) => (
-      <h2 className="text-3xl font-bold text-white mt-16 mb-6 first:mt-0 tracking-tight">
+      <p className="text-[17px] leading-[1.8] text-zinc-300 font-semibold mb-8 max-w-2xl mt-12 first:mt-0">
         {children}
-      </h2>
+      </p>
     ),
     h3: ({ children }) => (
-      <h3 className="text-2xl font-semibold text-white mt-12 mb-5 tracking-tight">
+      <p className="text-[17px] leading-[1.8] text-zinc-300 font-semibold mb-8 max-w-2xl mt-10">
         {children}
-      </h3>
+      </p>
     ),
     h4: ({ children }) => (
       <h4 className="text-xl font-semibold text-zinc-200 mt-10 mb-4">

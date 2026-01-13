@@ -75,18 +75,25 @@ export default async function ProjectPage({ params }: Props) {
     notFound()
   }
 
+  // Calculate section numbers dynamically
+  let sectionNumber = 0
+  const getSectionNumber = () => {
+    sectionNumber++
+    return String(sectionNumber).padStart(2, '0')
+  }
+
   return (
     <main className="bg-black text-white min-h-screen">
       {/* Hero Section */}
       <section className="border-b border-zinc-900">
-        <div className="max-w-4xl mx-auto px-6 sm:px-8 py-20 md:py-32">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
           {/* Categories */}
           {project.categories && project.categories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex flex-wrap gap-2 mb-6">
               {project.categories.map((category) => (
                 <span
                   key={category.slug}
-                  className="inline-flex items-center px-3 py-1.5 bg-zinc-900/50 text-zinc-400 rounded-full text-xs font-medium border border-zinc-800/50 backdrop-blur-sm"
+                  className="inline-flex items-center px-3 py-1.5 bg-zinc-900/50 text-zinc-400 rounded-full text-sm font-medium border border-zinc-800/50 backdrop-blur-sm"
                 >
                   {category.title}
                 </span>
@@ -95,27 +102,88 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-[1.1] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
             {project.title}
           </h1>
 
           {/* Description */}
           {project.shortDescription && (
-            <p className="text-xl sm:text-2xl text-zinc-400 leading-relaxed max-w-3xl">
+            <p className="text-xl sm:text-2xl text-zinc-300 leading-[1.6] max-w-3xl font-normal">
               {project.shortDescription}
             </p>
           )}
         </div>
       </section>
 
+      {/* At a Glance Summary */}
+      {((project.goals && project.goals.length > 0) || (project.impact && project.impact.length > 0)) && (
+        <section className="border-b border-zinc-900/50">
+          <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-20">
+            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
+              At a Glance
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              {/* Goals Summary */}
+              {project.goals && project.goals.length > 0 && (
+                <div>
+                  <div className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-4">
+                    Goals
+                  </div>
+                  <div className="space-y-4">
+                    {project.goals.slice(0, 3).map((metric, index) => (
+                      <div key={index} className="flex items-baseline gap-3">
+                        <div className="flex-shrink-0 w-1 h-1 rounded-full bg-zinc-700 mt-2"></div>
+                        <div>
+                          <div className="text-lg font-semibold text-white">
+                            {metric.value}
+                          </div>
+                          <div className="text-sm text-zinc-400 leading-snug">
+                            {metric.label}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Impact Summary */}
+              {project.impact && project.impact.length > 0 && (
+                <div>
+                  <div className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-4">
+                    Impact
+                  </div>
+                  <div className="space-y-4">
+                    {project.impact.slice(0, 3).map((metric, index) => (
+                      <div key={index} className="flex items-baseline gap-3">
+                        <div className="flex-shrink-0 w-1 h-1 rounded-full bg-emerald-500/50 mt-2"></div>
+                        <div>
+                          <div className="text-lg font-semibold text-white">
+                            {metric.value}
+                          </div>
+                          <div className="text-sm text-zinc-400 leading-snug">
+                            {metric.label}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Content Sections */}
       <div className="max-w-4xl mx-auto px-6 sm:px-8">
         {/* Context */}
-        {project.context && (
-          <section className="py-24 md:py-32 border-b border-zinc-900/50">
-            <div className="mb-16">
-              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                01 — Context
+        {project.context && Array.isArray(project.context) && project.context.length > 0 && (
+          <section className="py-20 md:py-28 border-b border-zinc-900/50">
+            <div className="mb-14">
+              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-5">
+                {getSectionNumber()} — Context
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 Setting the stage
@@ -128,11 +196,11 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Problem */}
-        {project.problem && (
-          <section className="py-24 md:py-32 border-b border-zinc-900/50">
-            <div className="mb-16">
-              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                02 — Problem
+        {project.problem && Array.isArray(project.problem) && project.problem.length > 0 && (
+          <section className="py-20 md:py-28 border-b border-zinc-900/50">
+            <div className="mb-14">
+              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-5">
+                {getSectionNumber()} — Problem
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 The challenge we faced
@@ -149,7 +217,7 @@ export default async function ProjectPage({ params }: Props) {
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                03 — Goals
+                {getSectionNumber()} — Goals
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 Success metrics
@@ -159,7 +227,7 @@ export default async function ProjectPage({ params }: Props) {
               {project.goals.map((metric, index) => (
                 <div
                   key={index}
-                  className="relative bg-zinc-950/50 border border-zinc-900 rounded-2xl p-8 backdrop-blur-sm"
+                  className="relative bg-zinc-950/50 border border-zinc-900 rounded-2xl p-8 backdrop-blur-sm min-h-[200px] flex flex-col justify-center"
                 >
                   <div className="text-5xl font-bold text-white mb-4 tracking-tight">
                     {metric.value}
@@ -179,11 +247,11 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Strategy */}
-        {project.strategy && (
+        {project.strategy && Array.isArray(project.strategy) && project.strategy.length > 0 && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                04 — Strategy
+                {getSectionNumber()} — Strategy
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 Our approach
@@ -196,11 +264,11 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Solution */}
-        {project.solution && (
+        {project.solution && Array.isArray(project.solution) && project.solution.length > 0 && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                05 — Solution
+                {getSectionNumber()} — Solution
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 What we built
@@ -217,7 +285,7 @@ export default async function ProjectPage({ params }: Props) {
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                06 — Impact
+                {getSectionNumber()} — Impact
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 Measured outcomes
@@ -227,7 +295,7 @@ export default async function ProjectPage({ params }: Props) {
               {project.impact.map((metric, index) => (
                 <div
                   key={index}
-                  className="relative bg-zinc-950/50 border border-zinc-800/50 rounded-2xl p-8 backdrop-blur-sm"
+                  className="relative bg-zinc-950/50 border border-zinc-800/50 rounded-2xl p-8 backdrop-blur-sm min-h-[200px] flex flex-col justify-center"
                 >
                   <div className="absolute -top-px -right-px w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-transparent rounded-2xl blur-xl"></div>
                   <div className="relative">
@@ -254,7 +322,7 @@ export default async function ProjectPage({ params }: Props) {
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                07 — Wireframes
+                {getSectionNumber()} — Wireframes
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 Featured designs
@@ -262,14 +330,19 @@ export default async function ProjectPage({ params }: Props) {
             </div>
 
             {/* Wireframes Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className={`grid gap-8 mb-12 ${
+              project.wireframes.length === 1 
+                ? 'grid-cols-1 max-w-2xl mx-auto' 
+                : 'grid-cols-1 md:grid-cols-2'
+            }`}>
               {project.wireframes.map((wireframe, index) => {
                 if (!wireframe.image?.asset) return null
 
                 try {
+                  // Get full image without cropping - only set max width
                   const imageUrl = urlFor(wireframe.image)
                     .width(800)
-                    .height(600)
+                    .fit('max')
                     .url()
 
                   return (
@@ -277,15 +350,18 @@ export default async function ProjectPage({ params }: Props) {
                       key={index}
                       className="group relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-800 transition-all"
                     >
-                      {/* Image */}
-                      <div className="relative w-full aspect-[4/3] bg-zinc-950">
-                        <Image
-                          src={imageUrl}
-                          alt={wireframe.image.alt || wireframe.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
+                      {/* Image - Full mobile screen visible */}
+                      <div className="relative w-full bg-zinc-950 flex items-center justify-center p-8 min-h-[400px]">
+                        <div className="relative w-full max-w-sm mx-auto h-full">
+                          <Image
+                            src={imageUrl}
+                            alt={wireframe.image.alt || wireframe.title}
+                            width={800}
+                            height={1200}
+                            className="object-contain w-full h-auto max-h-[600px]"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        </div>
                       </div>
 
                       {/* Content */}
@@ -338,11 +414,11 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Learnings */}
-        {project.learnings && (
+        {project.learnings && Array.isArray(project.learnings) && project.learnings.length > 0 && (
           <section className="py-24 md:py-32">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                08 — Learnings
+                {getSectionNumber()} — Learnings
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
                 What we learned
