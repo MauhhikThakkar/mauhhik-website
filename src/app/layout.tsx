@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants"
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION } from "@/lib/constants"
+import Analytics from "@/components/Analytics"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -83,6 +84,10 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased">
         {children}
+        {/* Analytics - only enabled in production or if explicitly enabled */}
+        {(IS_PRODUCTION || ANALYTICS_ENABLED) && PLAUSIBLE_DOMAIN && (
+          <Analytics domain={PLAUSIBLE_DOMAIN} enabled={true} />
+        )}
       </body>
     </html>
   )
