@@ -70,10 +70,10 @@ export default function EmailCapture() {
 
             {/* Success Message */}
             <h3 className="text-lg font-semibold text-white mb-2">
-              You're subscribed!
+              You&apos;re subscribed!
             </h3>
             <p className="text-sm text-zinc-400 leading-relaxed">
-              Thanks for joining. I'll share insights on building AI-first products.
+              Thanks for joining. I&apos;ll share insights on building AI-first products.
             </p>
           </div>
         </div>

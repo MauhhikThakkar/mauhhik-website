@@ -45,14 +45,23 @@ export function generateMetadata(config: SEOConfig = {}): Metadata {
   // Build titles
   // Next.js template will automatically add site name to page titles
   const defaultTitle = `${SITE_NAME} — Product Manager & AI Product Builder`
-  const pageTitle = title || defaultTitle
   // For OpenGraph/Twitter, we need the full title with site name
   const fullTitle = title ? `${title} | ${SITE_NAME}` : defaultTitle
 
   // Build canonical URL
   const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL
 
+  // Build article-specific OpenGraph fields (if type is article)
+  // Build separately to avoid mutating a potentially null/undefined openGraph
+  const articleFields: { publishedTime?: string; modifiedTime?: string; authors?: string[]; tags?: string[] } | undefined = type === 'article' ? {
+    ...(publishedTime && { publishedTime }),
+    ...(modifiedTime && { modifiedTime }),
+    ...(authors && authors.length > 0 && { authors }),
+    ...(tags && tags.length > 0 && { tags }),
+  } : undefined
+
   // OpenGraph configuration
+  // Initialize with all required fields to ensure it's never null/undefined
   const openGraph: Metadata['openGraph'] = {
     type,
     locale: 'en_US',
@@ -68,23 +77,7 @@ export function generateMetadata(config: SEOConfig = {}): Metadata {
         alt: imageAlt,
       },
     ],
-  }
-
-  // Add article-specific OpenGraph fields
-  if (type === 'article') {
-    openGraph.article = {}
-    if (publishedTime) {
-      openGraph.article.publishedTime = publishedTime
-    }
-    if (modifiedTime) {
-      openGraph.article.modifiedTime = modifiedTime
-    }
-    if (authors && authors.length > 0) {
-      openGraph.article.authors = authors
-    }
-    if (tags && tags.length > 0) {
-      openGraph.article.tags = tags
-    }
+    ...(articleFields && { article: articleFields }),
   }
 
   // Twitter card configuration
@@ -151,19 +144,20 @@ export function generatePageMetadata(
   const baseMetadata = generateMetadata(baseConfig)
   
   // Merge with overrides, with overrides taking precedence
+  // Safely handle potentially null/undefined openGraph and twitter
   return {
     ...baseMetadata,
     ...overrides,
-    openGraph: {
-      ...baseMetadata.openGraph,
+    openGraph: baseMetadata.openGraph || overrides?.openGraph ? {
+      ...(baseMetadata.openGraph || {}),
       ...overrides?.openGraph,
       images: overrides?.openGraph?.images || baseMetadata.openGraph?.images,
-    },
-    twitter: {
-      ...baseMetadata.twitter,
+    } : undefined,
+    twitter: baseMetadata.twitter || overrides?.twitter ? {
+      ...(baseMetadata.twitter || {}),
       ...overrides?.twitter,
       images: overrides?.twitter?.images || baseMetadata.twitter?.images,
-    },
+    } : undefined,
   }
 }
 

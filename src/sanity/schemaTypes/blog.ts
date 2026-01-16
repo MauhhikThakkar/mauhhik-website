@@ -245,7 +245,7 @@ export default defineType({
       publishedAt: 'publishedAt',
       isFeatured: 'isFeatured',
     },
-    prepare({ title, subtitle, media, category, publishedAt, isFeatured }) {
+    prepare({ title, subtitle: _subtitle, media, category, publishedAt, isFeatured }) {
       const date = publishedAt ? new Date(publishedAt).toLocaleDateString() : 'Draft'
       const featured = isFeatured ? '⭐ ' : ''
       return {

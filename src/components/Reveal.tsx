@@ -29,7 +29,7 @@ export default function Reveal({ children, className = '', delay = 0 }: RevealPr
       }}
       transition={{
         duration: 0.5,
-        ease: [0.22, 1, 0.36, 1], // easeOut curve
+        ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
         delay,
       }}
     >

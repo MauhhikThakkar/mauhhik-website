@@ -37,10 +37,10 @@ export default function AboutPage() {
               <Reveal delay={0.1}>
                 <div className="mb-16">
               <p className="leading-relaxed mb-4">
-                I build products that solve real problems. Not features for features' sake, but systems that create measurable impact.
+                I build products that solve real problems. Not features for features&apos; sake, but systems that create measurable impact.
               </p>
               <p className="leading-relaxed">
-                My work sits at the intersection of three things: understanding how AI changes what's possible, thinking in systems rather than silos, and executing with clarity in uncertain environments.
+                My work sits at the intersection of three things: understanding how AI changes what&apos;s possible, thinking in systems rather than silos, and executing with clarity in uncertain environments.
               </p>
             </div>
             </Reveal>
@@ -64,10 +64,10 @@ export default function AboutPage() {
 
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">
-                    AI amplifies judgment, doesn't replace it
+                    AI amplifies judgment, doesn&apos;t replace it
                   </h3>
                   <p className="leading-relaxed">
-                    The best AI products aren't about automation—they're about augmenting human judgment where it matters most. I focus on the seams: where AI handles scale, and humans handle nuance.
+                    The best AI products aren&apos;t about automation—they&apos;re about augmenting human judgment where it matters most. I focus on the seams: where AI handles scale, and humans handle nuance.
                   </p>
                 </div>
 
@@ -85,7 +85,7 @@ export default function AboutPage() {
                     Impact over activity
                   </h3>
                   <p className="leading-relaxed">
-                    Shipping isn't the goal. Solving problems is. I measure success by outcomes that matter to users and the business, not by velocity or feature count.
+                    Shipping isn&apos;t the goal. Solving problems is. I measure success by outcomes that matter to users and the business, not by velocity or feature count.
                   </p>
                 </div>
               </div>
@@ -96,7 +96,7 @@ export default function AboutPage() {
             <Reveal delay={0.3}>
               <div className="mb-16">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 tracking-tight">
-                What I'm working on now
+                What I&apos;m working on now
               </h2>
               
               <div className="space-y-8">
@@ -105,7 +105,7 @@ export default function AboutPage() {
                     Building AI-first products
                   </h3>
                   <p className="leading-relaxed">
-                    Exploring how AI changes product architecture, user experience, and business models. Not just adding AI features, but rethinking what's possible when intelligence is a first-class capability.
+                    Exploring how AI changes product architecture, user experience, and business models. Not just adding AI features, but rethinking what&apos;s possible when intelligence is a first-class capability.
                   </p>
                 </div>
 
@@ -123,7 +123,7 @@ export default function AboutPage() {
                     Execution in ambiguity
                   </h3>
                   <p className="leading-relaxed">
-                    Learning how to move fast when the path isn't clear. Building products in spaces where requirements shift, technology evolves, and user needs emerge rather than being predefined.
+                    Learning how to move fast when the path isn&apos;t clear. Building products in spaces where requirements shift, technology evolves, and user needs emerge rather than being predefined.
                   </p>
                 </div>
               </div>
@@ -142,11 +142,11 @@ export default function AboutPage() {
               </p>
               
               <p className="leading-relaxed mb-4">
-                You'll find case studies of products I've built, thoughts on product strategy, and frameworks I use to navigate uncertainty. The goal isn't to impress—it's to share what I've learned in a way that might be useful to others.
+                You&apos;ll find case studies of products I&apos;ve built, thoughts on product strategy, and frameworks I use to navigate uncertainty. The goal isn&apos;t to impress—it&apos;s to share what I&apos;ve learned in a way that might be useful to others.
               </p>
               
               <p className="leading-relaxed">
-                If you're building products at the intersection of AI and human judgment, or if you're trying to make better decisions in complex systems, some of this might resonate.
+                If you&apos;re building products at the intersection of AI and human judgment, or if you&apos;re trying to make better decisions in complex systems, some of this might resonate.
               </p>
             </div>
             </Reveal>
@@ -159,7 +159,7 @@ export default function AboutPage() {
               </h2>
               
               <p className="leading-relaxed mb-6">
-                I'm open to conversations about product strategy, AI product development, or building systems that scale. Here's how to reach out:
+                I&apos;m open to conversations about product strategy, AI product development, or building systems that scale. Here&apos;s how to reach out:
               </p>
               
               <div className="space-y-6">
@@ -168,7 +168,7 @@ export default function AboutPage() {
                     For product discussions
                   </h3>
                   <p className="leading-relaxed">
-                    If you're working on something interesting at the intersection of AI and product, or if you're navigating similar challenges, I'd love to hear about it. Reach out via email or Twitter.
+                    If you&apos;re working on something interesting at the intersection of AI and product, or if you&apos;re navigating similar challenges, I&apos;d love to hear about it. Reach out via email or Twitter.
                   </p>
                 </div>
 
@@ -177,7 +177,7 @@ export default function AboutPage() {
                     For collaboration
                   </h3>
                   <p className="leading-relaxed">
-                    I'm particularly interested in projects that combine AI capabilities with strong product thinking, or that require systems-level problem solving. If you're building something in that space, let's talk.
+                    I&apos;m particularly interested in projects that combine AI capabilities with strong product thinking, or that require systems-level problem solving. If you&apos;re building something in that space, let&apos;s talk.
                   </p>
                 </div>
 
@@ -186,7 +186,7 @@ export default function AboutPage() {
                     For speaking or writing
                   </h3>
                   <p className="leading-relaxed">
-                    I occasionally speak or write about product management, AI products, and systems thinking. If you're organizing an event or publication that aligns with these topics, I'm open to discussing opportunities.
+                    I occasionally speak or write about product management, AI products, and systems thinking. If you&apos;re organizing an event or publication that aligns with these topics, I&apos;m open to discussing opportunities.
                   </p>
                 </div>
               </div>

@@ -33,7 +33,7 @@ const components: PortableTextComponents = {
     ),
     blockquote: ({ children }) => (
       <blockquote className="relative border-l-4 border-zinc-700 pl-8 pr-6 py-6 my-12 bg-zinc-950/30 rounded-r-xl">
-        <div className="absolute top-4 left-4 text-6xl text-zinc-800 leading-none">"</div>
+        <div className="absolute top-4 left-4 text-6xl text-zinc-800 leading-none">&quot;</div>
         <div className="relative text-xl leading-relaxed text-zinc-200 font-normal italic">
           {children}
         </div>
@@ -124,7 +124,7 @@ const components: PortableTextComponents = {
             )}
           </figure>
         )
-      } catch (error) {
+      } catch {
         // Silently fail image rendering - return null to skip broken images
         return null
       }
@@ -133,7 +133,7 @@ const components: PortableTextComponents = {
 }
 
 interface PortableTextProps {
-  value: any
+  value: unknown
   className?: string
 }
 

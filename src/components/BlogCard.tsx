@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -33,19 +33,23 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
   }, [])
 
   // Hover variants - disabled on touch devices
-  const cardVariants = {
+  // Properly typed to satisfy Framer Motion Variants type
+  const cardVariants: Variants = {
     rest: {
       y: 0,
       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     },
     hover: isTouchDevice
-      ? {}
+      ? {
+          // Empty object for touch devices (no hover effect)
+          y: 0,
+        }
       : {
           y: -4,
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
           transition: {
             duration: 0.2,
-            ease: [0.22, 1, 0.36, 1], // easeOut
+            ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
           },
         },
   }

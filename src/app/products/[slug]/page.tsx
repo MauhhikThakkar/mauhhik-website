@@ -7,12 +7,18 @@ import PortableText from '@/components/PortableText'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import { urlFor } from '@/sanity/lib/image'
 
+// Type guard to safely check if value is valid Portable Text (array)
+// This narrows 'unknown' to 'unknown[]' so TypeScript knows it's renderable
+function isValidPortableText(value: unknown): value is unknown[] {
+  return Array.isArray(value) && value.length > 0
+}
+
 interface Product {
   _id: string
   title: string
   slug: string
   shortDescription: string
-  longDescription: any
+  longDescription: unknown
   status: 'draft' | 'live' | 'archived'
   price?: number
   ctaText?: string
@@ -44,10 +50,6 @@ interface Product {
   }>
 }
 
-interface Props {
-  params: { slug: string }
-}
-
 export async function generateStaticParams() {
   const products = await client.fetch(PRODUCT_SLUGS_QUERY)
   return products.map((product: { slug: string }) => ({
@@ -60,9 +62,14 @@ export async function generateStaticParams() {
 // 24 hours ensures updates appear within a day while maximizing cache performance
 export const revalidate = 86400
 
-export default async function ProductPage({ params }: Props) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
   const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, {
-    slug: params.slug,
+    slug,
   })
 
   if (!product || product.status !== 'live') {
@@ -108,12 +115,13 @@ export default async function ProductPage({ params }: Props) {
       </section>
 
       {/* Long Description / What It's For */}
-      {product.longDescription && (
+      {/* Type guard ensures longDescription is a valid Portable Text array before rendering */}
+      {isValidPortableText(product.longDescription) && (
         <section className="border-b border-zinc-900/50">
           <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
             <div className="mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                What it's for
+                What it&apos;s for
               </h2>
             </div>
             <div className="prose-custom text-zinc-300 text-[19px] leading-[1.7] max-w-2xl">
@@ -127,13 +135,13 @@ export default async function ProductPage({ params }: Props) {
       <section className="border-b border-zinc-900/50">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">
-            Who it's for
+            Who it&apos;s for
           </h2>
           <div className="max-w-2xl">
             <p className="text-lg text-zinc-400 leading-relaxed">
               This product is designed for product managers, founders, and builders who want to
-              apply proven frameworks and methodologies to their work. Whether you're early in your
-              career or leading product strategy, you'll find practical insights you can use immediately.
+              apply proven frameworks and methodologies to their work. Whether you&apos;re early in your
+              career or leading product strategy, you&apos;ll find practical insights you can use immediately.
             </p>
             <p className="text-lg text-zinc-400 leading-relaxed mt-6">
               {/* Placeholder - can be replaced with actual "who it's for" content from schema in future */}
@@ -217,9 +225,14 @@ export default async function ProductPage({ params }: Props) {
   )
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
   const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, {
-    slug: params.slug,
+    slug,
   })
 
   // If product doesn't exist, return default metadata
@@ -228,7 +241,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return generateSEOMetadata({
       title: 'Product Not Found',
       description: 'The requested product could not be found.',
-      url: `/products/${params.slug}`,
+      url: `/products/${slug}`,
     })
   }
 

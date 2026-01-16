@@ -9,7 +9,6 @@ import ReadingProgress from "@/components/ReadingProgress"
 import AuthorAttribution from "@/components/AuthorAttribution"
 import InlineCTA from "@/components/InlineCTA"
 import { urlFor } from "@/sanity/lib/image"
-import { SITE_URL } from "@/lib/constants"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 interface BlogPost {
@@ -24,7 +23,7 @@ interface BlogPost {
       url: string
     }
   }
-  content: any
+  content: unknown
   tldr?: string
   pmTakeaway?: string
   readingTime: number
@@ -68,8 +67,8 @@ interface BlogPost {
       description?: string
       buttonText: string
       buttonLink: string
-      ctaType: string
-      style: string
+      ctaType: 'content-upgrade' | 'newsletter' | 'product' | 'course' | 'free-resource' | 'custom'
+      style: 'card' | 'banner' | 'minimal' | 'feature'
       active?: boolean
       image?: {
         alt?: string
@@ -110,10 +109,6 @@ interface BlogPost {
   }
 }
 
-interface Props {
-  params: { slug: string }
-}
-
 export async function generateStaticParams() {
   const posts = await client.fetch(BLOG_SLUGS_QUERY)
   return posts.map((post: { slug: string }) => ({
@@ -126,9 +121,14 @@ export async function generateStaticParams() {
 // while maintaining performance. Longer posts benefit from longer cache times.
 export const revalidate = 3600
 
-export default async function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
   const post: BlogPost | null = await client.fetch(BLOG_POST_BY_SLUG_QUERY, {
-    slug: params.slug,
+    slug,
   })
 
   if (!post) {
@@ -320,7 +320,7 @@ export default async function BlogPostPage({ params }: Props) {
               <div className="mb-10">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Related Case Studies</h2>
                 <p className="text-base text-zinc-400 leading-relaxed">
-                  Related work where I've applied this thinking
+                  Related work where I&apos;ve applied this thinking
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -358,15 +358,20 @@ export default async function BlogPostPage({ params }: Props) {
   )
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
   const post: BlogPost | null = await client.fetch(BLOG_POST_BY_SLUG_QUERY, {
-    slug: params.slug,
+    slug,
   })
 
   if (!post) {
     return generateSEOMetadata({
       title: 'Post Not Found',
-      url: `/blog/${params.slug}`,
+      url: `/blog/${slug}`,
     })
   }
 

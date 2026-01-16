@@ -10,7 +10,11 @@ type Project = {
   slug: string
   shortDescription: string
   tags: string[]
-  coverImage: any
+  coverImage: {
+    asset: {
+      url: string
+    }
+  } | null
   liveUrl?: string
   githubUrl?: string
 }
@@ -76,7 +80,7 @@ export default async function PortfolioSection() {
             <div className="text-center py-20">
               <p className="text-zinc-500 text-lg mb-4">No portfolio projects found.</p>
               <p className="text-zinc-600 text-sm">
-                Portfolio case studies will appear here once they're added to Sanity.
+                Portfolio case studies will appear here once they&apos;re added to Sanity.
               </p>
             </div>
           )}

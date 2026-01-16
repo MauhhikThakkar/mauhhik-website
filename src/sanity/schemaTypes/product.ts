@@ -104,7 +104,7 @@ export default defineType({
               .min(0)
               .precision(2)
               .custom((price, context) => {
-                const isFree = (context.parent as any)?.isFree
+                const isFree = (context.parent as { isFree?: boolean })?.isFree
                 if (isFree && price !== 0) {
                   return 'Price must be 0 for free products'
                 }
@@ -527,7 +527,7 @@ export default defineType({
       status: 'status',
       featured: 'featured',
     },
-    prepare({ title, subtitle, media, productType, price, isFree, currency, status, featured }) {
+    prepare({ title, subtitle: _subtitle, media, productType, price, isFree, currency, status, featured }) {
       const type = productType ? productType.charAt(0).toUpperCase() + productType.slice(1) : 'Product'
       const priceDisplay = isFree ? 'Free' : `${currency} ${price}`
       const statusIcon = status === 'live' ? '🟢' : status === 'draft' ? '⚪' : status === 'coming-soon' ? '🟡' : '⚫'

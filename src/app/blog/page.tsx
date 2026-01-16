@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation"
 import Link from "next/link"
 import { client } from "@/sanity/lib/client"
 import { BLOG_POSTS_QUERY, BLOG_CATEGORIES_QUERY } from "@/sanity/lib/blogQueries"
@@ -238,7 +237,7 @@ export default async function BlogPage() {
       <div className="h-32"></div>
     </main>
     )
-  } catch (error) {
+  } catch {
     // Silently handle errors in production, show user-friendly message
     return (
       <main className="bg-black text-white min-h-screen">

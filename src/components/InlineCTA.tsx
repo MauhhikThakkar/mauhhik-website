@@ -1,10 +1,9 @@
 'use client'
 
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { urlFor } from '@/sanity/lib/image'
 import EmailCapture from './EmailCapture'
 
 interface InlineCTAProps {
@@ -130,7 +129,8 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
   }
 
   // Animation variants
-  const containerVariants = {
+  // Properly typed to satisfy Framer Motion Variants type
+  const containerVariants: Variants = {
     hidden: {
       opacity: 0,
       y: shouldReduceMotion ? 0 : 8,
@@ -140,7 +140,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
       },
     },
   }

@@ -1,10 +1,11 @@
 'use client'
 
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, useReducedMotion, type Variants } from "framer-motion"
 import CTAButton from "@/components/CTAButton"
 
 // Headline line animation variants
-const headlineLineVariants = {
+// Properly typed to satisfy Framer Motion Variants type
+const headlineLineVariants: Variants = {
   hidden: (reduced: boolean) => ({
     opacity: 0,
     y: reduced ? 0 : 20,
@@ -14,13 +15,14 @@ const headlineLineVariants = {
     y: 0,
     transition: {
       duration: 0.3,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
     },
   },
 }
 
 // Headline container with stagger
-const headlineContainerVariants = {
+// Properly typed to satisfy Framer Motion Variants type
+const headlineContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -32,7 +34,8 @@ const headlineContainerVariants = {
 }
 
 // Subheadline animation (after headline completes)
-const subheadlineVariants = {
+// Properly typed to satisfy Framer Motion Variants type
+const subheadlineVariants: Variants = {
   hidden: (reduced: boolean) => ({
     opacity: 0,
     y: reduced ? 0 : 20,
@@ -42,14 +45,15 @@ const subheadlineVariants = {
     y: 0,
     transition: {
       duration: 0.25,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
       delay: 0.35, // After headline lines complete (0.1 stagger + 0.25 duration)
     },
   },
 }
 
 // CTA buttons animation (scale-in, last)
-const ctaContainerVariants = {
+// Properly typed to satisfy Framer Motion Variants type
+const ctaContainerVariants: Variants = {
   hidden: {
     opacity: 0,
   },
@@ -62,7 +66,7 @@ const ctaContainerVariants = {
   },
 }
 
-const ctaButtonVariants = {
+const _ctaButtonVariants: Variants = {
   hidden: (reduced: boolean) => ({
     opacity: 0,
     scale: reduced ? 1 : 0.95,
@@ -72,7 +76,7 @@ const ctaButtonVariants = {
     scale: 1,
     transition: {
       duration: 0.15,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
     },
   },
 }

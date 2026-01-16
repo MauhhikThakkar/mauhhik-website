@@ -8,6 +8,11 @@ import PortableText from "@/components/PortableText"
 import { urlFor } from "@/sanity/lib/image"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
+// Type guard to check if value is a valid Portable Text array
+function isValidPortableText(value: unknown): value is unknown[] {
+  return Array.isArray(value) && value.length > 0
+}
+
 interface Metric {
   label: string
   value: string
@@ -71,11 +76,11 @@ interface Project {
     }
   }
   categories?: Category[]
-  context?: any
-  problem?: any
-  solution?: any
-  strategy?: any
-  learnings?: any
+  context?: unknown
+  problem?: unknown
+  solution?: unknown
+  strategy?: unknown
+  learnings?: unknown
   goals?: Metric[]
   impact?: Metric[]
   wireframes?: Wireframe[]
@@ -83,10 +88,6 @@ interface Project {
   relatedBlogs?: RelatedBlog[]
   previousProject?: NavProject
   nextProject?: NavProject
-}
-
-interface Props {
-  params: { slug: string }
 }
 
 export async function generateStaticParams() {
@@ -102,9 +103,14 @@ export async function generateStaticParams() {
 export const revalidate = 86400
 
 // Generate metadata for portfolio case study pages
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
   const project = await client.fetch<Project | null>(PROJECT_METADATA_QUERY, {
-    slug: params.slug,
+    slug,
   })
 
   // If project doesn't exist, return default metadata
@@ -113,7 +119,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return generateSEOMetadata({
       title: 'Portfolio Case Study',
       description: 'A detailed case study of a product project.',
-      url: `/portfolio/${params.slug}`,
+      url: `/portfolio/${slug}`,
     })
   }
 
@@ -132,9 +138,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function ProjectPage({ params }: Props) {
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
   const project: Project | null = await client.fetch(PROJECT_BY_SLUG_QUERY, {
-    slug: params.slug,
+    slug,
   })
 
   if (!project) {
@@ -245,7 +256,7 @@ export default async function ProjectPage({ params }: Props) {
       {/* Content Sections */}
       <div className="max-w-4xl mx-auto px-6 sm:px-8">
         {/* Context */}
-        {project.context && Array.isArray(project.context) && project.context.length > 0 && (
+        {isValidPortableText(project.context) && (
           <section className="py-20 md:py-28 border-b border-zinc-900/50">
             <div className="mb-14">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-5">
@@ -262,7 +273,7 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Problem */}
-        {project.problem && Array.isArray(project.problem) && project.problem.length > 0 && (
+        {isValidPortableText(project.problem) && (
           <section className="py-20 md:py-28 border-b border-zinc-900/50">
             <div className="mb-14">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-5">
@@ -313,7 +324,7 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Strategy */}
-        {project.strategy && Array.isArray(project.strategy) && project.strategy.length > 0 && (
+        {isValidPortableText(project.strategy) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
@@ -330,7 +341,7 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Solution */}
-        {project.solution && Array.isArray(project.solution) && project.solution.length > 0 && (
+        {isValidPortableText(project.solution) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
@@ -443,7 +454,7 @@ export default async function ProjectPage({ params }: Props) {
                       </div>
                     </div>
                   )
-                } catch (error) {
+                } catch {
                   // Silently fail wireframe rendering - return null to skip broken wireframes
                   return null
                 }
@@ -480,7 +491,7 @@ export default async function ProjectPage({ params }: Props) {
         )}
 
         {/* Learnings */}
-        {project.learnings && Array.isArray(project.learnings) && project.learnings.length > 0 && (
+        {isValidPortableText(project.learnings) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">

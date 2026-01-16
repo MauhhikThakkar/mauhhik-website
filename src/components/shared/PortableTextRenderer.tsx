@@ -2,6 +2,14 @@ import { PortableText, PortableTextComponents } from "@portabletext/react"
 import Image from "next/image"
 import { urlFor } from "@/sanity/lib/image"
 
+// Minimal TypedObject type for PortableText compatibility
+// PortableText expects objects with _type property (Sanity's typed object structure)
+type TypedObject = {
+  _type: string
+  _key?: string
+  [key: string]: unknown
+}
+
 const components: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
@@ -87,11 +95,29 @@ const components: PortableTextComponents = {
 }
 
 interface PortableTextRendererProps {
-  value: any
+  value: unknown
+}
+
+// Type guard to check if value is valid PortableText (TypedObject or array)
+function isValidPortableText(value: unknown): value is TypedObject | TypedObject[] {
+  if (!value) {
+    return false
+  }
+  
+  // Check if it's an array of TypedObjects
+  if (Array.isArray(value)) {
+    return value.length > 0 && value.every(
+      (item) => typeof item === 'object' && item !== null && '_type' in item
+    )
+  }
+  
+  // Check if it's a single TypedObject
+  return typeof value === 'object' && value !== null && '_type' in value
 }
 
 export default function PortableTextRenderer({ value }: PortableTextRendererProps) {
-  if (!value) {
+  // Runtime safety: guard against invalid values
+  if (!isValidPortableText(value)) {
     return null
   }
 

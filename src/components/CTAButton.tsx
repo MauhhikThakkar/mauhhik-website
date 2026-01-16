@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 import { ReactNode, useEffect, useState } from 'react'
 
@@ -28,7 +28,8 @@ export default function CTAButton({
   }, [])
 
   // Animation variants - subtle micro-interactions
-  const buttonVariants = {
+  // Properly typed to satisfy Framer Motion Variants type
+  const buttonVariants: Variants = {
     rest: {
       y: 0,
       scale: 1,
@@ -37,7 +38,11 @@ export default function CTAButton({
         : '0 1px 2px 0 rgba(255, 255, 255, 0.05)',
     },
     hover: isTouchDevice || shouldReduceMotion
-      ? {}
+      ? {
+          // No hover effect on touch devices or reduced motion
+          y: 0,
+          scale: 1,
+        }
       : {
           y: -2,
           boxShadow: variant === 'primary'
@@ -45,14 +50,14 @@ export default function CTAButton({
             : '0 4px 6px -1px rgba(255, 255, 255, 0.1), 0 2px 4px -1px rgba(255, 255, 255, 0.06)',
           transition: {
             duration: 0.15,
-            ease: [0.22, 1, 0.36, 1], // Same easing as blog cards
+            ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
           },
         },
     tap: {
       scale: 0.98,
       transition: {
         duration: 0.12,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
       },
     },
   }

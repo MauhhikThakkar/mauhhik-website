@@ -39,9 +39,10 @@ export function BlogPostSimple({ post }: { post: BlogPost }) {
       )}
 
       {/* Related projects */}
-      {post.relatedProjects && post.relatedProjects.length > 0 && (
+      {/* Example: Render related projects component here */}
+      {/* {post.relatedProjects && post.relatedProjects.length > 0 && (
         <RelatedProjects projects={post.relatedProjects} />
-      )}
+      )} */}
     </article>
   )
 }
