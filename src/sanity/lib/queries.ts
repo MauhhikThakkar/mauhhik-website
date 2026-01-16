@@ -18,6 +18,29 @@ export const PROJECTS_QUERY = `
   }
 `
 
+// Lightweight query for metadata generation (only essential fields)
+export const PROJECT_METADATA_QUERY = `
+  *[_type == "project" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    shortDescription,
+    coverImage {
+      alt,
+      asset->{
+        _id,
+        url,
+        metadata {
+          dimensions {
+            width,
+            height
+          }
+        }
+      }
+    }
+  }
+`
+
 // Complete projection for single project with richText image resolution
 export const PROJECT_BY_SLUG_QUERY = `
   *[_type == "project" && slug.current == $slug][0] {
@@ -26,6 +49,19 @@ export const PROJECT_BY_SLUG_QUERY = `
     title,
     "slug": slug.current,
     shortDescription,
+    coverImage {
+      alt,
+      asset->{
+        _id,
+        url,
+        metadata {
+          dimensions {
+            width,
+            height
+          }
+        }
+      }
+    },
     "categories": categories[]->{ 
       title, 
       "slug": slug.current 

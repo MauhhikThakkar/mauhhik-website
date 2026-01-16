@@ -9,7 +9,8 @@ import ReadingProgress from "@/components/ReadingProgress"
 import AuthorAttribution from "@/components/AuthorAttribution"
 import InlineCTA from "@/components/InlineCTA"
 import { urlFor } from "@/sanity/lib/image"
-import { SITE_URL, SITE_NAME } from "@/lib/constants"
+import { SITE_URL } from "@/lib/constants"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 interface BlogPost {
   _id: string
@@ -120,23 +121,15 @@ export async function generateStaticParams() {
   }))
 }
 
-// Force revalidation every request (for debugging)
-export const revalidate = 0
+// ISR: Revalidate blog posts every hour
+// Individual posts may be edited (typos, updates), so 1 hour ensures changes appear
+// while maintaining performance. Longer posts benefit from longer cache times.
+export const revalidate = 3600
 
 export default async function BlogPostPage({ params }: Props) {
-  console.log('===== BLOG POST DEBUG =====')
-  console.log('Fetching slug:', params.slug)
-  
   const post: BlogPost | null = await client.fetch(BLOG_POST_BY_SLUG_QUERY, {
     slug: params.slug,
   })
-
-  console.log('Post found:', !!post)
-  if (post) {
-    console.log('Post title:', post.title)
-    console.log('Post ID:', post._id)
-  }
-  console.log('===========================')
 
   if (!post) {
     notFound()
@@ -371,48 +364,29 @@ export async function generateMetadata({ params }: Props) {
   })
 
   if (!post) {
-    return {
+    return generateSEOMetadata({
       title: 'Post Not Found',
-    }
+      url: `/blog/${params.slug}`,
+    })
   }
 
   // Build OpenGraph image URL from hero image or default
   const ogImage = post.heroImage?.asset
     ? urlFor(post.heroImage).width(1200).height(630).fit('max').url()
-    : `${SITE_URL}/og-image.jpg`
+    : undefined // Will use default from generateSEOMetadata
 
   const title = post.seo?.metaTitle || post.title
   const description = post.seo?.metaDescription || post.shortDescription
 
-  return {
+  return generateSEOMetadata({
     title: `${title} | Blog`,
     description,
-    openGraph: {
-      title: post.title,
-      description,
-      type: 'article',
-      publishedTime: post.publishedAt,
-      authors: post.author?.name ? [post.author.name] : [SITE_NAME],
-      url: `${SITE_URL}/blog/${post.slug}`,
-      siteName: SITE_NAME,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.heroImage?.alt || post.title,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: post.title,
-      description,
-      images: [ogImage],
-      creator: '@mauhhik',
-    },
-    alternates: {
-      canonical: `${SITE_URL}/blog/${post.slug}`,
-    },
-  }
+    image: ogImage,
+    imageAlt: post.heroImage?.alt || post.title,
+    url: `/blog/${post.slug}`,
+    type: 'article',
+    publishedTime: post.publishedAt,
+    authors: post.author?.name ? [post.author.name] : undefined,
+    tags: post.tags,
+  })
 }

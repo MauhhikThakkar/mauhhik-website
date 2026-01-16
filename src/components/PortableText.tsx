@@ -125,7 +125,7 @@ const components: PortableTextComponents = {
           </figure>
         )
       } catch (error) {
-        console.error("Failed to render image:", error, value)
+        // Silently fail image rendering - return null to skip broken images
         return null
       }
     },

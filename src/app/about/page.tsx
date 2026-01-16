@@ -1,37 +1,14 @@
 import Link from "next/link"
-import { SITE_URL, SITE_NAME } from "@/lib/constants"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 import Navbar from "@/components/Navbar"
 import Reveal from "@/components/Reveal"
 
-export const metadata = {
-  title: 'About | Mauhhik',
+export const metadata = generateSEOMetadata({
+  title: 'About',
   description: 'Product Manager working at the intersection of AI, systems thinking, and execution. Building products that solve real problems.',
-  openGraph: {
-    title: 'About | Mauhhik',
-    description: 'Product Manager working at the intersection of AI, systems thinking, and execution.',
-    type: 'website',
-    url: `${SITE_URL}/about`,
-    siteName: SITE_NAME,
-    images: [
-      {
-        url: `${SITE_URL}/og-image.jpg`,
-        width: 1200,
-        height: 630,
-        alt: 'Mauhhik — About',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'About | Mauhhik',
-    description: 'Product Manager working at the intersection of AI, systems thinking, and execution.',
-    images: [`${SITE_URL}/og-image.jpg`],
-    creator: '@mauhhik',
-  },
-  alternates: {
-    canonical: `${SITE_URL}/about`,
-  },
-}
+  url: '/about',
+  imageAlt: 'Mauhhik — About',
+})
 
 export default function AboutPage() {
   return (

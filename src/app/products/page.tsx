@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { client } from "@/sanity/lib/client"
 import { LIVE_PRODUCTS_QUERY } from '@/sanity/lib/productQueries'
+import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import Reveal from '@/components/Reveal'
 
 interface Product {
@@ -89,7 +90,9 @@ export default async function ProductsPage() {
   )
 }
 
-export const metadata = {
+export const metadata = generateSEOMetadata({
   title: 'Products | Digital Resources & Guides',
   description: 'Digital products, guides, and resources for product managers and builders.',
-}
+  url: '/products',
+  imageAlt: 'Mauhhik — Products',
+})

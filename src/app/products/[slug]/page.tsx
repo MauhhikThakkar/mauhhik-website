@@ -39,6 +39,11 @@ export async function generateStaticParams() {
   }))
 }
 
+// ISR: Revalidate products every 24 hours
+// Products are relatively stable (pricing, descriptions change infrequently)
+// 24 hours ensures updates appear within a day while maximizing cache performance
+export const revalidate = 86400
+
 export default async function ProductPage({ params }: Props) {
   const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, {
     slug: params.slug,

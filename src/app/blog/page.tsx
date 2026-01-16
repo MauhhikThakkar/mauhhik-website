@@ -3,7 +3,8 @@ import Link from "next/link"
 import { client } from "@/sanity/lib/client"
 import { BLOG_POSTS_QUERY, BLOG_CATEGORIES_QUERY } from "@/sanity/lib/blogQueries"
 import { urlFor } from "@/sanity/lib/image"
-import { SITE_URL, SITE_NAME } from "@/lib/constants"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+
 import Reveal from "@/components/Reveal"
 import BlogCard from "@/components/BlogCard"
 
@@ -44,42 +45,12 @@ export default async function BlogPage() {
       client.fetch<BlogCategory[]>(BLOG_CATEGORIES_QUERY),
     ])
 
-    // DEBUG: Enhanced logging to diagnose routing/caching issues
-    console.log('===== BLOG PAGE DEBUG =====')
-    console.log('📍 Pathname: /blog (should NOT be hash-based)')
-    console.log('📊 Total posts from Sanity:', posts?.length || 0)
-    console.log('📝 Post details:', posts?.map(p => ({
-      title: p.title,
-      slug: p.slug,
-      hasDescription: !!p.shortDescription,
-      hasCategory: !!p.category,
-      publishedAt: p.publishedAt,
-      _id: p._id,
-    })))
-    console.log('🔍 GROQ Query Type: _type == "blog" && defined(slug.current)')
-    console.log('🕒 Timestamp:', new Date().toISOString())
-    console.log('============================')
-
     // Filter out posts with missing required fields
     const validPosts = (posts || []).filter(post => 
       post.title && 
       post.slug && 
       post.shortDescription
     )
-
-    console.log('✅ Valid posts after filter:', validPosts.length)
-    if (validPosts.length === 0 && posts && posts.length > 0) {
-      console.warn('⚠️  Posts were filtered out. Check for missing fields:')
-      posts.forEach(p => {
-        if (!p.title || !p.slug || !p.shortDescription) {
-          console.warn(`  - Post "${p.title || 'Untitled'}" missing:`, {
-            hasTitle: !!p.title,
-            hasSlug: !!p.slug,
-            hasDescription: !!p.shortDescription,
-          })
-        }
-      })
-    }
 
     // Separate posts into groups
     const featuredPosts = validPosts.filter(post => post.isFeatured).slice(0, 2)
@@ -268,47 +239,26 @@ export default async function BlogPage() {
     </main>
     )
   } catch (error) {
-    console.error('Error fetching blog posts:', error)
+    // Silently handle errors in production, show user-friendly message
     return (
       <main className="bg-black text-white min-h-screen">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-20">
           <h1 className="text-4xl font-bold mb-4">Error Loading Blog</h1>
-          <p className="text-zinc-400">There was an error loading the blog posts. Please check the console for details.</p>
+          <p className="text-zinc-400">There was an error loading the blog posts. Please try again later.</p>
         </div>
       </main>
     )
   }
 }
 
-// Force revalidation every request (for debugging)
-export const revalidate = 0
+// ISR: Revalidate blog listing every hour
+// Blog posts may be added/updated frequently, so 1 hour ensures fresh content
+// while maintaining good performance through caching
+export const revalidate = 3600
 
-export const metadata = {
+export const metadata = generateSEOMetadata({
   title: 'Writing | Product Thinking & Strategy',
   description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect. Thoughts on product management, strategy, and building things that matter.',
-  openGraph: {
-    title: 'Writing | Product Thinking & Strategy',
-    description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect.',
-    type: 'website',
-    url: `${SITE_URL}/blog`,
-    siteName: SITE_NAME,
-    images: [
-      {
-        url: `${SITE_URL}/og-image.jpg`,
-        width: 1200,
-        height: 630,
-        alt: 'Mauhhik — Writing',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Writing | Product Thinking & Strategy',
-    description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect.',
-    images: [`${SITE_URL}/og-image.jpg`],
-    creator: '@mauhhik',
-  },
-  alternates: {
-    canonical: `${SITE_URL}/blog`,
-  },
-}
+  url: '/blog',
+  imageAlt: 'Mauhhik — Writing',
+})

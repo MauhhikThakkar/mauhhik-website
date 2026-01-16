@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import { Metadata } from "next"
 import { client } from "@/sanity/lib/client"
-import { PROJECT_BY_SLUG_QUERY, PROJECT_SLUGS_QUERY } from "@/sanity/lib/queries"
+import { PROJECT_BY_SLUG_QUERY, PROJECT_SLUGS_QUERY, PROJECT_METADATA_QUERY } from "@/sanity/lib/queries"
 import PortableText from "@/components/PortableText"
 import { urlFor } from "@/sanity/lib/image"
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 interface Metric {
   label: string
@@ -55,6 +57,19 @@ interface Project {
   title: string
   slug: string
   shortDescription?: string
+  coverImage?: {
+    alt?: string
+    asset?: {
+      _id: string
+      url: string
+      metadata?: {
+        dimensions?: {
+          width: number
+          height: number
+        }
+      }
+    }
+  }
   categories?: Category[]
   context?: any
   problem?: any
@@ -79,6 +94,42 @@ export async function generateStaticParams() {
   return projects.map((project: { slug: string }) => ({
     slug: project.slug,
   }))
+}
+
+// ISR: Revalidate portfolio case studies every 24 hours
+// Case studies are more stable content that changes infrequently (updates, new metrics)
+// 24 hours provides good balance between freshness and performance
+export const revalidate = 86400
+
+// Generate metadata for portfolio case study pages
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const project = await client.fetch<Project | null>(PROJECT_METADATA_QUERY, {
+    slug: params.slug,
+  })
+
+  // If project doesn't exist, return default metadata
+  // Next.js will handle 404 via notFound() in the page component
+  if (!project) {
+    return generateSEOMetadata({
+      title: 'Portfolio Case Study',
+      description: 'A detailed case study of a product project.',
+      url: `/portfolio/${params.slug}`,
+    })
+  }
+
+  // Build OpenGraph image URL from cover image or default
+  const ogImage = project.coverImage?.asset
+    ? urlFor(project.coverImage).width(1200).height(630).fit('max').url()
+    : undefined // Will use default from generateSEOMetadata
+
+  return generateSEOMetadata({
+    title: `${project.title} | Portfolio`,
+    description: project.shortDescription || `A case study of ${project.title} — exploring the problem, solution, and impact.`,
+    image: ogImage,
+    imageAlt: project.coverImage?.alt || project.title,
+    url: `/portfolio/${project.slug}`,
+    type: 'website',
+  })
 }
 
 export default async function ProjectPage({ params }: Props) {
@@ -393,7 +444,7 @@ export default async function ProjectPage({ params }: Props) {
                     </div>
                   )
                 } catch (error) {
-                  console.error("Failed to render wireframe:", error)
+                  // Silently fail wireframe rendering - return null to skip broken wireframes
                   return null
                 }
               })}
