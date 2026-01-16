@@ -93,6 +93,14 @@ export default defineType({
     }),
 
     defineField({
+      name: 'relatedProject',
+      type: 'reference',
+      to: [{ type: 'project' }],
+      title: 'Related Case Study (Optional)',
+      description: 'Link to a case study/project for editorial context',
+    }),
+
+    defineField({
       name: 'image',
       type: 'image',
       title: 'CTA Image (Optional)',

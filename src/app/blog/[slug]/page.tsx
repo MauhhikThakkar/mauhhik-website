@@ -7,6 +7,7 @@ import PortableText from "@/components/PortableText"
 import EmailCapture from "@/components/EmailCapture"
 import ReadingProgress from "@/components/ReadingProgress"
 import AuthorAttribution from "@/components/AuthorAttribution"
+import InlineCTA from "@/components/InlineCTA"
 import { urlFor } from "@/sanity/lib/image"
 import { SITE_URL, SITE_NAME } from "@/lib/constants"
 
@@ -53,6 +54,50 @@ interface BlogPost {
             width: number
             height: number
             aspectRatio: number
+          }
+        }
+      }
+    }
+  }
+  ctas?: {
+    customPosition?: number
+    inlineContent?: {
+      _id: string
+      headline: string
+      description?: string
+      buttonText: string
+      buttonLink: string
+      ctaType: string
+      style: string
+      active?: boolean
+      image?: {
+        alt?: string
+        asset: {
+          _id: string
+          url: string
+        }
+      }
+      relatedProduct?: {
+        title: string
+        slug: string
+        heroImage?: {
+          asset: {
+            url: string
+          }
+        }
+        pricing?: {
+          isFree: boolean
+          price?: number
+          currency?: string
+        }
+      }
+      relatedProject?: {
+        title: string
+        slug: string
+        shortDescription?: string
+        coverImage?: {
+          asset: {
+            url: string
           }
         }
       }
@@ -222,6 +267,11 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="prose-custom text-zinc-300 text-[19px] leading-[1.7] max-w-2xl mx-auto">
             <PortableText value={post.content} />
           </div>
+
+          {/* Inline CTA - Appears after 40-50% scroll */}
+          {post.ctas?.inlineContent && (
+            <InlineCTA cta={post.ctas.inlineContent} />
+          )}
 
           {/* PM Takeaway - Optional Section */}
           {post.pmTakeaway && (

@@ -140,6 +140,12 @@ export const BLOG_POST_BY_SLUG_QUERY = `
           "slug": slug.current,
           heroImage { asset->{ url } },
           pricing { isFree, price, currency }
+        },
+        "relatedProject": relatedProject->{
+          title,
+          "slug": slug.current,
+          shortDescription,
+          coverImage { asset->{ url } }
         }
       },
       "endOfPost": endOfPost->{
@@ -160,6 +166,12 @@ export const BLOG_POST_BY_SLUG_QUERY = `
           "slug": slug.current,
           heroImage { asset->{ url } },
           pricing { isFree, price, currency }
+        },
+        "relatedProject": relatedProject->{
+          title,
+          "slug": slug.current,
+          shortDescription,
+          coverImage { asset->{ url } }
         }
       }
     },
