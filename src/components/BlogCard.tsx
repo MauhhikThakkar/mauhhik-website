@@ -57,17 +57,17 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
   const isFeatured = variant === 'featured'
 
   return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
+    <motion.article
+      className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden h-full flex flex-col hover:border-zinc-700 group"
+      variants={cardVariants}
+      initial="rest"
+      whileHover="hover"
+      whileFocus="hover"
+      whileTap={isTouchDevice ? {} : { scale: 0.98 }}
     >
-      <motion.article
-        className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden h-full flex flex-col hover:border-zinc-700"
-        variants={cardVariants}
-        initial="rest"
-        whileHover="hover"
-        whileFocus="hover"
-        whileTap={isTouchDevice ? {} : { scale: 0.98 }}
+      <Link
+        href={`/blog/${post.slug}`}
+        className="block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
       >
         {/* Image */}
         {imageUrl && (
@@ -121,7 +121,7 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
             {post.shortDescription}
           </p>
         </div>
-      </motion.article>
-    </Link>
+      </Link>
+    </motion.article>
   )
 }
