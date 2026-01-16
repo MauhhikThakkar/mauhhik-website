@@ -5,6 +5,7 @@ import { urlFor } from '@/sanity/lib/image'
 interface AuthorAttributionProps {
   author?: {
     name: string
+    role?: string
     bio?: string
     portfolioLink?: string
     picture?: {
@@ -22,18 +23,60 @@ interface AuthorAttributionProps {
       }
     }
   }
+  variant?: 'compact' | 'full'
 }
 
-export default function AuthorAttribution({ author }: AuthorAttributionProps) {
+export default function AuthorAttribution({ author, variant = 'full' }: AuthorAttributionProps) {
   // Don't render if no author
   if (!author || !author.name) {
     return null
   }
 
   const imageUrl = author.picture?.asset
-    ? urlFor(author.picture).width(80).height(80).fit('crop').url()
+    ? urlFor(author.picture).width(variant === 'compact' ? 48 : 80).height(variant === 'compact' ? 48 : 80).fit('crop').url()
     : null
 
+  // Compact variant for near title
+  if (variant === 'compact') {
+    return (
+      <div className="flex items-center gap-3 mb-6" itemScope itemType="https://schema.org/Person">
+        {/* Author Picture */}
+        {imageUrl && (
+          <div className="flex-shrink-0">
+            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-zinc-900 border border-zinc-800">
+              <Image
+                src={imageUrl}
+                alt={author.picture?.alt || `${author.name}${author.role ? `, ${author.role}` : ''}`}
+                fill
+                className="object-cover"
+                sizes="48px"
+                itemProp="image"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Author Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-medium text-zinc-300" itemProp="name">
+              {author.name}
+            </span>
+            {author.role && (
+              <>
+                <span className="text-zinc-600">•</span>
+                <span className="text-sm text-zinc-500" itemProp="jobTitle">
+                  {author.role}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Full variant for end of article
   return (
     <div className="not-prose mt-20 pt-12 border-t border-zinc-900 max-w-2xl mx-auto">
       <div className="flex flex-col sm:flex-row gap-6">
@@ -43,7 +86,7 @@ export default function AuthorAttribution({ author }: AuthorAttributionProps) {
             <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-zinc-900 border border-zinc-800">
               <Image
                 src={imageUrl}
-                alt={author.picture?.alt || author.name}
+                alt={author.picture?.alt || `${author.name}${author.role ? `, ${author.role}` : ''}`}
                 fill
                 className="object-cover"
                 sizes="80px"
@@ -53,19 +96,25 @@ export default function AuthorAttribution({ author }: AuthorAttributionProps) {
         )}
 
         {/* Author Info */}
-        <div className="flex-1">
+        <div className="flex-1" itemScope itemType="https://schema.org/Person">
           <div className="mb-2">
             <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
               About the author
             </span>
           </div>
           
-          <h3 className="text-lg font-semibold text-white mb-2">
+          <h3 className="text-lg font-semibold text-white mb-1" itemProp="name">
             {author.name}
           </h3>
 
+          {author.role && (
+            <p className="text-sm text-zinc-500 mb-3" itemProp="jobTitle">
+              {author.role}
+            </p>
+          )}
+
           {author.bio && (
-            <p className="text-sm text-zinc-400 leading-relaxed mb-4">
+            <p className="text-sm text-zinc-400 leading-relaxed mb-4" itemProp="description">
               {author.bio}
             </p>
           )}
@@ -76,6 +125,7 @@ export default function AuthorAttribution({ author }: AuthorAttributionProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-300 transition-colors"
+              itemProp="url"
             >
               <span>View portfolio</span>
               <svg
@@ -83,6 +133,7 @@ export default function AuthorAttribution({ author }: AuthorAttributionProps) {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"

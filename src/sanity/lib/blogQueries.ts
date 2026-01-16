@@ -102,6 +102,7 @@ export const BLOG_POST_BY_SLUG_QUERY = `
     publishedAt,
     "author": author->{ 
       name,
+      role,
       bio,
       portfolioLink,
       picture {

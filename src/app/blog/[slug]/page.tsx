@@ -40,6 +40,7 @@ interface BlogPost {
   publishedAt: string
   author?: {
     name: string
+    role?: string
     bio?: string
     portfolioLink?: string
     picture?: {
@@ -148,18 +149,15 @@ export default async function BlogPostPage({ params }: Props) {
             )}
 
             {/* Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.05] tracking-tight max-w-4xl">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.05] tracking-tight max-w-4xl">
               {post.title}
             </h1>
 
+            {/* Author Attribution (Compact) */}
+            {post.author && <AuthorAttribution author={post.author} variant="compact" />}
+
             {/* Meta */}
             <div className="flex items-center gap-4 text-base text-zinc-400 mb-8">
-              {post.author?.name && (
-                <>
-                  <span className="font-medium text-zinc-300">{post.author.name}</span>
-                  <span className="text-zinc-700">•</span>
-                </>
-              )}
               <time dateTime={post.publishedAt}>
                 {new Date(post.publishedAt).toLocaleDateString('en-US', {
                   month: 'long',

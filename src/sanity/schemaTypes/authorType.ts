@@ -12,6 +12,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'role',
+      type: 'string',
+      title: 'Role/Title',
+      description: 'Author role or job title (e.g., "Product Manager", "Founder", "Writer")',
+      validation: (Rule) => Rule.max(60).warning('Keep role concise'),
+    }),
+    defineField({
       name: 'bio',
       type: 'text',
       title: 'Short Bio',

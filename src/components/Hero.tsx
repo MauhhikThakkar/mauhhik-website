@@ -1,7 +1,7 @@
 'use client'
 
-import Link from "next/link"
 import { motion, useReducedMotion } from "framer-motion"
+import CTAButton from "@/components/CTAButton"
 
 // Headline line animation variants
 const headlineLineVariants = {
@@ -77,25 +77,6 @@ const ctaButtonVariants = {
   },
 }
 
-// Button hover animation variants
-const buttonHoverVariants = {
-  rest: {
-    scale: 1,
-    y: 0,
-  },
-  hover: {
-    scale: 1.02,
-    y: -1,
-    transition: {
-      duration: 0.2,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-  tap: {
-    scale: 0.98,
-  },
-}
-
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion()
 
@@ -150,32 +131,12 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
-          <motion.div
-            variants={ctaButtonVariants}
-            custom={shouldReduceMotion}
-            whileHover={buttonHoverVariants.hover}
-            whileTap={buttonHoverVariants.tap}
-          >
-            <Link
-              href="#portfolio"
-              className="inline-block px-6 py-3 rounded-full bg-white text-black font-medium hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black"
-            >
-              View Portfolio
-            </Link>
-          </motion.div>
-          <motion.div
-            variants={ctaButtonVariants}
-            custom={shouldReduceMotion}
-            whileHover={buttonHoverVariants.hover}
-            whileTap={buttonHoverVariants.tap}
-          >
-            <Link
-              href="/blog"
-              className="inline-block px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-black"
-            >
-              Read Blog
-            </Link>
-          </motion.div>
+          <CTAButton href="#portfolio" variant="primary">
+            View Portfolio
+          </CTAButton>
+          <CTAButton href="/blog" variant="secondary">
+            Read Blog
+          </CTAButton>
         </motion.div>
       </div>
     </section>
