@@ -20,6 +20,19 @@ export const PRODUCT_BY_SLUG_QUERY = `
     status,
     price,
     ctaText,
+    heroImage {
+      alt,
+      asset->{
+        _id,
+        url,
+        metadata {
+          dimensions {
+            width,
+            height
+          }
+        }
+      }
+    },
     "relatedBlogPosts": relatedBlogPosts[]->{
       _id,
       title,

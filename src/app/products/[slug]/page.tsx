@@ -1,8 +1,11 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Metadata } from 'next'
 import { client } from "@/sanity/lib/client"
 import { PRODUCT_BY_SLUG_QUERY, PRODUCT_SLUGS_QUERY } from '@/sanity/lib/productQueries'
 import PortableText from '@/components/PortableText'
+import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { urlFor } from '@/sanity/lib/image'
 
 interface Product {
   _id: string
@@ -13,6 +16,19 @@ interface Product {
   status: 'draft' | 'live' | 'archived'
   price?: number
   ctaText?: string
+  heroImage?: {
+    alt?: string
+    asset?: {
+      _id: string
+      url: string
+      metadata?: {
+        dimensions?: {
+          width: number
+          height: number
+        }
+      }
+    }
+  }
   relatedBlogPosts?: Array<{
     _id: string
     title: string
@@ -201,19 +217,32 @@ export default async function ProductPage({ params }: Props) {
   )
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, {
     slug: params.slug,
   })
 
+  // If product doesn't exist, return default metadata
+  // Next.js will handle 404 via notFound() in the page component
   if (!product) {
-    return {
+    return generateSEOMetadata({
       title: 'Product Not Found',
-    }
+      description: 'The requested product could not be found.',
+      url: `/products/${params.slug}`,
+    })
   }
 
-  return {
+  // Build OpenGraph image URL from hero image or default
+  const ogImage = product.heroImage?.asset
+    ? urlFor(product.heroImage).width(1200).height(630).fit('max').url()
+    : undefined // Will use default from generateSEOMetadata
+
+  return generateSEOMetadata({
     title: `${product.title} | Products`,
     description: product.shortDescription,
-  }
+    image: ogImage,
+    imageAlt: product.heroImage?.alt || product.title,
+    url: `/products/${product.slug}`,
+    type: 'website',
+  })
 }
