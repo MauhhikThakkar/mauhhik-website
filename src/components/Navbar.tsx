@@ -11,7 +11,7 @@ export default function Navbar() {
 
         {/* Navigation */}
         <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
-          {/* Portfolio/Products use hash links (sections on homepage) */}
+          {/* Portfolio uses hash link (section on homepage) */}
           <Link href="#portfolio" className="hover:text-white transition">
             Portfolio
           </Link>
@@ -24,11 +24,11 @@ export default function Navbar() {
           <Link href="/about" className="hover:text-white transition">
             About
           </Link>
-          <Link href="#products" className="hover:text-white transition">
+          <Link href="/products" className="hover:text-white transition">
             Products
           </Link>
           <Link
-            href="#resume"
+            href="/resume"
             className="px-4 py-2 rounded-full bg-white text-black font-medium hover:bg-gray-200 transition"
           >
             Resume
