@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { client } from "@/sanity/lib/client"
 import { BLOG_POSTS_QUERY, BLOG_CATEGORIES_QUERY } from "@/sanity/lib/blogQueries"
 import { urlFor } from "@/sanity/lib/image"
 import { SITE_URL, SITE_NAME } from "@/lib/constants"
 import Reveal from "@/components/Reveal"
+import BlogCard from "@/components/BlogCard"
 
 interface BlogCategory {
   _id: string
@@ -167,66 +167,13 @@ export default async function BlogPage() {
                   : null
 
                 return (
-                  <Link
+                  <BlogCard
                     key={post._id}
-                    href={`/blog/${post.slug}`}
-                    className="group block"
-                  >
-                    <article className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden transition-all duration-300 h-full hover:border-zinc-700 hover:shadow-lg hover:shadow-zinc-900/50 hover:-translate-y-1">
-                      {/* Featured Image */}
-                      {imageUrl && (
-                        <div className="relative w-full aspect-[16/9] bg-zinc-950">
-                          <Image
-                            src={imageUrl}
-                            alt={post.heroImage?.alt || post.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
-                        </div>
-                      )}
-
-                      {/* Content */}
-                      <div className="p-6">
-                        {/* Category & Meta */}
-                        <div className="flex items-center gap-3 mb-4 text-sm">
-                          {post.category && (
-                            <span
-                              className="px-3 py-1 rounded-full text-xs font-medium"
-                              style={{
-                                backgroundColor: post.category.color ? post.category.color + '20' : '#27272a',
-                                color: post.category.color || '#a1a1aa',
-                                borderWidth: '1px',
-                                borderColor: post.category.color ? post.category.color + '40' : '#3f3f46',
-                              }}
-                            >
-                              {post.category.title}
-                            </span>
-                          )}
-                          <span className="text-zinc-600">•</span>
-                          <time className="text-zinc-500">
-                            {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
-                          </time>
-                          <span className="text-zinc-600">•</span>
-                          <span className="text-zinc-500">{post.readingTime} min read</span>
-                        </div>
-
-                        {/* Title */}
-                        <h3 className="text-2xl font-bold text-white mb-3 leading-[1.3] group-hover:text-zinc-200 transition-colors">
-                          {post.title}
-                        </h3>
-
-                        {/* Description */}
-                        <p className="text-zinc-400 leading-relaxed line-clamp-2 break-words">
-                          {post.shortDescription}
-                        </p>
-                      </div>
-                    </article>
-                  </Link>
+                    post={post}
+                    imageUrl={imageUrl}
+                    imageAlt={post.heroImage?.alt}
+                    variant="featured"
+                  />
                 )
               })}
             </div>
@@ -245,71 +192,19 @@ export default async function BlogPage() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestPosts.map((post) => {
-              const imageUrl = post.heroImage?.asset
-                ? urlFor(post.heroImage).width(600).height(400).fit('max').url()
-                : null
+                const imageUrl = post.heroImage?.asset
+                  ? urlFor(post.heroImage).width(600).height(400).fit('max').url()
+                  : null
 
-              return (
-                <Link
-                  key={post._id}
-                  href={`/blog/${post.slug}`}
-                  className="group block"
-                >
-                  <article className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden transition-all duration-300 h-full flex flex-col hover:border-zinc-700 hover:shadow-lg hover:shadow-zinc-900/50 hover:-translate-y-1">
-                    {/* Image */}
-                    {imageUrl && (
-                      <div className="relative w-full aspect-[16/9] bg-zinc-950">
-                        <Image
-                          src={imageUrl}
-                          alt={post.heroImage?.alt || post.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-                    )}
-
-                    {/* Content */}
-                    <div className="p-6 flex-1 flex flex-col">
-                      {/* Category & Meta */}
-                      <div className="flex items-center gap-2 mb-3 text-xs flex-wrap">
-                        {post.category && (
-                          <span
-                            className="px-2.5 py-1 rounded-full font-medium"
-                            style={{
-                              backgroundColor: post.category.color ? post.category.color + '20' : '#27272a',
-                              color: post.category.color || '#a1a1aa',
-                              borderWidth: '1px',
-                              borderColor: post.category.color ? post.category.color + '40' : '#3f3f46',
-                            }}
-                          >
-                            {post.category.title}
-                          </span>
-                        )}
-                        <span className="text-zinc-600">•</span>
-                        <time className="text-zinc-500">
-                          {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </time>
-                        <span className="text-zinc-600">•</span>
-                        <span className="text-zinc-500">{post.readingTime} min</span>
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-xl font-bold text-white mb-2 leading-[1.3] group-hover:text-zinc-200 transition-colors line-clamp-2">
-                        {post.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3 flex-1 break-words">
-                        {post.shortDescription}
-                      </p>
-                    </div>
-                  </article>
-                </Link>
-              )
+                return (
+                  <BlogCard
+                    key={post._id}
+                    post={post}
+                    imageUrl={imageUrl}
+                    imageAlt={post.heroImage?.alt}
+                    variant="standard"
+                  />
+                )
               })}
             </div>
           </div>
@@ -337,51 +232,13 @@ export default async function BlogPage() {
                       : null
 
                     return (
-                      <Link
+                      <BlogCard
                         key={post._id}
-                        href={`/blog/${post.slug}`}
-                        className="group block"
-                      >
-                        <article className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden transition-all duration-300 h-full flex flex-col hover:border-zinc-700 hover:shadow-lg hover:shadow-zinc-900/50 hover:-translate-y-1">
-                          {/* Image */}
-                          {imageUrl && (
-                            <div className="relative w-full aspect-[16/9] bg-zinc-950">
-                              <Image
-                                src={imageUrl}
-                                alt={post.heroImage?.alt || post.title}
-                                fill
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              />
-                            </div>
-                          )}
-
-                          {/* Content */}
-                          <div className="p-6 flex-1 flex flex-col">
-                            {/* Meta */}
-                            <div className="flex items-center gap-2 mb-3 text-xs flex-wrap">
-                              <time className="text-zinc-500">
-                                {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                })}
-                              </time>
-                              <span className="text-zinc-600">•</span>
-                              <span className="text-zinc-500">{post.readingTime} min</span>
-                            </div>
-
-                            {/* Title */}
-                            <h3 className="text-xl font-bold text-white mb-2 leading-[1.3] group-hover:text-zinc-200 transition-colors line-clamp-2">
-                              {post.title}
-                            </h3>
-
-                            {/* Description */}
-                            <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3 flex-1 break-words">
-                              {post.shortDescription}
-                            </p>
-                          </div>
-                        </article>
-                      </Link>
+                        post={post}
+                        imageUrl={imageUrl}
+                        imageAlt={post.heroImage?.alt}
+                        variant="standard"
+                      />
                     )
                   })}
                 </div>
