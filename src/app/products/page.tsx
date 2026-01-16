@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { client } from "@/sanity/lib/client"
 import { LIVE_PRODUCTS_QUERY } from '@/sanity/lib/productQueries'
+import Reveal from '@/components/Reveal'
 
 interface Product {
   _id: string
@@ -30,10 +31,11 @@ export default async function ProductsPage() {
       </section>
 
       {/* Products Grid */}
-      <section className="py-16 md:py-20">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          {products && products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <Reveal>
+        <section className="py-16 md:py-20">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            {products && products.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => (
                 <Link
                   key={product._id}
@@ -79,6 +81,7 @@ export default async function ProductsPage() {
           )}
         </div>
       </section>
+      </Reveal>
 
       {/* Bottom Spacing */}
       <div className="h-32"></div>

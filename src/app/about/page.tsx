@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { SITE_URL, SITE_NAME } from "@/lib/constants"
 import Navbar from "@/components/Navbar"
+import Reveal from "@/components/Reveal"
 
 export const metadata = {
   title: 'About | Mauhhik',
@@ -50,12 +51,14 @@ export default function AboutPage() {
       </section>
 
       {/* Content */}
-      <section className="border-b border-zinc-900">
-        <div className="max-w-3xl mx-auto px-6 sm:px-8 py-16 md:py-24">
-          <div className="text-zinc-300 text-[19px] leading-[1.7]">
-            
-            {/* Short Intro */}
-            <div className="mb-16">
+      <Reveal>
+        <section className="border-b border-zinc-900">
+          <div className="max-w-3xl mx-auto px-6 sm:px-8 py-16 md:py-24">
+            <div className="text-zinc-300 text-[19px] leading-[1.7]">
+              
+              {/* Short Intro */}
+              <Reveal delay={0.1}>
+                <div className="mb-16">
               <p className="leading-relaxed mb-4">
                 I build products that solve real problems. Not features for features' sake, but systems that create measurable impact.
               </p>
@@ -63,9 +66,11 @@ export default function AboutPage() {
                 My work sits at the intersection of three things: understanding how AI changes what's possible, thinking in systems rather than silos, and executing with clarity in uncertain environments.
               </p>
             </div>
+            </Reveal>
 
             {/* What I Believe */}
-            <div className="mb-16">
+            <Reveal delay={0.2}>
+              <div className="mb-16">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 tracking-tight">
                 What I believe about building products
               </h2>
@@ -108,9 +113,11 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+            </Reveal>
 
             {/* What I'm Working On Now */}
-            <div className="mb-16">
+            <Reveal delay={0.3}>
+              <div className="mb-16">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 tracking-tight">
                 What I'm working on now
               </h2>
@@ -144,9 +151,11 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+            </Reveal>
 
             {/* What This Site Is For */}
-            <div className="mb-16">
+            <Reveal delay={0.4}>
+              <div className="mb-16">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 tracking-tight">
                 What this site is for
               </h2>
@@ -163,9 +172,11 @@ export default function AboutPage() {
                 If you're building products at the intersection of AI and human judgment, or if you're trying to make better decisions in complex systems, some of this might resonate.
               </p>
             </div>
+            </Reveal>
 
             {/* How to Connect */}
-            <div className="mb-16">
+            <Reveal delay={0.5}>
+              <div className="mb-16">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 tracking-tight">
                 How to connect or collaborate
               </h2>
@@ -237,10 +248,12 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+            </Reveal>
 
           </div>
         </div>
       </section>
+      </Reveal>
 
       {/* Bottom Spacing */}
       <div className="h-32"></div>

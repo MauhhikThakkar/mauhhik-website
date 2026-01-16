@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { client } from '@/sanity/client'
 import { PROJECTS_QUERY } from '@/sanity/queries'
+import Reveal from '@/components/Reveal'
 
 type Project = {
   _id: string
@@ -22,15 +23,16 @@ export default async function PortfolioSection() {
   const projects = await getProjects()
 
   return (
-    <section id="portfolio" className="bg-black text-white py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-bold mb-4">Portfolio</h2>
-        <p className="text-gray-400 mb-12">
-          Selected case studies showcasing product thinking, execution,
-          and real-world delivery.
-        </p>
+    <Reveal>
+      <section id="portfolio" className="bg-black text-white py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl font-bold mb-4">Portfolio</h2>
+          <p className="text-gray-400 mb-12">
+            Selected case studies showcasing product thinking, execution,
+            and real-world delivery.
+          </p>
 
-        <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
           {projects.map((project) => (
             <Link
               key={project._id}
@@ -71,5 +73,6 @@ export default async function PortfolioSection() {
         </div>
       </div>
     </section>
+    </Reveal>
   )
 }

@@ -5,6 +5,7 @@ import { client } from "@/sanity/lib/client"
 import { BLOG_POSTS_QUERY, BLOG_CATEGORIES_QUERY } from "@/sanity/lib/blogQueries"
 import { urlFor } from "@/sanity/lib/image"
 import { SITE_URL, SITE_NAME } from "@/lib/constants"
+import Reveal from "@/components/Reveal"
 
 interface BlogCategory {
   _id: string
@@ -153,12 +154,13 @@ export default async function BlogPage() {
 
       {/* Featured Posts */}
       {featuredPosts.length > 0 && (
-        <section className="border-b border-zinc-900/50">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8 py-16 md:py-20">
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
-              Featured
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Reveal>
+          <section className="border-b border-zinc-900/50">
+            <div className="max-w-6xl mx-auto px-6 sm:px-8 py-16 md:py-20">
+              <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
+                Featured
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {featuredPosts.map((post) => {
                 const imageUrl = post.heroImage?.asset
                   ? urlFor(post.heroImage).width(800).height(600).fit('max').url()
@@ -230,16 +232,18 @@ export default async function BlogPage() {
             </div>
           </div>
         </section>
+        </Reveal>
       )}
 
       {/* Latest Posts */}
       {latestPosts.length > 0 && (
-        <section className="border-b border-zinc-900/50 py-16 md:py-20">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8">
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
-              Latest
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <Reveal>
+          <section className="border-b border-zinc-900/50 py-16 md:py-20">
+            <div className="max-w-6xl mx-auto px-6 sm:px-8">
+              <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
+                Latest
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {latestPosts.map((post) => {
               const imageUrl = post.heroImage?.asset
                 ? urlFor(post.heroImage).width(600).height(400).fit('max').url()
@@ -310,14 +314,16 @@ export default async function BlogPage() {
             </div>
           </div>
         </section>
+        </Reveal>
       )}
 
       {/* Category-Based Grouping */}
       {Object.keys(postsByCategory).length > 0 && (
-        <section className="py-16 md:py-20">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8">
-            {Object.values(postsByCategory).map(({ category, posts }) => (
-              <div key={category._id} className="mb-16 last:mb-0">
+        <Reveal>
+          <section className="py-16 md:py-20">
+            <div className="max-w-6xl mx-auto px-6 sm:px-8">
+              {Object.values(postsByCategory).map(({ category, posts }, index) => (
+                <Reveal key={category._id} delay={index * 0.1} className="mb-16 last:mb-0">
                 <div className="flex items-center gap-3 mb-8">
                   <h2 className="text-2xl md:text-3xl font-bold text-white">
                     {category.title}
@@ -379,10 +385,11 @@ export default async function BlogPage() {
                     )
                   })}
                 </div>
-              </div>
-            ))}
-          </div>
-        </section>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        </Reveal>
       )}
 
       {/* Empty State */}
