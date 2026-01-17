@@ -7,6 +7,7 @@ import { PROJECT_BY_SLUG_QUERY, PROJECT_SLUGS_QUERY, PROJECT_METADATA_QUERY } fr
 import PortableText from "@/components/PortableText"
 import { urlFor } from "@/sanity/lib/image"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+import PortfolioBreadcrumb from "@/components/portfolio/PortfolioBreadcrumb"
 
 // Type guard to check if value is a valid Portable Text array
 function isValidPortableText(value: unknown): value is unknown[] {
@@ -164,6 +165,9 @@ export default async function ProjectPage({
       {/* Hero Section */}
       <section className="border-b border-zinc-900">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
+          {/* Breadcrumb Navigation */}
+          <PortfolioBreadcrumb caseStudyTitle={project.title} />
+
           {/* Categories */}
           {project.categories && project.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
