@@ -66,21 +66,6 @@ const ctaContainerVariants: Variants = {
   },
 }
 
-const _ctaButtonVariants: Variants = {
-  hidden: (reduced: boolean) => ({
-    opacity: 0,
-    scale: reduced ? 1 : 0.95,
-  }),
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.15,
-      ease: [0.22, 1, 0.36, 1] as const, // cubic-bezier array - valid Easing type
-    },
-  },
-}
-
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion()
 
@@ -135,7 +120,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
-          <CTAButton href="#portfolio" variant="primary">
+          <CTAButton href="/portfolio" variant="primary">
             View Portfolio
           </CTAButton>
           <CTAButton href="/blog" variant="secondary">

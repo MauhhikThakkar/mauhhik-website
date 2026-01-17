@@ -11,8 +11,8 @@ export default function Navbar() {
 
         {/* Navigation */}
         <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
-          {/* Portfolio links to homepage section - works from any page */}
-          <Link href="/#portfolio" className="hover:text-white transition">
+          {/* Portfolio uses proper Next.js route for SEO and shareability */}
+          <Link href="/portfolio" className="hover:text-white transition">
             Portfolio
           </Link>
           {/* CRITICAL FIX: Changed from hash (#blog) to proper Next.js route (/blog) */}

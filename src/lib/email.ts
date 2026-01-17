@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 
 interface EmailConfig {
   to: string
@@ -7,41 +7,115 @@ interface EmailConfig {
 }
 
 /**
- * Create email transporter from environment variables
+ * Validate that sender domain is not a free email provider
  */
-function createTransporter() {
-  const smtpHost = process.env.SMTP_HOST
-  const smtpPort = process.env.SMTP_PORT
-  const smtpUser = process.env.SMTP_USER
-  const smtpPassword = process.env.SMTP_PASSWORD
-  const smtpFrom = process.env.SMTP_FROM
+function validateSenderDomain(from: string): void {
+  const freeEmailDomains = [
+    'gmail.com',
+    'yahoo.com',
+    'hotmail.com',
+    'outlook.com',
+    'aol.com',
+    'icloud.com',
+    'mail.com',
+    'protonmail.com',
+    'yandex.com',
+    'zoho.com',
+  ]
 
-  // Validate required environment variables
-  if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword || !smtpFrom) {
-    throw new Error(
-      'Missing email configuration. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, and SMTP_FROM environment variables.'
-    )
+  const domain = from.split('@')[1]?.toLowerCase()
+  if (!domain) {
+    throw new Error(`Invalid sender email format: ${from}`)
   }
 
-  return nodemailer.createTransport({
-    host: smtpHost,
-    port: parseInt(smtpPort, 10),
-    secure: parseInt(smtpPort, 10) === 465, // true for 465, false for other ports
-    auth: {
-      user: smtpUser,
-      pass: smtpPassword,
-    },
-  })
+  if (freeEmailDomains.includes(domain)) {
+    throw new Error(
+      `Sender domain "${domain}" is a free email provider. Resend requires a verified custom domain. Please use a domain verified in your Resend account.`
+    )
+  }
 }
 
 /**
- * Send resume download email
+ * Initialize Resend client with API key
+ * Throws immediately if API key is missing
  */
-export async function sendResumeEmail(config: EmailConfig): Promise<void> {
+function createResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY
+
+  if (!apiKey) {
+    const error = new Error(
+      'RESEND_API_KEY environment variable is MISSING. Email sending will fail. Please set RESEND_API_KEY in your environment variables.'
+    )
+    console.error('\n❌ [EMAIL] CRITICAL: RESEND_API_KEY is not configured!')
+    console.error('   This will cause email sending to fail.')
+    console.error('   Set RESEND_API_KEY in your .env.local file or environment variables.\n')
+    throw error
+  }
+
+  if (apiKey.trim().length === 0) {
+    const error = new Error(
+      'RESEND_API_KEY environment variable is EMPTY. Please set a valid Resend API key.'
+    )
+    console.error('\n❌ [EMAIL] CRITICAL: RESEND_API_KEY is empty!\n')
+    throw error
+  }
+
+  return new Resend(apiKey)
+}
+
+/**
+ * Send resume access email using Resend
+ * 
+ * @param config - Email configuration with recipient, download URL, and expiry
+ * @returns Resend Email ID on success
+ * @throws Error if API key is missing, RESEND_FROM is missing, or Resend API call fails
+ */
+export async function sendResumeEmail(config: EmailConfig): Promise<string> {
   const { to, downloadUrl, expiresAt } = config
 
-  const transporter = createTransporter()
-  const from = process.env.SMTP_FROM || 'noreply@mauhhik.dev'
+  const isDevelopment = process.env.NODE_ENV === 'development'
+
+  console.log('[EMAIL_ATTEMPT] Starting email send process')
+  console.log(`[EMAIL_ATTEMPT] Timestamp: ${new Date().toISOString()}`)
+  console.log(`[EMAIL_ATTEMPT] Environment: ${isDevelopment ? 'development' : 'production'}`)
+
+  // Validate API key - ALWAYS throw if missing (no silent failures)
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey || apiKey.trim().length === 0) {
+    const error = new Error(
+      'RESEND_API_KEY environment variable is MISSING or EMPTY. Email sending cannot proceed.'
+    )
+    console.error('[EMAIL_FAILURE] RESEND_API_KEY validation failed')
+    console.error(`[EMAIL_FAILURE] Error: ${error.message}`)
+    throw error
+  }
+
+  // Validate RESEND_FROM - ALWAYS throw if missing (no silent failures)
+  const from = process.env.RESEND_FROM
+  if (!from || from.trim().length === 0) {
+    const error = new Error(
+      'RESEND_FROM environment variable is MISSING or EMPTY. Please set RESEND_FROM to a verified domain in your Resend account.'
+    )
+    console.error('[EMAIL_FAILURE] RESEND_FROM validation failed')
+    console.error(`[EMAIL_FAILURE] Error: ${error.message}`)
+    throw error
+  }
+
+  // Validate sender domain is not a free email provider (only in production)
+  if (!isDevelopment) {
+    try {
+      validateSenderDomain(from)
+    } catch (domainError) {
+      console.error('\n❌ [EMAIL] FATAL: Sender domain validation failed!')
+      console.error(`   Error: ${domainError instanceof Error ? domainError.message : String(domainError)}\n`)
+      throw domainError
+    }
+  }
+
+  console.log(`[EMAIL_ATTEMPT] From: ${from}`)
+  console.log(`[EMAIL_ATTEMPT] To: ${to}`)
+
+  const resend = createResendClient()
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Mauhhik'
 
   // Format expiry time
@@ -51,55 +125,52 @@ export async function sendResumeEmail(config: EmailConfig): Promise<void> {
     timeZone: 'UTC',
   })
 
-  const mailOptions = {
-    from: `"${siteName}" <${from}>`,
-    to,
-    subject: 'Your Resume Download Link',
-    html: `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background-color: #ffffff; border-radius: 8px; padding: 32px; border: 1px solid #e5e7eb;">
-            <h1 style="color: #111827; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;">
-              Your Resume Download Link
-            </h1>
-            
-            <p style="color: #4b5563; font-size: 16px; margin: 0 0 24px 0;">
-              Thank you for your interest. Click the button below to download my resume.
-            </p>
-            
-            <div style="margin: 32px 0;">
-              <a 
-                href="${downloadUrl}" 
-                style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 16px;"
-              >
-                Download Resume
-              </a>
-            </div>
-            
-            <div style="background-color: #f9fafb; border-left: 4px solid #3b82f6; padding: 16px; margin: 24px 0; border-radius: 4px;">
-              <p style="color: #4b5563; font-size: 14px; margin: 0 0 8px 0; font-weight: 500;">
-                Important:
-              </p>
-              <ul style="color: #6b7280; font-size: 14px; margin: 0; padding-left: 20px;">
-                <li style="margin-bottom: 4px;">This link expires on ${expiryTime} UTC</li>
-                <li style="margin-bottom: 4px;">You can download the resume up to 3 times</li>
-                <li>Please do not share this link with others</li>
-              </ul>
-            </div>
-            
-            <p style="color: #9ca3af; font-size: 14px; margin: 24px 0 0 0; border-top: 1px solid #e5e7eb; padding-top: 24px;">
-              If you did not request this resume, please ignore this email.
-            </p>
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background-color: #ffffff; border-radius: 8px; padding: 32px; border: 1px solid #e5e7eb;">
+          <h1 style="color: #111827; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;">
+            Your Resume Download Link
+          </h1>
+          
+          <p style="color: #4b5563; font-size: 16px; margin: 0 0 24px 0;">
+            Thank you for your interest. Click the button below to download my resume.
+          </p>
+          
+          <div style="margin: 32px 0;">
+            <a 
+              href="${downloadUrl}" 
+              style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 16px;"
+            >
+              Download Resume
+            </a>
           </div>
-        </body>
-      </html>
-    `,
-    text: `
+          
+          <div style="background-color: #f9fafb; border-left: 4px solid #3b82f6; padding: 16px; margin: 24px 0; border-radius: 4px;">
+            <p style="color: #4b5563; font-size: 14px; margin: 0 0 8px 0; font-weight: 500;">
+              Important:
+            </p>
+            <ul style="color: #6b7280; font-size: 14px; margin: 0; padding-left: 20px;">
+              <li style="margin-bottom: 4px;">This link expires on ${expiryTime} UTC</li>
+              <li style="margin-bottom: 4px;">You can download the resume up to 3 times</li>
+              <li>Please do not share this link with others</li>
+            </ul>
+          </div>
+          
+          <p style="color: #9ca3af; font-size: 14px; margin: 24px 0 0 0; border-top: 1px solid #e5e7eb; padding-top: 24px;">
+            If you did not request this resume, please ignore this email.
+          </p>
+        </div>
+      </body>
+    </html>
+  `
+
+  const textContent = `
 Your Resume Download Link
 
 Thank you for your interest. Use the link below to download my resume:
@@ -112,8 +183,80 @@ Important:
 - Please do not share this link with others
 
 If you did not request this resume, please ignore this email.
-    `.trim(),
-  }
+  `.trim()
 
-  await transporter.sendMail(mailOptions)
+  console.log(`[EMAIL_ATTEMPT] Subject: Your Resume Access Link`)
+  console.log(`[EMAIL_ATTEMPT] Format: HTML + Text`)
+
+  try {
+    const result = await resend.emails.send({
+      from: `"${siteName}" <${from}>`,
+      to,
+      subject: 'Your Resume Access Link',
+      html: htmlContent,
+      text: textContent,
+    })
+
+    // Log full Resend response
+    console.log(`[EMAIL_ATTEMPT] Resend API Response: ${JSON.stringify(result, null, 2)}`)
+
+    // Validate response - ALWAYS throw on error
+    if (result.error) {
+      const error = new Error(
+        `Resend API returned an error: ${result.error.message || 'Unknown error'}`
+      )
+      console.error('[EMAIL_FAILURE] Resend API returned error')
+      console.error(`[EMAIL_FAILURE] Error object: ${JSON.stringify(result.error, null, 2)}`)
+      console.error(`[EMAIL_FAILURE] Error message: ${error.message}`)
+      throw error
+    }
+
+    // Validate data exists - ALWAYS throw if missing
+    if (!result.data) {
+      const error = new Error(
+        'Resend API returned success but data is undefined. This should not happen.'
+      )
+      console.error('[EMAIL_FAILURE] Resend response missing data')
+      console.error(`[EMAIL_FAILURE] Full response: ${JSON.stringify(result, null, 2)}`)
+      throw error
+    }
+
+    // Validate email ID exists - ALWAYS throw if missing
+    if (!result.data.id) {
+      const error = new Error(
+        'Resend API returned data but email ID is missing. Cannot verify email was accepted.'
+      )
+      console.error('[EMAIL_FAILURE] Resend response missing email ID')
+      console.error(`[EMAIL_FAILURE] Response data: ${JSON.stringify(result.data, null, 2)}`)
+      throw error
+    }
+
+    // Success - log and return email ID
+    const emailId = result.data.id
+    console.log(`[EMAIL_SUCCESS] Email sent successfully`)
+    console.log(`[EMAIL_SUCCESS] Resend Email ID: ${emailId}`)
+    console.log(`[EMAIL_SUCCESS] From: ${from}`)
+    console.log(`[EMAIL_SUCCESS] To: ${to}`)
+    console.log(`[EMAIL_SUCCESS] Subject: Your Resume Access Link`)
+    
+    return emailId
+
+  } catch (error) {
+    // Log full error details
+    console.error(`[EMAIL_FAILURE] Email sending failed`)
+    console.error(`[EMAIL_FAILURE] Timestamp: ${new Date().toISOString()}`)
+    console.error(`[EMAIL_FAILURE] From: ${from}`)
+    console.error(`[EMAIL_FAILURE] To: ${to}`)
+    
+    if (error instanceof Error) {
+      console.error(`[EMAIL_FAILURE] Error name: ${error.name}`)
+      console.error(`[EMAIL_FAILURE] Error message: ${error.message}`)
+      console.error(`[EMAIL_FAILURE] Error stack: ${error.stack}`)
+    } else {
+      console.error(`[EMAIL_FAILURE] Error (unknown type): ${String(error)}`)
+    }
+    
+    // ALWAYS re-throw - no silent failures
+    throw error
+  }
 }

@@ -3,6 +3,9 @@ import { randomBytes } from 'crypto'
 import { sendResumeEmail } from '@/lib/email'
 import { storeResumeRequest } from '@/lib/resumeStorage'
 
+// Ensure Node.js runtime (not Edge) for crypto and file system access
+export const runtime = 'nodejs'
+
 interface ResumeRequest {
   email: string
 }
@@ -10,7 +13,7 @@ interface ResumeRequest {
 /**
  * POST /api/resume/request
  * 
- * Creates a resume request with secure token and sends email
+ * Creates a resume request with secure token and sends email using Resend
  */
 export async function POST(request: NextRequest) {
   try {
@@ -58,36 +61,37 @@ export async function POST(request: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.dev'
     const downloadUrl = `${siteUrl}/resume/download?token=${token}`
 
-    const isDevelopment = process.env.NODE_ENV === 'development'
-
-    // Attempt to send email
+    // Attempt to send email - HARD FAIL if it doesn't work
+    let emailId: string
     try {
-      await sendResumeEmail({
+      emailId = await sendResumeEmail({
         to: email.trim(),
         downloadUrl,
         expiresAt: expiry,
       })
+      console.log(`[RESUME_REQUEST] Email sent successfully. Email ID: ${emailId}`)
     } catch (emailError) {
-      // In development: log the link and continue (allow testing without email setup)
-      if (isDevelopment) {
-        console.log('\n' + '='.repeat(80))
-        console.log('📧 EMAIL SENDING SKIPPED (Development Mode)')
-        console.log('='.repeat(80))
-        console.log(`To: ${email.trim()}`)
-        console.log(`Download URL: ${downloadUrl}`)
-        console.log(`Expires: ${expiry.toISOString()}`)
-        console.log(`Token: ${token}`)
-        console.log('='.repeat(80) + '\n')
-        // Continue to return success response
-      } else {
-        // In production: email delivery is required
-        console.error('Resume request email error:', {
-          error: emailError instanceof Error ? emailError.message : String(emailError),
-          email: email.trim(),
-          token: token.substring(0, 8) + '...', // Log partial token for debugging
-        })
-        throw emailError // Re-throw to be caught by outer catch block
-      }
+      // Log full error details with explicit prefix
+      const error = emailError instanceof Error ? emailError : new Error(String(emailError))
+      
+      console.error('[RESUME_EMAIL_ERROR] Email sending failed')
+      console.error(`[RESUME_EMAIL_ERROR] Error message: ${error.message}`)
+      console.error(`[RESUME_EMAIL_ERROR] Error stack: ${error.stack}`)
+      console.error(`[RESUME_EMAIL_ERROR] Recipient: ${email.trim()}`)
+      console.error(`[RESUME_EMAIL_ERROR] Has RESEND_API_KEY: ${!!process.env.RESEND_API_KEY}`)
+      console.error(`[RESUME_EMAIL_ERROR] Has RESEND_FROM: ${!!process.env.RESEND_FROM}`)
+      console.error(`[RESUME_EMAIL_ERROR] Download URL: ${downloadUrl.substring(0, 50)}...`)
+      console.error(`[RESUME_EMAIL_ERROR] Expires: ${expiry.toISOString()}`)
+      
+      // ALWAYS throw - no silent failures, no false success
+      throw error
+    }
+
+    // Only return success if email was actually sent and we have an email ID
+    if (!emailId) {
+      const error = new Error('Email was sent but no email ID was returned')
+      console.error('[RESUME_EMAIL_ERROR] No email ID returned from sendResumeEmail')
+      throw error
     }
 
     // Return success response (don't expose token)
@@ -99,15 +103,21 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    // Enhanced error logging (server-side only)
+    // Enhanced error logging (server-side only) - full error details for debugging
     const errorDetails = {
+      timestamp: new Date().toISOString(),
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
+      name: error instanceof Error ? error.name : undefined,
+      // Include environment context for debugging
+      nodeEnv: process.env.NODE_ENV,
+      hasResendKey: !!process.env.RESEND_API_KEY,
+      hasResendFrom: !!process.env.RESEND_FROM,
     }
-    console.error('Resume request error:', errorDetails)
     
-    // Don't expose internal errors in production
+    console.error('[RESUME REQUEST] Request failed with error:', errorDetails)
+    
+    // Don't expose internal errors to client - keep generic message
     return NextResponse.json(
       { error: 'Failed to process resume request. Please try again later.' },
       { status: 500 }
