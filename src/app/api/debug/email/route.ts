@@ -5,10 +5,14 @@ import { sendResumeEmail } from '@/lib/email'
 export const runtime = 'nodejs'
 
 /**
- * GET /api/debug/resend
+ * GET /api/debug/email
  * 
- * Temporary debug route to test Resend email configuration
- * This route should be removed or protected in production
+ * Provider isolation endpoint for incident resolution
+ * Tests email infrastructure independently of resume flow
+ * 
+ * Returns success ONLY if Resend returns an emailId
+ * If this fails → email infra is broken
+ * If this succeeds → resume flow logic is broken
  */
 export async function GET() {
   try {
@@ -19,7 +23,7 @@ export async function GET() {
     if (!apiKey) {
       return NextResponse.json(
         {
-          ok: false,
+          success: false,
           error: 'RESEND_API_KEY is not set',
           timestamp: new Date().toISOString(),
         },
@@ -30,7 +34,7 @@ export async function GET() {
     if (!from) {
       return NextResponse.json(
         {
-          ok: false,
+          success: false,
           error: 'RESEND_FROM is not set',
           timestamp: new Date().toISOString(),
         },
@@ -38,34 +42,43 @@ export async function GET() {
       )
     }
 
-    // Test email configuration
+    // Test email configuration with hardcoded test email
     const testEmail = 'test@example.com'
     const testDownloadUrl = 'https://example.com/resume/download?token=test-token'
     const testExpiry = new Date()
     testExpiry.setHours(testExpiry.getHours() + 6)
 
-    console.log('[DEBUG/RESEND] Testing email configuration:', {
+    console.log('[DEBUG_EMAIL] Testing email infrastructure:', {
       timestamp: new Date().toISOString(),
       from,
       to: testEmail,
       hasApiKey: !!apiKey,
     })
 
-    const emailId = await sendResumeEmail({
+    const emailResult = await sendResumeEmail({
       to: testEmail,
       downloadUrl: testDownloadUrl,
       expiresAt: testExpiry,
     })
 
+    // Success ONLY if we got an emailId
+    if (!emailResult || !emailResult.emailId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Email sent but no emailId returned',
+          timestamp: new Date().toISOString(),
+        },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json({
       success: true,
-      emailId,
-      message: 'Resend email test successful',
+      emailId: emailResult.emailId,
+      provider: emailResult.provider,
+      message: 'Email infrastructure test successful',
       timestamp: new Date().toISOString(),
-      config: {
-        from,
-        hasApiKey: true,
-      },
     })
   } catch (error) {
     const errorDetails = {
@@ -75,11 +88,11 @@ export async function GET() {
       name: error instanceof Error ? error.name : undefined,
     }
 
-    console.error('[DEBUG/RESEND] Email test failed:', errorDetails)
+    console.error('[DEBUG_EMAIL] Email infrastructure test failed:', errorDetails)
 
     return NextResponse.json(
       {
-        ok: false,
+        success: false,
         error: errorDetails.message,
         stack: process.env.NODE_ENV === 'development' ? errorDetails.stack : undefined,
         timestamp: errorDetails.timestamp,

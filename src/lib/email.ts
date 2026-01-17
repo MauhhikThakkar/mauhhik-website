@@ -64,13 +64,29 @@ function createResendClient(): Resend {
 }
 
 /**
+ * Email send result
+ */
+export interface EmailSendResult {
+  emailId: string
+  provider: 'resend'
+}
+
+/**
  * Send resume access email using Resend
  * 
+ * STRICT CONTRACT: This function either succeeds with emailId or throws.
+ * No silent failures. No partial success.
+ * 
  * @param config - Email configuration with recipient, download URL, and expiry
- * @returns Resend Email ID on success
- * @throws Error if API key is missing, RESEND_FROM is missing, or Resend API call fails
+ * @returns { emailId, provider: "resend" } on success
+ * @throws Error if:
+ *   - RESEND_API_KEY is missing
+ *   - RESEND_FROM is missing
+ *   - Resend API returns error
+ *   - Resend API returns no data
+ *   - data.id is missing
  */
-export async function sendResumeEmail(config: EmailConfig): Promise<string> {
+export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendResult> {
   const { to, downloadUrl, expiresAt } = config
 
   const isDevelopment = process.env.NODE_ENV === 'development'
@@ -205,9 +221,9 @@ If you did not request this resume, please ignore this email.
       const error = new Error(
         `Resend API returned an error: ${result.error.message || 'Unknown error'}`
       )
-      console.error('[EMAIL_FAILURE] Resend API returned error')
-      console.error(`[EMAIL_FAILURE] Error object: ${JSON.stringify(result.error, null, 2)}`)
-      console.error(`[EMAIL_FAILURE] Error message: ${error.message}`)
+      console.error('[EMAIL_REJECTED] Resend API rejected email')
+      console.error(`[EMAIL_REJECTED] Error object: ${JSON.stringify(result.error, null, 2)}`)
+      console.error(`[EMAIL_REJECTED] Error message: ${error.message}`)
       throw error
     }
 
@@ -231,15 +247,19 @@ If you did not request this resume, please ignore this email.
       throw error
     }
 
-    // Success - log and return email ID
+    // Success - log and return result
     const emailId = result.data.id
-    console.log(`[EMAIL_SUCCESS] Email sent successfully`)
-    console.log(`[EMAIL_SUCCESS] Resend Email ID: ${emailId}`)
-    console.log(`[EMAIL_SUCCESS] From: ${from}`)
-    console.log(`[EMAIL_SUCCESS] To: ${to}`)
-    console.log(`[EMAIL_SUCCESS] Subject: Your Resume Access Link`)
+    console.log(`[EMAIL_ACCEPTED] Email accepted by Resend`)
+    console.log(`[EMAIL_ACCEPTED] Email ID: ${emailId}`)
+    console.log(`[EMAIL_ACCEPTED] From: ${from}`)
+    console.log(`[EMAIL_ACCEPTED] To: ${to}`)
+    console.log(`[EMAIL_ACCEPTED] Subject: Your Resume Access Link`)
+    console.log(`[EMAIL_ACCEPTED] Provider: resend`)
     
-    return emailId
+    return {
+      emailId,
+      provider: 'resend' as const,
+    }
 
   } catch (error) {
     // Log full error details

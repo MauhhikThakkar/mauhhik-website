@@ -39,17 +39,19 @@ export default function ResumeRequestForm() {
         body: JSON.stringify({ email: email.trim() }),
       })
 
-      const data = await response.json()
-
+      // UI TRUTH GUARANTEE: Show success ONLY on HTTP 200
       if (!response.ok) {
-        setError(data.error || 'Something went wrong. Please try again.')
+        const data = await response.json().catch(() => ({ error: 'Unknown error' }))
+        setError(data.error || 'Resume request failed. This is a system error.')
         return
       }
 
+      // Only set success if we got HTTP 200
       setIsSuccess(true)
       setEmail('')
     } catch {
-      setError('Something went wrong. Please try again.')
+      // Network errors or JSON parse errors
+      setError('Resume request failed. This is a system error.')
     } finally {
       setIsSubmitting(false)
     }
