@@ -85,6 +85,7 @@ interface Project {
   goals?: Metric[]
   impact?: Metric[]
   wireframes?: Wireframe[]
+  featuredWireframes?: Wireframe[]
   prototypeLink?: string
   relatedBlogs?: RelatedBlog[]
   previousProject?: NavProject
@@ -168,15 +169,31 @@ export default async function ProjectPage({
           {/* Breadcrumb Navigation */}
           <PortfolioBreadcrumb caseStudyTitle={project.title} />
 
+          {/* Domain Tag */}
+          {project.categories && project.categories.length > 0 && (
+            <div className="mb-4">
+              <span className="inline-flex items-center px-3 py-1.5 bg-zinc-900/50 text-zinc-400 rounded-full text-sm font-medium border border-zinc-800/50 backdrop-blur-sm">
+                {project.categories[0].title}
+              </span>
+            </div>
+          )}
+
           {/* Title with Descriptor */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 leading-[1.1] tracking-tight">
             {project.title}
           </h1>
           {project.shortDescription && (
-            <p className="text-lg text-zinc-400 mb-12 leading-relaxed max-w-3xl">
+            <p className="text-lg text-zinc-400 mb-6 leading-relaxed max-w-3xl">
               {project.shortDescription}
             </p>
           )}
+
+          {/* Role & Context Badge */}
+          <div className="flex flex-wrap items-center gap-3 mb-12">
+            <span className="text-sm text-zinc-400">Product Strategy & Execution</span>
+            <span className="text-zinc-600">•</span>
+            <span className="text-sm text-zinc-500">Certification Project</span>
+          </div>
 
           {/* Intro Paragraph - using first part of context if available */}
           {isValidPortableText(project.context) && (
@@ -220,7 +237,7 @@ export default async function ProjectPage({
           {/* What I Was Responsible For */}
           <div className="mb-8 max-w-3xl">
             <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">What I Was Responsible For</h2>
-            <ul className="space-y-2 text-zinc-300 leading-relaxed list-none pl-0">
+            <ul className="space-y-2 text-zinc-300 leading-relaxed list-none pl-0 mb-4">
               <li className="flex items-start gap-3">
                 <span className="text-zinc-600 mt-1">•</span>
                 <span>Discovery and user research</span>
@@ -238,6 +255,52 @@ export default async function ProjectPage({
                 <span>Delivery planning and execution</span>
               </li>
             </ul>
+            <p className="text-zinc-400 text-sm leading-relaxed">
+              This work reflects my approach to product strategy and execution under constraints, 
+              which is outlined in my{' '}
+              <Link
+                href="/resume"
+                className="text-zinc-300 hover:text-white underline underline-offset-4 transition-colors"
+              >
+                resume under product experience
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Resume Context Block */}
+      <section className="border-b border-zinc-900">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 py-8">
+          <div className="bg-zinc-950/30 border border-zinc-900 rounded-xl p-6 max-w-3xl">
+            <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
+              Resume Context
+            </div>
+            <p className="text-zinc-300 text-sm leading-relaxed mb-4">
+              This project represents hands-on product work demonstrating product strategy, 
+              hypothesis-driven discovery, and execution under constraints. This experience 
+              is referenced in my professional resume.
+            </p>
+            <Link
+              href="/resume"
+              className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            >
+              <span>View resume experience</span>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>
@@ -246,12 +309,12 @@ export default async function ProjectPage({
       <div className="max-w-4xl mx-auto px-6 sm:px-8">
         {/* Context */}
         {isValidPortableText(project.context) && (
-          <section className="py-20 md:py-28 border-b border-zinc-900/50">
-            <div className="mb-14">
-              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-5">
+          <section className="py-24 md:py-32 border-b border-zinc-900/50">
+            <div className="mb-16">
+              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
                 {getSectionNumber()} — Context
               </span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
+              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-3">
                 Setting the stage
               </h2>
             </div>
@@ -263,12 +326,12 @@ export default async function ProjectPage({
 
         {/* Problem */}
         {isValidPortableText(project.problem) && (
-          <section className="py-20 md:py-28 border-b border-zinc-900/50">
-            <div className="mb-14">
-              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-5">
+          <section className="py-24 md:py-32 border-b border-zinc-900/50">
+            <div className="mb-16">
+              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
                 {getSectionNumber()} — Problem
               </span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
+              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-3">
                 The challenge we faced
               </h2>
             </div>
@@ -337,7 +400,7 @@ export default async function ProjectPage({
                 {getSectionNumber()} — Solution
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
-                What we built
+                Solution Design & Key Trade-offs
               </h2>
             </div>
             <div className="prose-custom text-zinc-300 text-lg leading-relaxed max-w-3xl">
@@ -347,7 +410,7 @@ export default async function ProjectPage({
         )}
 
         {/* Featured Wireframes */}
-        {project.wireframes && project.wireframes.length > 0 && (
+        {((project.wireframes && project.wireframes.length > 0) || (project.featuredWireframes && project.featuredWireframes.length > 0)) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
@@ -359,59 +422,64 @@ export default async function ProjectPage({
             </div>
 
             {/* Wireframes Grid */}
-            <div className={`grid gap-8 mb-12 ${
-              project.wireframes.length === 1 
-                ? 'grid-cols-1 max-w-2xl mx-auto' 
-                : 'grid-cols-1 md:grid-cols-2'
-            }`}>
-              {project.wireframes.map((wireframe, index) => {
-                if (!wireframe.image?.asset) return null
+            {(() => {
+              const wireframesToRender = project.wireframes || project.featuredWireframes || []
+              return (
+                <div className={`grid gap-8 mb-12 ${
+                  wireframesToRender.length === 1 
+                    ? 'grid-cols-1 max-w-2xl mx-auto' 
+                    : 'grid-cols-1 md:grid-cols-2'
+                }`}>
+                  {wireframesToRender.map((wireframe, index) => {
+                    if (!wireframe.image?.asset) return null
 
-                try {
-                  // Get full image without cropping - only set max width
-                  const imageUrl = urlFor(wireframe.image)
-                    .width(800)
-                    .fit('max')
-                    .url()
+                    try {
+                      // Get full image without cropping - only set max width
+                      const imageUrl = urlFor(wireframe.image)
+                        .width(800)
+                        .fit('max')
+                        .url()
 
-                  return (
-                    <div
-                      key={index}
-                      className="group relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-800 transition-all"
-                    >
-                      {/* Image - Full mobile screen visible */}
-                      <div className="relative w-full bg-zinc-950 flex items-center justify-center p-8 min-h-[400px]">
-                        <div className="relative w-full max-w-sm mx-auto h-full">
-                          <Image
-                            src={imageUrl}
-                            alt={wireframe.image.alt || wireframe.title}
-                            width={800}
-                            height={1200}
-                            className="object-contain w-full h-auto max-h-[600px]"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
+                      return (
+                        <div
+                          key={index}
+                          className="group relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-800 transition-all"
+                        >
+                          {/* Image - Full mobile screen visible */}
+                          <div className="relative w-full bg-zinc-950 flex items-center justify-center p-8 min-h-[400px]">
+                            <div className="relative w-full max-w-sm mx-auto h-full">
+                              <Image
+                                src={imageUrl}
+                                alt={wireframe.image.alt || wireframe.title}
+                                width={800}
+                                height={1200}
+                                className="object-contain w-full h-auto max-h-[600px]"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div className="p-6">
+                            <h3 className="text-lg font-semibold text-white mb-2">
+                              {wireframe.title}
+                            </h3>
+                            {wireframe.caption && (
+                              <p className="text-sm text-zinc-400 leading-relaxed">
+                                {wireframe.caption}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Content */}
-                      <div className="p-6">
-                        <h3 className="text-lg font-semibold text-white mb-2">
-                          {wireframe.title}
-                        </h3>
-                        {wireframe.caption && (
-                          <p className="text-sm text-zinc-400 leading-relaxed">
-                            {wireframe.caption}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )
-                } catch {
-                  // Silently fail wireframe rendering - return null to skip broken wireframes
-                  return null
-                }
-              })}
-            </div>
+                      )
+                    } catch {
+                      // Silently fail wireframe rendering - return null to skip broken wireframes
+                      return null
+                    }
+                  })}
+                </div>
+              )
+            })()}
 
             {/* Prototype Link CTA */}
             {project.prototypeLink && (
@@ -442,22 +510,27 @@ export default async function ProjectPage({
           </section>
         )}
 
-        {/* Outcomes & Learnings */}
+        {/* Intended Impact & Success Criteria */}
         {(isValidPortableText(project.learnings) || (project.impact && project.impact.length > 0)) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                {getSectionNumber()} — Outcomes & Learnings
+                {getSectionNumber()} — Intended Impact & Success Criteria
               </span>
               <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-12">
-                Outcomes & Learnings
+                Intended Impact & Success Criteria
               </h2>
             </div>
 
             <div className="space-y-16 max-w-3xl">
-              {/* Outcomes */}
+              {/* Intended Impact */}
               <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Outcomes</h3>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Intended Impact & Success Criteria</h3>
+                <p className="text-zinc-300 leading-relaxed mb-4">
+                  This solution was designed to address the problem outlined in the Problem Statement section. 
+                  If this product were shipped, success would be evaluated through specific signals and metrics 
+                  that align with the intended outcomes.
+                </p>
                 {isValidPortableText(project.learnings) ? (
                   <div className="prose-custom text-zinc-300 leading-relaxed">
                     <PortableText value={project.learnings} />
@@ -468,31 +541,84 @@ export default async function ProjectPage({
                       project.impact.map((metric, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <span className="text-zinc-600 mt-1">•</span>
-                          <span>{metric.label}</span>
+                          <span>Success would be monitored through: {metric.label}</span>
                         </li>
                       ))
                     ) : (
                       <>
                         <li className="flex items-start gap-3">
                           <span className="text-zinc-600 mt-1">•</span>
-                          <span>Clarified product direction and user needs</span>
+                          <span>This solution was designed to clarify product direction and user needs</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <span className="text-zinc-600 mt-1">•</span>
-                          <span>Validated core assumptions through discovery</span>
+                          <span>Success would be evaluated through validation of core assumptions through discovery</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <span className="text-zinc-600 mt-1">•</span>
-                          <span>De-risked technical and product uncertainty</span>
+                          <span>This approach was structured to de-risk technical and product uncertainty</span>
                         </li>
                         <li className="flex items-start gap-3">
                           <span className="text-zinc-600 mt-1">•</span>
-                          <span>Informed prioritization and tradeoff decisions</span>
+                          <span>Intended to inform prioritization and tradeoff decisions</span>
                         </li>
                       </>
                     )}
                   </ul>
                 )}
+              </div>
+
+              {/* Key Assumptions */}
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Key Assumptions</h3>
+                <p className="text-zinc-300 leading-relaxed mb-4">
+                  This solution depends on several assumptions that would need validation in a real-world context:
+                </p>
+                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>User behavior and needs align with the problem framing and discovery findings</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Technical constraints and capabilities match the solution architecture assumptions</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Stakeholder priorities and business context remain consistent with the strategy phase</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Market conditions and competitive landscape support the proposed approach</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Trade-offs & Constraints */}
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Trade-offs Considered</h3>
+                <p className="text-zinc-300 leading-relaxed mb-4">
+                  This solution represents intentional choices made under constraints. The following trade-offs 
+                  were explicitly considered:
+                </p>
+                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Certain features or capabilities were deprioritized to focus on core value delivery</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Technical complexity was balanced against time-to-value and resource constraints</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>User experience depth was weighed against scope and delivery timeline</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Comprehensive validation was balanced with the need to make progress under ambiguity</span>
+                  </li>
+                </ul>
               </div>
 
               {/* Key Learnings */}
@@ -505,7 +631,7 @@ export default async function ProjectPage({
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-zinc-600 mt-1">•</span>
-                    <span>I over-indexed on initial assumptions and changed approach once real user feedback emerged</span>
+                    <span>I over-indexed on initial assumptions and would change approach once real user feedback emerged</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-zinc-600 mt-1">•</span>
@@ -518,6 +644,37 @@ export default async function ProjectPage({
                   <li className="flex items-start gap-3">
                     <span className="text-zinc-600 mt-1">•</span>
                     <span>Product thinking evolved from feature-focused to outcome-focused problem solving</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* What This Demonstrates */}
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">What This Case Study Demonstrates</h3>
+                <p className="text-zinc-300 leading-relaxed mb-4">
+                  This certification project demonstrates product thinking and structured problem-solving 
+                  under constraints. It shows:
+                </p>
+                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Ability to frame problems systematically and work through ambiguity</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Structured approach to discovery, validation, and decision-making</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Ethical restraint in not claiming unverified outcomes or metrics</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Understanding of trade-offs, assumptions, and constraints in product work</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Product judgment that prioritizes clarity and honesty over impressiveness</span>
                   </li>
                 </ul>
               </div>
@@ -614,6 +771,31 @@ export default async function ProjectPage({
           </section>
         )}
       </div>
+
+      {/* Resume CTA Section */}
+      <section className="border-t border-zinc-900">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-20">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4 leading-tight">
+              Want to see how this fits into my professional experience?
+            </h2>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+              <Link
+                href="/resume"
+                className="px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                View Resume
+              </Link>
+              <Link
+                href="/portfolio"
+                className="text-sm text-zinc-400 hover:text-white transition-colors underline underline-offset-4"
+              >
+                Back to Portfolio
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Navigation */}
       {(project.previousProject || project.nextProject) && (

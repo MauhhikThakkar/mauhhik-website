@@ -130,11 +130,11 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
-          <CTAButton href="/portfolio" variant="primary">
-            View Portfolio
+          <CTAButton href="/resume" variant="primary">
+            View Resume
           </CTAButton>
-          <CTAButton href="/blog" variant="secondary">
-            Read Blog
+          <CTAButton href="/portfolio" variant="secondary">
+            View Case Studies
           </CTAButton>
         </motion.div>
       </div>

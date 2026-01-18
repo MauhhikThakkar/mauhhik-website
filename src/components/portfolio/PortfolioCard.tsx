@@ -114,7 +114,7 @@ export default function PortfolioCard({ project, index }: PortfolioCardProps) {
 
             {/* Description */}
             {project.shortDescription && (
-              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-6 line-clamp-3">
+              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4 line-clamp-2">
                 {project.shortDescription}
               </p>
             )}

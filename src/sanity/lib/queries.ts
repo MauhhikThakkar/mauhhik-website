@@ -189,6 +189,24 @@ export const PROJECT_BY_SLUG_QUERY = `
         }
       }
     },
+    featuredWireframes[] {
+      title,
+      caption,
+      image {
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {
+              width,
+              height,
+              aspectRatio
+            }
+          }
+        }
+      }
+    },
     prototypeLink,
     "relatedBlogs": relatedBlogs[]->{
       _id,

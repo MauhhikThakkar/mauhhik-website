@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
@@ -15,6 +16,23 @@ export default function Home() {
     <main className="bg-black text-white">
       <Navbar />
       <Hero />
+      
+      {/* Proof Strip */}
+      <section className="border-t border-zinc-900 py-8">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="text-zinc-400 text-sm leading-relaxed">
+            ICPM-certified Product Manager with hands-on product delivery.
+            Resume available to verified professionals.{' '}
+            <Link
+              href="/resume"
+              className="text-zinc-300 hover:text-white underline underline-offset-4 transition-colors"
+            >
+              View Resume
+            </Link>
+          </p>
+        </div>
+      </section>
+
       <PortfolioSection />
     </main>
   );
