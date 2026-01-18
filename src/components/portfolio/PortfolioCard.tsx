@@ -1,8 +1,5 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion, useReducedMotion } from 'framer-motion'
 
 interface ImpactMetric {
   label: string
@@ -44,48 +41,24 @@ interface PortfolioProject {
 interface PortfolioCardProps {
   project: PortfolioProject
   index: number
-  judgmentHook?: string | null
+  judgmentSignal?: string | null
+  isRecommended?: boolean
 }
 
-export default function PortfolioCard({ project, index, judgmentHook }: PortfolioCardProps) {
-  const shouldReduceMotion = useReducedMotion()
-
+export default function PortfolioCard({ project, judgmentSignal, isRecommended }: PortfolioCardProps) {
   // Get primary impact metric (first one, or most relevant)
   const primaryImpact = project.impact?.[0]
 
   return (
-    <motion.div
-      initial={{
-        opacity: shouldReduceMotion ? 1 : 0,
-        y: shouldReduceMotion ? 0 : 24,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        duration: 0.35,
-        ease: [0.22, 1, 0.36, 1],
-        delay: shouldReduceMotion ? 0 : index * 0.1,
-      }}
-    >
+    <div>
       <Link
         href={`/portfolio/${project.slug}`}
         className="group block h-full"
       >
-        <motion.article
-          className="h-full bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-700 transition-all duration-300"
-          style={{
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          }}
-          whileHover={shouldReduceMotion ? {} : {
-            y: -2,
-            boxShadow: '0 8px 24px 0 rgba(0, 0, 0, 0.4)',
-            transition: {
-              duration: 0.3,
-              ease: [0.22, 1, 0.36, 1],
-            },
-          }}
+        <article
+          className={`h-full bg-zinc-950/30 border rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors ${
+            isRecommended ? 'border-zinc-800' : 'border-zinc-900'
+          }`}
         >
           {/* Cover Image */}
           {project.coverImage?.asset?.url && (
@@ -103,9 +76,19 @@ export default function PortfolioCard({ project, index, judgmentHook }: Portfoli
 
           {/* Content */}
           <div className="p-6 sm:p-8">
-            {/* Role / Primary Category */}
-            {project.categories && project.categories.length > 0 && (
+            {/* Recommended Badge */}
+            {isRecommended && (
               <div className="mb-3">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                  Recommended starting point
+                </span>
+              </div>
+            )}
+
+            {/* Domain / Category */}
+            {project.categories && project.categories.length > 0 && (
+              <div className="mb-2">
                 <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   {project.categories[0].title}
                 </span>
@@ -117,35 +100,33 @@ export default function PortfolioCard({ project, index, judgmentHook }: Portfoli
               {project.title}
             </h2>
 
+            {/* Judgment Signal */}
+            {judgmentSignal && (
+              <p className="text-zinc-400 text-sm leading-relaxed mb-4">
+                {judgmentSignal}
+              </p>
+            )}
+
             {/* Description */}
             {project.shortDescription && (
-              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4 line-clamp-2">
+              <p className="text-zinc-500 text-sm leading-relaxed mb-4 line-clamp-2">
                 {project.shortDescription}
               </p>
             )}
 
-            {/* Judgment Hook */}
-            {judgmentHook && (
-              <div className="mb-4 pb-4 border-b border-zinc-900/50">
-                <p className="text-zinc-500 text-xs leading-relaxed italic">
-                  {judgmentHook}
-                </p>
-              </div>
-            )}
-
-            {/* Impact Metric */}
+            {/* Impact Metric - Visually Secondary */}
             {primaryImpact && (
-              <div className="mb-6 pb-6 border-b border-zinc-900">
+              <div className="mb-6 pt-4 border-t border-zinc-900/50">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-3xl font-bold text-white">
+                  <span className="text-lg font-medium text-zinc-500">
                     {primaryImpact.value}
                   </span>
-                  <span className="text-sm text-zinc-500">
+                  <span className="text-xs text-zinc-600">
                     {primaryImpact.label}
                   </span>
                 </div>
                 {primaryImpact.context && (
-                  <p className="text-xs text-zinc-600 mt-1">
+                  <p className="text-xs text-zinc-700 mt-1">
                     {primaryImpact.context}
                   </p>
                 )}
@@ -153,20 +134,13 @@ export default function PortfolioCard({ project, index, judgmentHook }: Portfoli
             )}
 
             {/* CTA */}
-            <div className="flex items-center text-sm font-medium text-white group-hover:text-white">
+            <div className="flex items-center text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">
               <span>Read Case Study</span>
-              <motion.svg
+              <svg
                 className="w-4 h-4 ml-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                whileHover={shouldReduceMotion ? {} : {
-                  x: 4,
-                  transition: {
-                    duration: 0.3,
-                    ease: [0.22, 1, 0.36, 1],
-                  },
-                }}
               >
                 <path
                   strokeLinecap="round"
@@ -174,11 +148,11 @@ export default function PortfolioCard({ project, index, judgmentHook }: Portfoli
                   strokeWidth={2}
                   d="M9 5l7 7-7 7"
                 />
-              </motion.svg>
+              </svg>
             </div>
           </div>
-        </motion.article>
+        </article>
       </Link>
-    </motion.div>
+    </div>
   )
 }

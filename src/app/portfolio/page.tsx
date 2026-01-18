@@ -107,37 +107,57 @@ function calculateSeniorityScore(project: PortfolioProject): number {
 }
 
 /**
- * Generate judgment hook - a concise line that signals PM thinking
+ * Generate judgment signal - a concise framing line that explains why this project matters
  */
-function getJudgmentHook(project: PortfolioProject): string | null {
-  // Prefer whatThisDemonstrates as it's most direct
+function getJudgmentSignal(project: PortfolioProject): string | null {
+  // Build signal from available judgment fields
+  const parts: string[] = []
+  
+  // Extract domain/context from categories
+  const domain = project.categories?.[0]?.title || null
+  const hasComplexDomain = domain && (
+    domain.toLowerCase().includes('enterprise') ||
+    domain.toLowerCase().includes('fintech') ||
+    domain.toLowerCase().includes('ai') ||
+    domain.toLowerCase().includes('saas')
+  )
+  
+  // Build signal based on what's available
   if (project.whatThisDemonstrates) {
-    // Extract first sentence or first ~80 chars
-    const text = project.whatThisDemonstrates.trim()
-    const firstSentence = text.split(/[.!?]/)[0]
-    if (firstSentence.length <= 100) {
-      return firstSentence
+    // Extract key phrase that signals judgment
+    const text = project.whatThisDemonstrates.toLowerCase()
+    if (text.includes('decision-making')) {
+      parts.push('decision-making')
+    } else if (text.includes('trade-off') || text.includes('tradeoff')) {
+      parts.push('trade-off evaluation')
+    } else if (text.includes('ambiguity') || text.includes('constraint')) {
+      parts.push('operating under constraints')
+    } else if (text.includes('strategy') || text.includes('framing')) {
+      parts.push('strategic framing')
+    } else {
+      parts.push('product judgment')
     }
-    return text.substring(0, 97) + '...'
+  } else if (project.tradeoffs && project.tradeoffs.length > 0) {
+    parts.push('trade-off evaluation')
+  } else if (project.keyAssumptions && project.keyAssumptions.length > 0) {
+    parts.push('assumption validation')
+  } else {
+    parts.push('product thinking')
   }
   
-  // Fallback to intendedImpact
-  if (project.intendedImpact) {
-    const text = project.intendedImpact.trim()
-    const firstSentence = text.split(/[.!?]/)[0]
-    if (firstSentence.length <= 100) {
-      return firstSentence
+  // Add domain context if available
+  if (hasComplexDomain) {
+    if (domain.toLowerCase().includes('fintech')) {
+      return `Demonstrates ${parts[0]} in regulated fintech environments`
+    } else if (domain.toLowerCase().includes('enterprise')) {
+      return `Demonstrates ${parts[0]} in enterprise contexts`
+    } else if (domain.toLowerCase().includes('ai')) {
+      return `Demonstrates ${parts[0]} in AI product development`
     }
-    return text.substring(0, 97) + '...'
   }
   
-  // If we have tradeoffs, create a hook from the first one
-  if (project.tradeoffs && project.tradeoffs.length > 0) {
-    const firstTradeoff = project.tradeoffs[0]
-    return `Trade-off: ${firstTradeoff.decision}`
-  }
-  
-  return null
+  // Fallback to generic signal
+  return `Demonstrates ${parts[0]}`
 }
 
 async function getProjects(): Promise<PortfolioProject[]> {
@@ -178,13 +198,15 @@ export default async function PortfolioPage() {
           <div className="mt-16 sm:mt-20">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {projects.map((project, index) => {
-                const judgmentHook = getJudgmentHook(project)
+                const judgmentSignal = getJudgmentSignal(project)
+                const isRecommended = index === 0
                 return (
                   <PortfolioCard
                     key={project._id}
                     project={project}
                     index={index}
-                    judgmentHook={judgmentHook}
+                    judgmentSignal={judgmentSignal}
+                    isRecommended={isRecommended}
                   />
                 )
               })}
