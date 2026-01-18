@@ -72,11 +72,6 @@ export default function Hero() {
   return (
     <section className="min-h-screen flex items-center justify-center px-6 pt-24">
       <div className="max-w-3xl text-center">
-        {/* Badge - no animation per requirements */}
-        <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-sm text-gray-300 border border-white/5">
-          Product Manager • ICPM Certified • AI & Data
-        </div>
-
         {/* Headline with staggered line reveal */}
         <motion.h1
           className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto leading-[1.1]"
@@ -89,52 +84,37 @@ export default function Hero() {
             variants={headlineLineVariants}
             custom={shouldReduceMotion}
           >
-            Product Manager.
+            Product Manager focused on
           </motion.span>
           <motion.span
             className="block"
             variants={headlineLineVariants}
             custom={shouldReduceMotion}
           >
-            Outcomes through <span className="text-gray-400">ambiguity</span>.
+            clarity, judgment, and execution.
           </motion.span>
         </motion.h1>
 
         {/* Subheadline - animates after headline */}
         <motion.p
-          className="text-gray-400 text-lg md:text-xl mb-4 leading-relaxed max-w-2xl mx-auto"
+          className="text-gray-400 text-lg md:text-xl mb-10 leading-relaxed max-w-2xl mx-auto"
           variants={subheadlineVariants}
           initial="hidden"
           animate="visible"
           custom={shouldReduceMotion}
         >
-          ICPM-certified PM shipping product strategy into delivered software.
-          AI and data-driven decision making.
+          Designing products for complex, high-trust environments. 
+          AI, fintech, and enterprise platforms.
         </motion.p>
 
-        {/* Credibility line - small text */}
-        <motion.p
-          className="text-gray-500 text-sm mb-10 max-w-2xl mx-auto"
-          variants={subheadlineVariants}
-          initial="hidden"
-          animate="visible"
-          custom={shouldReduceMotion}
-        >
-          Available for PM roles and consulting.
-        </motion.p>
-
-        {/* CTAs - scale-in animation, last */}
+        {/* Primary CTA - Portfolio */}
         <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
           variants={ctaContainerVariants}
           initial="hidden"
           animate="visible"
         >
-          <CTAButton href="/resume" variant="primary">
-            View Resume
-          </CTAButton>
-          <CTAButton href="/portfolio" variant="secondary">
-            View Case Studies
+          <CTAButton href="/portfolio" variant="primary">
+            View Portfolio
           </CTAButton>
         </motion.div>
       </div>

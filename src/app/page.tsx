@@ -1,14 +1,13 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 export const metadata = generateSEOMetadata({
-  title: 'Product Manager & AI Product Builder',
-  description: 'Product Manager with hands-on experience in AI tools, Excel automation, SaaS MVPs, and real-world delivery. Building AI-first products and shipping them to production.',
+  title: 'Product Manager | Mauhhik',
+  description: 'Product Manager focused on clarity, judgment, and execution. Designing products for complex, high-trust environments.',
   url: '/',
-  imageAlt: 'Mauhhik — Product Manager & AI Product Builder',
+  imageAlt: 'Mauhhik — Product Manager',
 })
 
 export default function Home() {
@@ -17,23 +16,37 @@ export default function Home() {
       <Navbar />
       <Hero />
       
-      {/* Proof Strip */}
-      <section className="border-t border-zinc-900 py-8">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="text-zinc-400 text-sm leading-relaxed">
-            ICPM-certified Product Manager with hands-on product delivery.
-            Resume available to verified professionals.{' '}
-            <Link
-              href="/resume"
-              className="text-zinc-300 hover:text-white underline underline-offset-4 transition-colors"
-            >
-              View Resume
-            </Link>
+      {/* Thinking Section */}
+      <section className="border-t border-zinc-900 py-16 md:py-20">
+        <div className="max-w-2xl mx-auto px-6">
+          <p className="text-zinc-400 text-base md:text-lg leading-relaxed text-center">
+            Product decisions require clear problem framing, explicit trade-off evaluation, 
+            and judgment under constraints. My work demonstrates structured thinking across 
+            certification-based projects and shipped products.
           </p>
         </div>
       </section>
 
-      <PortfolioSection />
+      {/* Secondary Links */}
+      <section className="border-t border-zinc-900 py-8">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm">
+            <Link
+              href="/resume"
+              className="text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-4"
+            >
+              Resume
+            </Link>
+            <span className="text-zinc-700 hidden sm:inline">•</span>
+            <Link
+              href="/about"
+              className="text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-4"
+            >
+              About
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
