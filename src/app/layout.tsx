@@ -4,6 +4,7 @@ import "./globals.css"
 import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION } from "@/lib/constants"
 import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
+import Footer from "@/components/Footer"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,8 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased flex flex-col min-h-screen">
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
         {/* Analytics - only enabled in production or if explicitly enabled */}
         {(IS_PRODUCTION || ANALYTICS_ENABLED) && PLAUSIBLE_DOMAIN && (
           <Analytics domain={PLAUSIBLE_DOMAIN} enabled={true} />

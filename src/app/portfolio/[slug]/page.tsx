@@ -85,6 +85,14 @@ interface Project {
   goals?: Metric[]
   impact?: Metric[]
   wireframes?: Wireframe[]
+  intendedImpact?: string
+  successCriteria?: string[]
+  keyAssumptions?: string[]
+  tradeoffs?: Array<{
+    decision: string
+    tradeoff: string
+  }>
+  whatThisDemonstrates?: string
   featuredWireframes?: Wireframe[]
   prototypeLink?: string
   relatedBlogs?: RelatedBlog[]
@@ -256,13 +264,13 @@ export default async function ProjectPage({
               </li>
             </ul>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              This work reflects my approach to product strategy and execution under constraints, 
-              which is outlined in my{' '}
+              This work reflects my approach to product strategy and execution under constraints. 
+              The methodology and frameworks applied here are detailed in my{' '}
               <Link
                 href="/resume"
                 className="text-zinc-300 hover:text-white underline underline-offset-4 transition-colors"
               >
-                resume under product experience
+                professional resume
               </Link>
               .
             </p>
@@ -275,18 +283,17 @@ export default async function ProjectPage({
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-8">
           <div className="bg-zinc-950/30 border border-zinc-900 rounded-xl p-6 max-w-3xl">
             <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
-              Resume Context
+              Professional Context
             </div>
             <p className="text-zinc-300 text-sm leading-relaxed mb-4">
-              This project represents hands-on product work demonstrating product strategy, 
-              hypothesis-driven discovery, and execution under constraints. This experience 
-              is referenced in my professional resume.
+              This case study demonstrates product strategy, hypothesis-driven discovery, and execution under constraints. 
+              The frameworks and decision-making processes shown here reflect the experience outlined in my professional resume.
             </p>
             <Link
               href="/resume"
               className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
             >
-              <span>View resume experience</span>
+              <span>View professional resume</span>
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -510,204 +517,189 @@ export default async function ProjectPage({
           </section>
         )}
 
-        {/* Intended Impact & Success Criteria */}
-        {(isValidPortableText(project.learnings) || (project.impact && project.impact.length > 0)) && (
+        {/* Product Judgment Section */}
+        {(project.intendedImpact || project.successCriteria || project.keyAssumptions || (project.tradeoffs && project.tradeoffs.length > 0) || project.whatThisDemonstrates) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                {getSectionNumber()} — Intended Impact & Success Criteria
+                {getSectionNumber()} — Product Judgment
               </span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-12">
-                Intended Impact & Success Criteria
+              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-4">
+                Product Judgment
               </h2>
+              <p className="text-zinc-400 text-lg leading-relaxed max-w-3xl">
+                Design intent, evaluation criteria, and decision-making rationale
+              </p>
             </div>
 
-            <div className="space-y-16 max-w-3xl">
-              {/* Intended Impact */}
-              <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Intended Impact & Success Criteria</h3>
-                <p className="text-zinc-300 leading-relaxed mb-4">
-                  This solution was designed to address the problem outlined in the Problem Statement section. 
-                  If this product were shipped, success would be evaluated through specific signals and metrics 
-                  that align with the intended outcomes.
-                </p>
-                {isValidPortableText(project.learnings) ? (
-                  <div className="prose-custom text-zinc-300 leading-relaxed">
-                    <PortableText value={project.learnings} />
+            <div className="space-y-6 max-w-4xl">
+              {/* Intended Impact Card */}
+              {project.intendedImpact && (
+                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                      <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-white mb-3 tracking-tight">Intended Impact</h3>
+                      <p className="text-zinc-300 leading-relaxed whitespace-pre-line">
+                        {project.intendedImpact}
+                      </p>
+                    </div>
                   </div>
-                ) : (
-                  <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
-                    {project.impact && project.impact.length > 0 ? (
-                      project.impact.map((metric, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <span className="text-zinc-600 mt-1">•</span>
-                          <span>Success would be monitored through: {metric.label}</span>
-                        </li>
-                      ))
-                    ) : (
-                      <>
-                        <li className="flex items-start gap-3">
-                          <span className="text-zinc-600 mt-1">•</span>
-                          <span>This solution was designed to clarify product direction and user needs</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="text-zinc-600 mt-1">•</span>
-                          <span>Success would be evaluated through validation of core assumptions through discovery</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="text-zinc-600 mt-1">•</span>
-                          <span>This approach was structured to de-risk technical and product uncertainty</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="text-zinc-600 mt-1">•</span>
-                          <span>Intended to inform prioritization and tradeoff decisions</span>
-                        </li>
-                      </>
-                    )}
-                  </ul>
-                )}
-              </div>
+                </div>
+              )}
 
-              {/* Key Assumptions */}
-              <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Key Assumptions</h3>
-                <p className="text-zinc-300 leading-relaxed mb-4">
-                  This solution depends on several assumptions that would need validation in a real-world context:
-                </p>
-                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>User behavior and needs align with the problem framing and discovery findings</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Technical constraints and capabilities match the solution architecture assumptions</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Stakeholder priorities and business context remain consistent with the strategy phase</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Market conditions and competitive landscape support the proposed approach</span>
-                  </li>
-                </ul>
-              </div>
+              {/* Success Criteria Card */}
+              {project.successCriteria && project.successCriteria.length > 0 && (
+                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                      <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-white mb-4 tracking-tight">Success Criteria (If Shipped)</h3>
+                      <ul className="space-y-2.5">
+                        {project.successCriteria.map((criterion, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                            <span className="text-zinc-300 leading-relaxed">{criterion}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-              {/* Trade-offs & Constraints */}
-              <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Trade-offs Considered</h3>
-                <p className="text-zinc-300 leading-relaxed mb-4">
-                  This solution represents intentional choices made under constraints. The following trade-offs 
-                  were explicitly considered:
-                </p>
-                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Certain features or capabilities were deprioritized to focus on core value delivery</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Technical complexity was balanced against time-to-value and resource constraints</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>User experience depth was weighed against scope and delivery timeline</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Comprehensive validation was balanced with the need to make progress under ambiguity</span>
-                  </li>
-                </ul>
-              </div>
+              {/* Key Assumptions Card */}
+              {project.keyAssumptions && project.keyAssumptions.length > 0 && (
+                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                      <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-white mb-4 tracking-tight">Key Assumptions</h3>
+                      <ul className="space-y-2.5">
+                        {project.keyAssumptions.map((assumption, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                            <span className="text-zinc-300 leading-relaxed">{assumption}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Trade-offs Card */}
+              {project.tradeoffs && project.tradeoffs.length > 0 && (
+                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                      <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-white mb-4 tracking-tight">Trade-offs Considered</h3>
+                      <div className="space-y-4">
+                        {project.tradeoffs.map((tradeoff, index) => (
+                          <div key={index} className="border-l-2 border-zinc-800/80 pl-4 py-2">
+                            <div className="font-medium text-white mb-1.5">{tradeoff.decision}</div>
+                            <div className="text-zinc-400 text-sm leading-relaxed whitespace-pre-line">{tradeoff.tradeoff}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* What This Demonstrates Card */}
+              {project.whatThisDemonstrates && (
+                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                      <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-white mb-3 tracking-tight">What This Case Study Demonstrates</h3>
+                      <p className="text-zinc-300 leading-relaxed whitespace-pre-line">
+                        {project.whatThisDemonstrates}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Key Learnings */}
-              <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Key Learnings</h3>
-                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>I underestimated the importance of early stakeholder alignment on constraints</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>I over-indexed on initial assumptions and would change approach once real user feedback emerged</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Discovery revealed user needs differed from initial problem framing</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>This reinforced my belief that validation before execution reduces downstream rework</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Product thinking evolved from feature-focused to outcome-focused problem solving</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* What This Demonstrates */}
-              <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">What This Case Study Demonstrates</h3>
-                <p className="text-zinc-300 leading-relaxed mb-4">
-                  This certification project demonstrates product thinking and structured problem-solving 
-                  under constraints. It shows:
-                </p>
-                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Ability to frame problems systematically and work through ambiguity</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Structured approach to discovery, validation, and decision-making</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Ethical restraint in not claiming unverified outcomes or metrics</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Understanding of trade-offs, assumptions, and constraints in product work</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Product judgment that prioritizes clarity and honesty over impressiveness</span>
-                  </li>
-                </ul>
-              </div>
+              {isValidPortableText(project.learnings) && (
+                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                      <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-semibold text-white mb-4 tracking-tight">Key Learnings</h3>
+                      <div className="prose-custom text-zinc-300 leading-relaxed">
+                        <PortableText value={project.learnings} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* PM Skills Demonstrated */}
-              <div>
-                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">PM Skills Demonstrated</h3>
-                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Problem framing under ambiguity</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Hypothesis-driven discovery and validation</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Tradeoff evaluation across user needs, business goals, and technical constraints</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Stakeholder alignment and communication</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Prioritization under resource and timeline constraints</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-zinc-600 mt-1">•</span>
-                    <span>Decision-making with incomplete information</span>
-                  </li>
-                </ul>
+              <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
+                    <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-semibold text-white mb-4 tracking-tight">PM Skills Demonstrated</h3>
+                    <ul className="space-y-2.5">
+                      <li className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                        <span className="text-zinc-300 leading-relaxed">Problem framing under ambiguity</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                        <span className="text-zinc-300 leading-relaxed">Hypothesis-driven discovery and validation</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                        <span className="text-zinc-300 leading-relaxed">Tradeoff evaluation across user needs, business goals, and technical constraints</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                        <span className="text-zinc-300 leading-relaxed">Stakeholder alignment and communication</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                        <span className="text-zinc-300 leading-relaxed">Prioritization under resource and timeline constraints</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-zinc-500 mt-2"></span>
+                        <span className="text-zinc-300 leading-relaxed">Decision-making with incomplete information</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -776,9 +768,9 @@ export default async function ProjectPage({
       <section className="border-t border-zinc-900">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-20">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4 leading-tight">
-              Want to see how this fits into my professional experience?
-            </h2>
+            <p className="text-zinc-500 text-sm mb-6">
+              This case study demonstrates product thinking and execution that aligns with my professional experience.
+            </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
               <Link
                 href="/resume"
@@ -790,7 +782,7 @@ export default async function ProjectPage({
                 href="/portfolio"
                 className="text-sm text-zinc-400 hover:text-white transition-colors underline underline-offset-4"
               >
-                Back to Portfolio
+                View Other Case Studies
               </Link>
             </div>
           </div>

@@ -35,14 +35,19 @@ interface PortfolioProject {
   }
   impact?: ImpactMetric[]
   categories?: Category[]
+  intendedImpact?: string
+  whatThisDemonstrates?: string
+  keyAssumptions?: string[]
+  tradeoffs?: Array<{ decision: string; tradeoff: string }>
 }
 
 interface PortfolioCardProps {
   project: PortfolioProject
   index: number
+  judgmentHook?: string | null
 }
 
-export default function PortfolioCard({ project, index }: PortfolioCardProps) {
+export default function PortfolioCard({ project, index, judgmentHook }: PortfolioCardProps) {
   const shouldReduceMotion = useReducedMotion()
 
   // Get primary impact metric (first one, or most relevant)
@@ -117,6 +122,15 @@ export default function PortfolioCard({ project, index }: PortfolioCardProps) {
               <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4 line-clamp-2">
                 {project.shortDescription}
               </p>
+            )}
+
+            {/* Judgment Hook */}
+            {judgmentHook && (
+              <div className="mb-4 pb-4 border-b border-zinc-900/50">
+                <p className="text-zinc-500 text-xs leading-relaxed italic">
+                  {judgmentHook}
+                </p>
+              </div>
             )}
 
             {/* Impact Metric */}

@@ -1,6 +1,8 @@
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import ResumeRequestForm from '@/components/ResumeRequestForm'
 import { Suspense } from 'react'
+import Link from 'next/link'
+import { client } from '@/sanity/lib/client'
 
 export const metadata = generateSEOMetadata({
   title: 'Resume | Mauhhik',
@@ -51,11 +53,43 @@ async function DownloadSuccessMessageWrapper({
   return null
 }
 
+// Fetch featured case studies that demonstrate resume experience
+const FEATURED_CASE_STUDIES_QUERY = `
+  *[_type == "project" && (whatThisDemonstrates != null || intendedImpact != null)]
+  | order(_createdAt desc)
+  [0...3] {
+    _id,
+    title,
+    "slug": slug.current,
+    shortDescription,
+    "categories": categories[]->{ title }
+  }
+`
+
+interface FeaturedCaseStudy {
+  _id: string
+  title: string
+  slug: string
+  shortDescription?: string
+  categories?: Array<{ title: string }>
+}
+
+async function getFeaturedCaseStudies(): Promise<FeaturedCaseStudy[]> {
+  try {
+    return await client.fetch(FEATURED_CASE_STUDIES_QUERY)
+  } catch (error) {
+    console.error('Error fetching featured case studies:', error)
+    return []
+  }
+}
+
 export default async function ResumePage({
   searchParams,
 }: {
   searchParams: Promise<{ downloaded?: string }>
 }) {
+  const featuredCaseStudies = await getFeaturedCaseStudies()
+
   return (
     <main className="bg-black text-white min-h-screen">
       <div className="max-w-4xl mx-auto px-6 sm:px-8 py-20">
@@ -76,6 +110,65 @@ export default async function ResumePage({
         </Suspense>
         
         <ResumeRequestForm />
+
+        {/* Related Case Studies Section */}
+        {featuredCaseStudies && featuredCaseStudies.length > 0 && (
+          <div className="mt-16 pt-16 border-t border-zinc-900/50">
+            <div className="max-w-2xl mx-auto">
+              <p className="text-sm text-zinc-500 mb-6 text-center">
+                Detailed case studies that demonstrate the experience outlined in my resume:
+              </p>
+              <div className="space-y-3">
+                {featuredCaseStudies.map((caseStudy) => (
+                  <Link
+                    key={caseStudy._id}
+                    href={`/portfolio/${caseStudy.slug}`}
+                    className="block group p-4 bg-zinc-950/30 border border-zinc-900/50 rounded-lg hover:border-zinc-800/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-white group-hover:text-white mb-1">
+                          {caseStudy.title}
+                        </h3>
+                        {caseStudy.shortDescription && (
+                          <p className="text-xs text-zinc-500 line-clamp-1">
+                            {caseStudy.shortDescription}
+                          </p>
+                        )}
+                        {caseStudy.categories && caseStudy.categories.length > 0 && (
+                          <p className="text-xs text-zinc-600 mt-1">
+                            {caseStudy.categories.map(c => c.title).join(', ')}
+                          </p>
+                        )}
+                      </div>
+                      <svg
+                        className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 flex-shrink-0 mt-0.5 transition-colors"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-6 text-center">
+                <Link
+                  href="/portfolio"
+                  className="text-sm text-zinc-500 hover:text-zinc-400 transition-colors underline underline-offset-4"
+                >
+                  View all case studies
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )

@@ -161,6 +161,14 @@ export const PROJECT_BY_SLUG_QUERY = `
         }
       }
     },
+    intendedImpact,
+    successCriteria,
+    keyAssumptions,
+    tradeoffs[] {
+      decision,
+      tradeoff
+    },
+    whatThisDemonstrates,
     goals[] {
       label,
       value,
