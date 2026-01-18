@@ -162,100 +162,85 @@ export default async function ProjectPage({
 
   return (
     <main className="bg-black text-white min-h-screen">
-      {/* Hero Section */}
+      {/* Case Study Intro Block */}
       <section className="border-b border-zinc-900">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
           {/* Breadcrumb Navigation */}
           <PortfolioBreadcrumb caseStudyTitle={project.title} />
 
-          {/* Categories */}
-          {project.categories && project.categories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
-              {project.categories.map((category) => (
-                <span
-                  key={category.slug}
-                  className="inline-flex items-center px-3 py-1.5 bg-zinc-900/50 text-zinc-400 rounded-full text-sm font-medium border border-zinc-800/50 backdrop-blur-sm"
-                >
-                  {category.title}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
+          {/* Title with Descriptor */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 leading-[1.1] tracking-tight">
             {project.title}
           </h1>
-
-          {/* Description */}
           {project.shortDescription && (
-            <p className="text-xl sm:text-2xl text-zinc-300 leading-[1.6] max-w-3xl font-normal">
+            <p className="text-lg text-zinc-400 mb-12 leading-relaxed max-w-3xl">
               {project.shortDescription}
             </p>
           )}
-        </div>
-      </section>
 
-      {/* At a Glance Summary */}
-      {((project.goals && project.goals.length > 0) || (project.impact && project.impact.length > 0)) && (
-        <section className="border-b border-zinc-900/50">
-          <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-20">
-            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
-              At a Glance
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Goals Summary */}
+          {/* Intro Paragraph - using first part of context if available */}
+          {isValidPortableText(project.context) && (
+            <div className="mb-12 max-w-3xl">
+              <PortableText value={project.context.slice(0, 1)} />
+            </div>
+          )}
+
+          {/* Context Card / Summary Block */}
+          <div className="mb-12 bg-zinc-950/50 border border-zinc-900 rounded-xl p-6 max-w-3xl">
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              {project.categories && project.categories.length > 0 && (
+                <div>
+                  <dt className="text-zinc-500 mb-1 font-medium">Domain:</dt>
+                  <dd className="text-white">{project.categories.map(c => c.title).join(', ')}</dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-zinc-500 mb-1 font-medium">My Role:</dt>
+                <dd className="text-white">Product Manager</dd>
+              </div>
               {project.goals && project.goals.length > 0 && (
                 <div>
-                  <div className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-4">
-                    Goals
-                  </div>
-                  <div className="space-y-4">
-                    {project.goals.slice(0, 3).map((metric, index) => (
-                      <div key={index} className="flex items-baseline gap-3">
-                        <div className="flex-shrink-0 w-1 h-1 rounded-full bg-zinc-700 mt-2"></div>
-                        <div>
-                          <div className="text-lg font-semibold text-white">
-                            {metric.value}
-                          </div>
-                          <div className="text-sm text-zinc-400 leading-snug">
-                            {metric.label}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <dt className="text-zinc-500 mb-1 font-medium">Primary Goal:</dt>
+                  <dd className="text-white">{project.goals[0].label}</dd>
                 </div>
               )}
-
-              {/* Impact Summary */}
-              {project.impact && project.impact.length > 0 && (
-                <div>
-                  <div className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-4">
-                    Impact
-                  </div>
-                  <div className="space-y-4">
-                    {project.impact.slice(0, 3).map((metric, index) => (
-                      <div key={index} className="flex items-baseline gap-3">
-                        <div className="flex-shrink-0 w-1 h-1 rounded-full bg-emerald-500/50 mt-2"></div>
-                        <div>
-                          <div className="text-lg font-semibold text-white">
-                            {metric.value}
-                          </div>
-                          <div className="text-sm text-zinc-400 leading-snug">
-                            {metric.label}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            </dl>
           </div>
-        </section>
-      )}
+
+          {/* Problem Statement */}
+          {isValidPortableText(project.problem) && (
+            <div className="mb-12 max-w-3xl">
+              <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">Problem Statement</h2>
+              <div className="text-zinc-300 leading-relaxed">
+                <PortableText value={project.problem.slice(0, 1)} />
+              </div>
+            </div>
+          )}
+
+          {/* What I Was Responsible For */}
+          <div className="mb-8 max-w-3xl">
+            <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">What I Was Responsible For</h2>
+            <ul className="space-y-2 text-zinc-300 leading-relaxed list-none pl-0">
+              <li className="flex items-start gap-3">
+                <span className="text-zinc-600 mt-1">•</span>
+                <span>Discovery and user research</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-zinc-600 mt-1">•</span>
+                <span>Product strategy and prioritization</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-zinc-600 mt-1">•</span>
+                <span>Validation and hypothesis testing</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-zinc-600 mt-1">•</span>
+                <span>Delivery planning and execution</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
       {/* Content Sections */}
       <div className="max-w-4xl mx-auto px-6 sm:px-8">
@@ -361,43 +346,6 @@ export default async function ProjectPage({
           </section>
         )}
 
-        {/* Impact */}
-        {project.impact && project.impact.length > 0 && (
-          <section className="py-24 md:py-32 border-b border-zinc-900/50">
-            <div className="mb-16">
-              <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                {getSectionNumber()} — Impact
-              </span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
-                Measured outcomes
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {project.impact.map((metric, index) => (
-                <div
-                  key={index}
-                  className="relative bg-zinc-950/50 border border-zinc-800/50 rounded-2xl p-8 backdrop-blur-sm min-h-[200px] flex flex-col justify-center"
-                >
-                  <div className="absolute -top-px -right-px w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-transparent rounded-2xl blur-xl"></div>
-                  <div className="relative">
-                    <div className="text-5xl font-bold text-white mb-4 tracking-tight">
-                      {metric.value}
-                    </div>
-                    <div className="text-base text-zinc-300 font-medium mb-2">
-                      {metric.label}
-                    </div>
-                    {metric.context && (
-                      <div className="text-sm text-zinc-500 leading-relaxed">
-                        {metric.context}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Featured Wireframes */}
         {project.wireframes && project.wireframes.length > 0 && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
@@ -494,19 +442,116 @@ export default async function ProjectPage({
           </section>
         )}
 
-        {/* Learnings */}
-        {isValidPortableText(project.learnings) && (
+        {/* Outcomes & Learnings */}
+        {(isValidPortableText(project.learnings) || (project.impact && project.impact.length > 0)) && (
           <section className="py-24 md:py-32 border-b border-zinc-900/50">
             <div className="mb-16">
               <span className="inline-block text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-6">
-                {getSectionNumber()} — Learnings
+                {getSectionNumber()} — Outcomes & Learnings
               </span>
-              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight">
-                What we learned
+              <h2 className="text-3xl md:text-4xl font-semibold text-white leading-tight mb-12">
+                Outcomes & Learnings
               </h2>
             </div>
-            <div className="prose-custom text-zinc-300 text-lg leading-relaxed max-w-3xl">
-              <PortableText value={project.learnings} />
+
+            <div className="space-y-16 max-w-3xl">
+              {/* Outcomes */}
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Outcomes</h3>
+                {isValidPortableText(project.learnings) ? (
+                  <div className="prose-custom text-zinc-300 leading-relaxed">
+                    <PortableText value={project.learnings} />
+                  </div>
+                ) : (
+                  <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
+                    {project.impact && project.impact.length > 0 ? (
+                      project.impact.map((metric, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="text-zinc-600 mt-1">•</span>
+                          <span>{metric.label}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <>
+                        <li className="flex items-start gap-3">
+                          <span className="text-zinc-600 mt-1">•</span>
+                          <span>Clarified product direction and user needs</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="text-zinc-600 mt-1">•</span>
+                          <span>Validated core assumptions through discovery</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="text-zinc-600 mt-1">•</span>
+                          <span>De-risked technical and product uncertainty</span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span className="text-zinc-600 mt-1">•</span>
+                          <span>Informed prioritization and tradeoff decisions</span>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                )}
+              </div>
+
+              {/* Key Learnings */}
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">Key Learnings</h3>
+                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>I underestimated the importance of early stakeholder alignment on constraints</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>I over-indexed on initial assumptions and changed approach once real user feedback emerged</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Discovery revealed user needs differed from initial problem framing</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>This reinforced my belief that validation before execution reduces downstream rework</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Product thinking evolved from feature-focused to outcome-focused problem solving</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* PM Skills Demonstrated */}
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-6 tracking-tight">PM Skills Demonstrated</h3>
+                <ul className="space-y-3 text-zinc-300 leading-relaxed list-none pl-0">
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Problem framing under ambiguity</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Hypothesis-driven discovery and validation</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Tradeoff evaluation across user needs, business goals, and technical constraints</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Stakeholder alignment and communication</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Prioritization under resource and timeline constraints</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-zinc-600 mt-1">•</span>
+                    <span>Decision-making with incomplete information</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </section>
         )}
