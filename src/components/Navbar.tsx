@@ -6,7 +6,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="text-lg font-semibold tracking-tight">
-          Mauhhik.dev
+          Mauhhik Thakkar
         </Link>
 
         {/* Navigation */}

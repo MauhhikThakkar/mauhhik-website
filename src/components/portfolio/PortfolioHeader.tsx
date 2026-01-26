@@ -25,9 +25,9 @@ export default function PortfolioHeader() {
         Product Case Studies
       </h1>
       <p className="text-xl text-zinc-400 leading-relaxed">
-        Selected case studies showcasing product thinking, execution, and
-        real-world delivery. From AI-first products to SaaS MVPs, each project
-        demonstrates hands-on problem-solving and measurable impact.
+        Case studies demonstrating product judgment under ambiguity, trade-off evaluation, 
+        and decision-making in complex domains. Work spans enterprise platforms, fintech, 
+        AI products, and trust-heavy environments.
       </p>
     </motion.header>
   )

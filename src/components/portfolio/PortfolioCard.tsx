@@ -45,20 +45,91 @@ interface PortfolioCardProps {
 }
 
 /**
- * Extract one-line problem statement from project data
+ * Extract one-line problem statement with domain context
+ * Clarifies problem type (enterprise, fintech, AI, trust-heavy) and avoids numeric claims
  */
 function getProblemStatement(project: PortfolioProject): string | null {
-  // Use shortDescription as problem statement if available
-  if (project.shortDescription) {
-    // Take first sentence or first ~100 chars
-    const firstSentence = project.shortDescription.split('.')[0]
-    if (firstSentence.length <= 120) {
-      return firstSentence
-    }
-    // If first sentence is too long, truncate description
-    return project.shortDescription.substring(0, 100).trim() + '...'
+  if (!project.shortDescription) {
+    return null
   }
-  return null
+
+  // Extract domain context from categories
+  const domainContext = getDomainContext(project.categories)
+  
+  // Get base problem statement
+  let problemText = project.shortDescription
+  
+  // Remove numeric claims unless they're contextual (e.g., "3 stakeholders" is contextual, "300% increase" is not)
+  problemText = removeUnqualifiedMetrics(problemText)
+  
+  // Take first sentence or first ~100 chars
+  const firstSentence = problemText.split('.')[0]
+  let statement = firstSentence.length <= 120 ? firstSentence : problemText.substring(0, 100).trim() + '...'
+  
+  // Prepend domain context if not already mentioned and if it adds clarity
+  if (domainContext && !statement.toLowerCase().includes(domainContext.toLowerCase())) {
+    // Only add if it makes the statement clearer
+    if (domainContext.length + statement.length <= 120) {
+      statement = `${domainContext}: ${statement}`
+    }
+  }
+  
+  return statement
+}
+
+/**
+ * Extract domain context from categories
+ */
+function getDomainContext(categories?: Category[]): string | null {
+  if (!categories || categories.length === 0) {
+    return null
+  }
+  
+  const categoryTitles = categories.map(c => c.title.toLowerCase())
+  
+  // Prioritize high-complexity domains
+  if (categoryTitles.some(c => c.includes('fintech') || c.includes('finance'))) {
+    return 'Fintech'
+  }
+  if (categoryTitles.some(c => c.includes('enterprise'))) {
+    return 'Enterprise'
+  }
+  if (categoryTitles.some(c => c.includes('ai') || c.includes('artificial intelligence'))) {
+    return 'AI product'
+  }
+  if (categoryTitles.some(c => c.includes('trust') || c.includes('compliance') || c.includes('regulatory'))) {
+    return 'Trust-heavy'
+  }
+  if (categoryTitles.some(c => c.includes('saas'))) {
+    return 'SaaS'
+  }
+  
+  // Return first category if no specific match
+  return categories[0].title
+}
+
+/**
+ * Remove unqualified numeric claims (percentages, multipliers) unless contextual
+ * Preserves contextual numbers like "3 stakeholders", "2-week sprint"
+ */
+function removeUnqualifiedMetrics(text: string): string {
+  // Remove performance metrics: "300% increase", "5x growth", "50% reduction"
+  // Keep contextual: "3 stakeholders", "2-week sprint", "5 teams"
+  let cleaned = text
+    // Remove percentage-based performance claims
+    .replace(/\d+%\s*(increase|growth|improvement|reduction|decrease|boost|uptick|rise)/gi, '')
+    // Remove multiplier-based performance claims
+    .replace(/\d+x\s*(growth|increase|improvement|boost)/gi, '')
+    // Remove revenue/sales dollar amounts
+    .replace(/\$\d+[KMB]?\s*(revenue|sales|profit|ARR|MRR)/gi, '')
+    // Clean up extra spaces
+    .replace(/\s+/g, ' ')
+    .trim()
+  
+  // Remove leading/trailing punctuation artifacts
+  cleaned = cleaned.replace(/^[,\s.]+|[,\s.]+$/g, '')
+  
+  return cleaned
 }
 
 /**
