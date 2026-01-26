@@ -135,6 +135,9 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Mauhhik'
 
   // Note: expiryTime is no longer used in email templates since we're using a static link
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.com'
+  const portfolioUrl = `${siteUrl}/portfolio`
+  const aboutUrl = `${siteUrl}/about`
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -145,12 +148,12 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
       </head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background-color: #ffffff; border-radius: 8px; padding: 32px; border: 1px solid #e5e7eb;">
-          <h1 style="color: #111827; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;">
-            Your Resume Access Link
+          <h1 style="color: #111827; font-size: 24px; font-weight: 600; margin: 0 0 8px 0;">
+            Resume: Mauhik Thakkar
           </h1>
           
-          <p style="color: #4b5563; font-size: 16px; margin: 0 0 24px 0;">
-            Thank you for your interest. Click the button below to view my resume.
+          <p style="color: #6b7280; font-size: 14px; margin: 0 0 24px 0; font-weight: 400;">
+            Product Manager focused on clarity, judgment, and execution in complex, high-trust environments.
           </p>
           
           <div style="margin: 32px 0;">
@@ -158,12 +161,29 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
               href="${downloadUrl}" 
               style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 16px;"
             >
-              View Resume
+              View Resume (PDF)
             </a>
           </div>
           
-          <p style="color: #9ca3af; font-size: 14px; margin: 24px 0 0 0; border-top: 1px solid #e5e7eb; padding-top: 24px;">
-            You can access this resume at any time using the link above. If you did not request this resume, please ignore this email.
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
+            <p style="color: #4b5563; font-size: 15px; margin: 0 0 16px 0; font-weight: 500;">
+              Next steps:
+            </p>
+            <ul style="color: #4b5563; font-size: 15px; margin: 0; padding-left: 20px; line-height: 1.8;">
+              <li style="margin-bottom: 8px;">
+                <a href="${portfolioUrl}" style="color: #000000; text-decoration: underline;">View case studies</a> — Product judgment and decision-making across fintech, AI, and enterprise platforms
+              </li>
+              <li style="margin-bottom: 8px;">
+                <a href="${aboutUrl}" style="color: #000000; text-decoration: underline;">Read about my approach</a> — How I think about product decisions, trade-offs, and ambiguity
+              </li>
+              <li>
+                <a href="${siteUrl}" style="color: #000000; text-decoration: underline;">Visit homepage</a> — Overview of work and availability
+              </li>
+            </ul>
+          </div>
+          
+          <p style="color: #9ca3af; font-size: 13px; margin: 32px 0 0 0; border-top: 1px solid #e5e7eb; padding-top: 24px;">
+            If you did not request this resume, please ignore this email.
           </p>
         </div>
       </body>
@@ -171,25 +191,35 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
   `
 
   const textContent = `
-Your Resume Access Link
+Resume: Mauhik Thakkar
 
-Thank you for your interest. Use the link below to view my resume:
+Product Manager focused on clarity, judgment, and execution in complex, high-trust environments.
 
+View resume:
 ${downloadUrl}
 
-You can access this resume at any time using the link above.
+Next steps:
+
+• View case studies — ${portfolioUrl}
+  Product judgment and decision-making across fintech, AI, and enterprise platforms
+
+• Read about my approach — ${aboutUrl}
+  How I think about product decisions, trade-offs, and ambiguity
+
+• Visit homepage — ${siteUrl}
+  Overview of work and availability
 
 If you did not request this resume, please ignore this email.
   `.trim()
 
-  console.log(`[EMAIL_ATTEMPT] Subject: Your Resume Access Link`)
+  console.log(`[EMAIL_ATTEMPT] Subject: Resume: Mauhik Thakkar`)
   console.log(`[EMAIL_ATTEMPT] Format: HTML + Text`)
 
   try {
     const result = await resend.emails.send({
       from: `"${siteName}" <${from}>`,
       to,
-      subject: 'Your Resume Access Link',
+      subject: 'Resume: Mauhik Thakkar',
       html: htmlContent,
       text: textContent,
     })
@@ -234,7 +264,7 @@ If you did not request this resume, please ignore this email.
     console.log(`[EMAIL_ACCEPTED] Email ID: ${emailId}`)
     console.log(`[EMAIL_ACCEPTED] From: ${from}`)
     console.log(`[EMAIL_ACCEPTED] To: ${to}`)
-    console.log(`[EMAIL_ACCEPTED] Subject: Your Resume Access Link`)
+    console.log(`[EMAIL_ACCEPTED] Subject: Resume: Mauhik Thakkar`)
     console.log(`[EMAIL_ACCEPTED] Provider: resend`)
     
     return {

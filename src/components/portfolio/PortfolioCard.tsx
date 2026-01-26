@@ -41,13 +41,79 @@ interface PortfolioProject {
 interface PortfolioCardProps {
   project: PortfolioProject
   index: number
-  judgmentSignal?: string | null
   isRecommended?: boolean
 }
 
-export default function PortfolioCard({ project, judgmentSignal, isRecommended }: PortfolioCardProps) {
-  // Get primary impact metric (first one, or most relevant)
-  const primaryImpact = project.impact?.[0]
+/**
+ * Extract one-line problem statement from project data
+ */
+function getProblemStatement(project: PortfolioProject): string | null {
+  // Use shortDescription as problem statement if available
+  if (project.shortDescription) {
+    // Take first sentence or first ~100 chars
+    const firstSentence = project.shortDescription.split('.')[0]
+    if (firstSentence.length <= 120) {
+      return firstSentence
+    }
+    // If first sentence is too long, truncate description
+    return project.shortDescription.substring(0, 100).trim() + '...'
+  }
+  return null
+}
+
+/**
+ * Extract credibility signal: intended impact, problem scale, or decision complexity
+ */
+function getCredibilitySignal(project: PortfolioProject): string | null {
+  // Priority 1: Intended impact (most concrete)
+  if (project.intendedImpact) {
+    // Extract first sentence or key phrase
+    const impact = project.intendedImpact.split('.')[0]
+    if (impact.length <= 100) {
+      return impact
+    }
+    return impact.substring(0, 90).trim() + '...'
+  }
+  
+  // Priority 2: Trade-offs indicate decision complexity
+  if (project.tradeoffs && project.tradeoffs.length > 0) {
+    const tradeoffCount = project.tradeoffs.length
+    if (tradeoffCount >= 3) {
+      return `Evaluated ${tradeoffCount}+ critical trade-offs`
+    } else if (tradeoffCount >= 2) {
+      return `Evaluated multiple trade-offs`
+    }
+    return 'Evaluated key trade-offs'
+  }
+  
+  // Priority 3: Key assumptions indicate problem complexity
+  if (project.keyAssumptions && project.keyAssumptions.length > 0) {
+    const assumptionCount = project.keyAssumptions.length
+    if (assumptionCount >= 3) {
+      return `Validated ${assumptionCount}+ key assumptions`
+    }
+    return 'Validated critical assumptions'
+  }
+  
+  // Priority 4: What this demonstrates (if concise)
+  if (project.whatThisDemonstrates) {
+    const text = project.whatThisDemonstrates
+    if (text.length <= 100) {
+      return text
+    }
+    // Extract key phrase
+    const firstSentence = text.split('.')[0]
+    if (firstSentence.length <= 100) {
+      return firstSentence
+    }
+  }
+  
+  return null
+}
+
+export default function PortfolioCard({ project, isRecommended }: PortfolioCardProps) {
+  const problemStatement = getProblemStatement(project)
+  const credibilitySignal = getCredibilitySignal(project)
 
   return (
     <div>
@@ -86,50 +152,24 @@ export default function PortfolioCard({ project, judgmentSignal, isRecommended }
               </div>
             )}
 
-            {/* Domain / Category */}
-            {project.categories && project.categories.length > 0 && (
-              <div className="mb-2">
-                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                  {project.categories[0].title}
-                </span>
-              </div>
-            )}
-
             {/* Title */}
             <h2 className="text-xl sm:text-2xl font-semibold mb-3 group-hover:text-white transition-colors">
               {project.title}
             </h2>
 
-            {/* Judgment Signal */}
-            {judgmentSignal && (
+            {/* One-line Problem Statement */}
+            {problemStatement && (
               <p className="text-zinc-400 text-sm leading-relaxed mb-4">
-                {judgmentSignal}
+                {problemStatement}
               </p>
             )}
 
-            {/* Description */}
-            {project.shortDescription && (
-              <p className="text-zinc-500 text-sm leading-relaxed mb-4 line-clamp-2">
-                {project.shortDescription}
-              </p>
-            )}
-
-            {/* Impact Metric - Visually Secondary */}
-            {primaryImpact && (
+            {/* One Credibility Signal */}
+            {credibilitySignal && (
               <div className="mb-6 pt-4 border-t border-zinc-900/50">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-medium text-zinc-500">
-                    {primaryImpact.value}
-                  </span>
-                  <span className="text-xs text-zinc-600">
-                    {primaryImpact.label}
-                  </span>
-                </div>
-                {primaryImpact.context && (
-                  <p className="text-xs text-zinc-700 mt-1">
-                    {primaryImpact.context}
-                  </p>
-                )}
+                <p className="text-xs text-zinc-500 leading-relaxed">
+                  {credibilitySignal}
+                </p>
               </div>
             )}
 
