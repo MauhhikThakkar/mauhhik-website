@@ -134,12 +134,7 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
   const resend = createResendClient()
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Mauhhik'
 
-  // Format expiry time
-  const expiryTime = expiresAt.toLocaleString('en-US', {
-    dateStyle: 'long',
-    timeStyle: 'short',
-    timeZone: 'UTC',
-  })
+  // Note: expiryTime is no longer used in email templates since we're using a static link
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -151,11 +146,11 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background-color: #ffffff; border-radius: 8px; padding: 32px; border: 1px solid #e5e7eb;">
           <h1 style="color: #111827; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;">
-            Your Resume Download Link
+            Your Resume Access Link
           </h1>
           
           <p style="color: #4b5563; font-size: 16px; margin: 0 0 24px 0;">
-            Thank you for your interest. Click the button below to download my resume.
+            Thank you for your interest. Click the button below to view my resume.
           </p>
           
           <div style="margin: 32px 0;">
@@ -163,23 +158,12 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
               href="${downloadUrl}" 
               style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 16px;"
             >
-              Download Resume
+              View Resume
             </a>
           </div>
           
-          <div style="background-color: #f9fafb; border-left: 4px solid #3b82f6; padding: 16px; margin: 24px 0; border-radius: 4px;">
-            <p style="color: #4b5563; font-size: 14px; margin: 0 0 8px 0; font-weight: 500;">
-              Important:
-            </p>
-            <ul style="color: #6b7280; font-size: 14px; margin: 0; padding-left: 20px;">
-              <li style="margin-bottom: 4px;">This link expires on ${expiryTime} UTC</li>
-              <li style="margin-bottom: 4px;">You can download the resume up to 3 times</li>
-              <li>Please do not share this link with others</li>
-            </ul>
-          </div>
-          
           <p style="color: #9ca3af; font-size: 14px; margin: 24px 0 0 0; border-top: 1px solid #e5e7eb; padding-top: 24px;">
-            If you did not request this resume, please ignore this email.
+            You can access this resume at any time using the link above. If you did not request this resume, please ignore this email.
           </p>
         </div>
       </body>
@@ -187,16 +171,13 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
   `
 
   const textContent = `
-Your Resume Download Link
+Your Resume Access Link
 
-Thank you for your interest. Use the link below to download my resume:
+Thank you for your interest. Use the link below to view my resume:
 
 ${downloadUrl}
 
-Important:
-- This link expires on ${expiryTime} UTC
-- You can download the resume up to 3 times
-- Please do not share this link with others
+You can access this resume at any time using the link above.
 
 If you did not request this resume, please ignore this email.
   `.trim()

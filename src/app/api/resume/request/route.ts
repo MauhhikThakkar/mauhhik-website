@@ -57,16 +57,16 @@ export async function POST(request: NextRequest) {
 
     await storeResumeRequest(requestData)
 
-    // Send email with secure download link
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.dev'
-    const downloadUrl = `${siteUrl}/resume/download?token=${token}`
+    // Send email with static resume PDF link
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.com'
+    const resumeUrl = `${siteUrl}/resume/Mauhik_Thakkar_Product_Manager_Resume.pdf`
 
     // Attempt to send email - HARD FAIL if it doesn't work
     let emailResult: { emailId: string; provider: 'resend' }
     try {
       emailResult = await sendResumeEmail({
         to: email.trim(),
-        downloadUrl,
+        downloadUrl: resumeUrl,
         expiresAt: expiry,
       })
       console.log(`[RESUME_INCIDENT] Email accepted by Resend`)
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       console.error(`[RESUME_INCIDENT] Recipient: ${email.trim()}`)
       console.error(`[RESUME_INCIDENT] Has RESEND_API_KEY: ${!!process.env.RESEND_API_KEY}`)
       console.error(`[RESUME_INCIDENT] Has RESEND_FROM: ${!!process.env.RESEND_FROM}`)
-      console.error(`[RESUME_INCIDENT] Download URL: ${downloadUrl.substring(0, 50)}...`)
+      console.error(`[RESUME_INCIDENT] Resume URL: ${resumeUrl.substring(0, 50)}...`)
       console.error(`[RESUME_INCIDENT] Expires: ${expiry.toISOString()}`)
       
       // ALWAYS throw - no silent failures, no false success
