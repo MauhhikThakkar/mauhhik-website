@@ -4,6 +4,7 @@ interface EmailConfig {
   to: string
   downloadUrl: string
   expiresAt: Date
+  attachPdf?: boolean // Optional: attach PDF by fetching from URL
 }
 
 /**
@@ -87,7 +88,7 @@ export interface EmailSendResult {
  *   - data.id is missing
  */
 export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendResult> {
-  const { to, downloadUrl, expiresAt } = config
+  const { to, downloadUrl, expiresAt, attachPdf = false } = config
 
   const isDevelopment = process.env.NODE_ENV === 'development'
 
@@ -214,15 +215,56 @@ If you did not request this resume, please ignore this email.
 
   console.log(`[EMAIL_ATTEMPT] Subject: Resume: Mauhik Thakkar`)
   console.log(`[EMAIL_ATTEMPT] Format: HTML + Text`)
+  console.log(`[EMAIL_ATTEMPT] Attach PDF: ${attachPdf}`)
+
+  // Optionally fetch and attach PDF from URL
+  let pdfAttachment: { filename: string; content: Buffer } | undefined
+  if (attachPdf) {
+    try {
+      console.log(`[EMAIL_ATTEMPT] Fetching PDF from URL: ${downloadUrl}`)
+      const pdfResponse = await fetch(downloadUrl)
+      
+      if (!pdfResponse.ok) {
+        console.error(`[EMAIL_WARNING] Failed to fetch PDF: ${pdfResponse.status} ${pdfResponse.statusText}`)
+        console.error(`[EMAIL_WARNING] PDF attachment will be skipped, but email will still be sent with link`)
+      } else {
+        const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer())
+        pdfAttachment = {
+          filename: 'Mauhik_Thakkar_Product_Manager_Resume.pdf',
+          content: pdfBuffer,
+        }
+        console.log(`[EMAIL_ATTEMPT] PDF fetched successfully (${pdfBuffer.length} bytes)`)
+      }
+    } catch (fetchError) {
+      console.error(`[EMAIL_WARNING] Error fetching PDF for attachment:`, fetchError)
+      console.error(`[EMAIL_WARNING] PDF attachment will be skipped, but email will still be sent with link`)
+      // Don't throw - email can still be sent with just the link
+    }
+  }
 
   try {
-    const result = await resend.emails.send({
+    const emailPayload: {
+      from: string
+      to: string
+      subject: string
+      html: string
+      text: string
+      attachments?: Array<{ filename: string; content: Buffer }>
+    } = {
       from: `"${siteName}" <${from}>`,
       to,
       subject: 'Resume: Mauhik Thakkar',
       html: htmlContent,
       text: textContent,
-    })
+    }
+
+    // Add attachment if available
+    if (pdfAttachment) {
+      emailPayload.attachments = [pdfAttachment]
+      console.log(`[EMAIL_ATTEMPT] PDF attachment included`)
+    }
+
+    const result = await resend.emails.send(emailPayload)
 
     // Log full Resend response
     console.log(`[EMAIL_ATTEMPT] Resend API Response: ${JSON.stringify(result, null, 2)}`)

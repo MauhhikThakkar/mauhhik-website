@@ -58,8 +58,14 @@ export async function POST(request: NextRequest) {
     await storeResumeRequest(requestData)
 
     // Send email with static resume PDF link
+    // Use explicit production URL to ensure reliability
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.com'
     const resumeUrl = `${siteUrl}/resume/Mauhik_Thakkar_Product_Manager_Resume.pdf`
+
+    console.log(`[RESUME_REQUEST] Processing resume request`)
+    console.log(`[RESUME_REQUEST] Email: ${email.trim()}`)
+    console.log(`[RESUME_REQUEST] Resume URL: ${resumeUrl}`)
+    console.log(`[RESUME_REQUEST] Expires: ${expiry.toISOString()}`)
 
     // Attempt to send email - HARD FAIL if it doesn't work
     let emailResult: { emailId: string; provider: 'resend' }
@@ -68,23 +74,26 @@ export async function POST(request: NextRequest) {
         to: email.trim(),
         downloadUrl: resumeUrl,
         expiresAt: expiry,
+        attachPdf: true, // Attach PDF by fetching from URL
       })
-      console.log(`[RESUME_INCIDENT] Email accepted by Resend`)
-      console.log(`[RESUME_INCIDENT] Email ID: ${emailResult.emailId}`)
-      console.log(`[RESUME_INCIDENT] Provider: ${emailResult.provider}`)
+      console.log(`[RESUME_REQUEST] Email sent successfully`)
+      console.log(`[RESUME_REQUEST] Email ID: ${emailResult.emailId}`)
+      console.log(`[RESUME_REQUEST] Provider: ${emailResult.provider}`)
     } catch (emailError) {
-      // Log full error details with incident tag
+      // Log full error details with clear context
       const error = emailError instanceof Error ? emailError : new Error(String(emailError))
       
-      console.error('[RESUME_INCIDENT] Email sending failed')
-      console.error(`[RESUME_INCIDENT] Error message: ${error.message}`)
-      console.error(`[RESUME_INCIDENT] Error stack: ${error.stack}`)
-      console.error(`[RESUME_INCIDENT] Error name: ${error.name}`)
-      console.error(`[RESUME_INCIDENT] Recipient: ${email.trim()}`)
-      console.error(`[RESUME_INCIDENT] Has RESEND_API_KEY: ${!!process.env.RESEND_API_KEY}`)
-      console.error(`[RESUME_INCIDENT] Has RESEND_FROM: ${!!process.env.RESEND_FROM}`)
-      console.error(`[RESUME_INCIDENT] Resume URL: ${resumeUrl.substring(0, 50)}...`)
-      console.error(`[RESUME_INCIDENT] Expires: ${expiry.toISOString()}`)
+      console.error('[RESUME_REQUEST] Email sending failed')
+      console.error(`[RESUME_REQUEST] Error type: ${error.name}`)
+      console.error(`[RESUME_REQUEST] Error message: ${error.message}`)
+      console.error(`[RESUME_REQUEST] Error stack: ${error.stack}`)
+      console.error(`[RESUME_REQUEST] Recipient: ${email.trim()}`)
+      console.error(`[RESUME_REQUEST] Resume URL: ${resumeUrl}`)
+      console.error(`[RESUME_REQUEST] Environment check:`)
+      console.error(`  - NODE_ENV: ${process.env.NODE_ENV}`)
+      console.error(`  - Has RESEND_API_KEY: ${!!process.env.RESEND_API_KEY}`)
+      console.error(`  - Has RESEND_FROM: ${!!process.env.RESEND_FROM}`)
+      console.error(`  - RESEND_FROM value: ${process.env.RESEND_FROM || 'NOT SET'}`)
       
       // ALWAYS throw - no silent failures, no false success
       throw error
@@ -92,13 +101,14 @@ export async function POST(request: NextRequest) {
 
     // Validate email result
     if (!emailResult || !emailResult.emailId) {
-      const error = new Error('Email was sent but no email ID was returned')
-      console.error('[RESUME_INCIDENT] No email ID in result object')
-      console.error(`[RESUME_INCIDENT] Result: ${JSON.stringify(emailResult, null, 2)}`)
+      const error = new Error('Email was sent but no email ID was returned from Resend API')
+      console.error('[RESUME_REQUEST] Validation failed: No email ID in result')
+      console.error(`[RESUME_REQUEST] Result object: ${JSON.stringify(emailResult, null, 2)}`)
       throw error
     }
 
     // Return success response (don't expose token)
+    console.log(`[RESUME_REQUEST] Request completed successfully`)
     return NextResponse.json(
       {
         success: true,
@@ -107,25 +117,33 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     )
   } catch (error) {
-    // SINGLE TOP-LEVEL CATCH: Log everything with incident tag
+    // SINGLE TOP-LEVEL CATCH: Log everything with clear context
     const errorDetails = {
       timestamp: new Date().toISOString(),
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined,
+      name: error instanceof Error ? error.name : 'UnknownError',
       nodeEnv: process.env.NODE_ENV,
       hasResendKey: !!process.env.RESEND_API_KEY,
       hasResendFrom: !!process.env.RESEND_FROM,
-      runtime: 'nodejs', // Explicitly logged
+      runtime: 'nodejs',
     }
     
-    console.error('[RESUME_INCIDENT] Request failed')
-    console.error('[RESUME_INCIDENT] Full error object:', JSON.stringify(errorDetails, null, 2))
-    console.error('[RESUME_INCIDENT] Error stack:', errorDetails.stack)
+    console.error('[RESUME_REQUEST] Request failed with error')
+    console.error(`[RESUME_REQUEST] Error name: ${errorDetails.name}`)
+    console.error(`[RESUME_REQUEST] Error message: ${errorDetails.message}`)
+    console.error(`[RESUME_REQUEST] Full error details:`, JSON.stringify(errorDetails, null, 2))
+    if (errorDetails.stack) {
+      console.error(`[RESUME_REQUEST] Error stack: ${errorDetails.stack}`)
+    }
     
-    // Return 500 for ANY error - no fallback success
+    // Return 500 with meaningful error message
+    const errorMessage = error instanceof Error 
+      ? `Failed to process resume request: ${error.message}`
+      : 'Failed to process resume request. Please try again later.'
+    
     return NextResponse.json(
-      { error: 'Failed to process resume request. Please try again later.' },
+      { error: errorMessage },
       { status: 500 }
     )
   }
