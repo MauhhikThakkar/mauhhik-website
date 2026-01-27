@@ -32,7 +32,7 @@ const components: PortableTextComponents = {
       </h4>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="relative border-l-4 border-zinc-700 pl-8 pr-6 py-6 my-12 bg-zinc-950/30 rounded-r-xl">
+      <blockquote className="relative border-l-4 border-zinc-700 pl-8 pr-6 py-6 my-12 bg-charcoal-light/30 rounded-r-xl">
         <div className="absolute top-4 left-4 text-6xl text-zinc-800 leading-none">&quot;</div>
         <div className="relative text-xl leading-relaxed text-zinc-200 font-normal italic">
           {children}
@@ -107,7 +107,7 @@ const components: PortableTextComponents = {
 
         return (
           <figure className="my-16 -mx-0">
-            <div className="relative w-full rounded-xl overflow-hidden bg-zinc-950 border border-zinc-900/50">
+            <div className="relative w-full rounded-xl overflow-hidden bg-charcoal-light border border-zinc-900/50">
               <Image
                 src={imageUrl}
                 alt={value.alt || "Content image"}

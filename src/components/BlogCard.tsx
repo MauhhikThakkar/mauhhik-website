@@ -58,7 +58,7 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
 
   return (
     <motion.article
-      className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden h-full flex flex-col hover:border-zinc-700 group"
+      className="relative bg-charcoal-light/30 border border-zinc-900 rounded-2xl overflow-hidden h-full flex flex-col hover:border-zinc-700 group"
       variants={cardVariants}
       initial="rest"
       whileHover="hover"
@@ -67,11 +67,11 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
     >
       <Link
         href={`/blog/${post.slug}`}
-        className="block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
+        className="block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal rounded-2xl"
       >
         {/* Image */}
         {imageUrl && (
-          <div className="relative w-full aspect-[16/9] bg-zinc-950">
+          <div className="relative w-full aspect-[16/9] bg-charcoal-light">
             <Image
               src={imageUrl}
               alt={imageAlt || post.title}

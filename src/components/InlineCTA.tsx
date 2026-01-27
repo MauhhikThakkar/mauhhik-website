@@ -181,7 +181,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
         animate="visible"
         aria-label="Related product"
       >
-        <div className="bg-zinc-950/40 border border-zinc-800/50 rounded-xl p-6 md:p-8">
+        <div className="bg-charcoal-light/40 border border-zinc-800/50 rounded-xl p-6 md:p-8">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Image */}
             {imageUrl && (
@@ -217,7 +217,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
                     href={cta.buttonLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-black"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-charcoal"
                   >
                     <span>{cta.buttonText}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -227,7 +227,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
                 ) : (
                   <Link
                     href={cta.buttonLink}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-black"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-charcoal"
                   >
                     <span>{cta.buttonText}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -262,7 +262,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
         animate="visible"
         aria-label="Related case study"
       >
-        <div className="bg-zinc-950/40 border-l-4 border-zinc-700 rounded-r-lg p-6 md:p-8">
+        <div className="bg-charcoal-light/40 border-l-4 border-zinc-700 rounded-r-lg p-6 md:p-8">
           <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">
             How this applies in practice
           </p>
@@ -294,7 +294,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
               )}
               <Link
                 href={`/portfolio/${project.slug}`}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-black"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-charcoal"
               >
                 <span>{cta.buttonText || 'View case study'}</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -318,7 +318,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
       animate="visible"
       aria-label="Call to action"
     >
-      <div className="bg-zinc-950/40 border border-zinc-800/50 rounded-xl p-6 md:p-8">
+      <div className="bg-charcoal-light/40 border border-zinc-800/50 rounded-xl p-6 md:p-8">
         <h3 className="text-lg font-semibold text-white mb-2">
           {cta.headline}
         </h3>
@@ -332,7 +332,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
             href={cta.buttonLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-black"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-charcoal"
           >
             <span>{cta.buttonText}</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -342,7 +342,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
         ) : (
           <Link
             href={cta.buttonLink}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-black"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-charcoal"
           >
             <span>{cta.buttonText}</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

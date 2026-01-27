@@ -61,7 +61,7 @@ export default function ResumeRequestForm() {
   if (isSuccess) {
     return (
       <div className="max-w-md mx-auto">
-        <div className="bg-zinc-950/30 border border-emerald-900/50 rounded-2xl p-8 md:p-10">
+        <div className="bg-charcoal-light/30 border border-emerald-900/50 rounded-2xl p-8 md:p-10">
           <div className="text-center">
             {/* Success Icon */}
             <div className="flex justify-center mb-6" aria-hidden="true">
@@ -102,7 +102,7 @@ export default function ResumeRequestForm() {
   // Form state
   return (
     <div className="max-w-md mx-auto">
-      <div className="bg-zinc-950/30 border border-zinc-900 rounded-2xl p-8 md:p-10">
+      <div className="bg-charcoal-light/30 border border-zinc-900 rounded-2xl p-8 md:p-10">
         <form onSubmit={handleSubmit} noValidate>
           <div className="space-y-4">
             {/* Email Input */}

@@ -77,7 +77,7 @@ export default async function ProductPage({
   }
 
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-charcoal text-white min-h-screen">
       {/* Hero Section */}
       <section className="border-b border-zinc-900">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 pt-20 pb-16 md:pt-24 md:pb-20">
@@ -152,7 +152,7 @@ export default async function ProductPage({
 
       {/* Related Writing */}
       {product.relatedBlogPosts && product.relatedBlogPosts.length > 0 && (
-        <section className="border-b border-zinc-900/50 bg-zinc-950/20">
+        <section className="border-b border-zinc-900/50 bg-charcoal-light/20">
           <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
             <div className="mb-10">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
@@ -167,7 +167,7 @@ export default async function ProductPage({
                 <Link
                   key={post._id}
                   href={`/blog/${post.slug}`}
-                  className="group block p-6 bg-zinc-950/50 border border-zinc-800 rounded-xl hover:border-zinc-700 hover:bg-zinc-950/70 hover:shadow-lg hover:shadow-zinc-900/30 hover:-translate-y-1 transition-all duration-300"
+                  className="group block p-6 bg-charcoal-light/50 border border-zinc-800 rounded-xl hover:border-zinc-700 hover:bg-charcoal-light/70 hover:shadow-lg hover:shadow-zinc-900/30 hover:-translate-y-1 transition-all duration-300"
                 >
                   <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-zinc-100 transition-colors">
                     {post.title}
@@ -193,7 +193,7 @@ export default async function ProductPage({
       {/* CTA Section - Coming Soon */}
       <section className="py-16 md:py-24 border-t border-zinc-900/50">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 text-center">
-          <div className="inline-flex items-center gap-3 px-8 py-4 bg-zinc-950/50 text-zinc-300 rounded-xl border border-zinc-800">
+          <div className="inline-flex items-center gap-3 px-8 py-4 bg-charcoal-light/50 text-zinc-300 rounded-xl border border-zinc-800">
             <svg
               className="w-5 h-5 text-zinc-500"
               fill="none"

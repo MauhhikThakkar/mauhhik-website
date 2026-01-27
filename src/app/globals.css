@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply bg-charcoal;
+  }
   body {
-    @apply bg-black text-white antialiased;
+    @apply bg-charcoal text-white antialiased;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }

@@ -91,7 +91,7 @@ export default async function ResumePage({
   const featuredCaseStudies = await getFeaturedCaseStudies()
 
   return (
-    <main className="bg-black text-white min-h-screen print:bg-white print:text-black">
+    <main className="bg-charcoal text-white min-h-screen print:bg-white print:text-black">
       <div className="max-w-4xl mx-auto px-6 sm:px-8 py-12 sm:py-20">
         {/* Above-the-fold: Role positioning and context */}
         <div className="mb-12 print:mb-8">
@@ -112,7 +112,7 @@ export default async function ResumePage({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 print:hidden">
             <Link
               href="/portfolio"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-black"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-charcoal"
             >
               <svg
                 className="w-4 h-4"
@@ -134,7 +134,7 @@ export default async function ResumePage({
               href="https://www.linkedin.com/in/mauhhikthakkar/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-black"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-charcoal"
             >
               <svg
                 className="w-4 h-4"
@@ -179,7 +179,7 @@ export default async function ResumePage({
                   <Link
                     key={caseStudy._id}
                     href={`/portfolio/${caseStudy.slug}`}
-                    className="block group p-4 bg-zinc-950/30 border border-zinc-900/50 rounded-lg hover:border-zinc-800/50 transition-colors"
+                    className="block group p-4 bg-charcoal-light/30 border border-zinc-900/50 rounded-lg hover:border-zinc-800/50 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">

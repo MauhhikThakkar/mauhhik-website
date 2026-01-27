@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
-import Navbar from "@/components/Navbar"
 import Reveal from "@/components/Reveal"
 
 export const metadata = generateSEOMetadata({
@@ -12,9 +11,7 @@ export const metadata = generateSEOMetadata({
 
 export default function AboutPage() {
   return (
-    <main className="bg-black text-white min-h-screen">
-      <Navbar />
-      
+    <main className="bg-charcoal text-white min-h-screen">
       {/* Hero Section */}
       <section className="border-b border-zinc-900">
         <div className="max-w-3xl mx-auto px-6 sm:px-8 py-16 md:py-24">

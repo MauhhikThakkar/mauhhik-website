@@ -67,7 +67,7 @@ export default function CTAButton({
     ? 'px-6 py-3 rounded-full bg-white text-black font-medium hover:bg-gray-200'
     : 'px-6 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 hover:border-white/30'
 
-  const focusClasses = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black'
+  const focusClasses = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal'
 
   if (external) {
     return (

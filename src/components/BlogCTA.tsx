@@ -50,11 +50,11 @@ export default function BlogCTA({
         return `${baseClasses} border-l-4 border-zinc-700 pl-8 py-6`
 
       case 'feature':
-        return `${baseClasses} bg-zinc-950/50 border-2 border-zinc-800 rounded-3xl p-10 backdrop-blur-sm`
+        return `${baseClasses} bg-charcoal-light/50 border-2 border-zinc-800 rounded-3xl p-10 backdrop-blur-sm`
 
       case 'card':
       default:
-        return `${baseClasses} bg-zinc-950/30 border border-zinc-900 rounded-2xl p-8 md:p-10`
+        return `${baseClasses} bg-charcoal-light/30 border border-zinc-900 rounded-2xl p-8 md:p-10`
     }
   }
 

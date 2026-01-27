@@ -140,7 +140,7 @@ export default async function BlogPostPage({
     : null
 
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-charcoal text-white min-h-screen">
       {/* Reading Progress Indicator */}
       <ReadingProgress />
 
@@ -216,7 +216,7 @@ export default async function BlogPostPage({
 
         {/* TL;DR - Prominent */}
         {post.tldr && (
-          <div className="border-b border-zinc-900/50 bg-zinc-950/30">
+          <div className="border-b border-zinc-900/50 bg-charcoal-light/30">
             <div className="max-w-4xl mx-auto px-6 sm:px-8 py-12">
               <div className="max-w-3xl">
                 <div className="flex items-center gap-3 mb-4">
@@ -241,7 +241,7 @@ export default async function BlogPostPage({
         {imageUrl && (
           <div className="border-b border-zinc-900">
             <div className="max-w-5xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-zinc-950">
+              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-charcoal-light">
                 <Image
                   src={imageUrl}
                   alt={post.heroImage?.alt || post.title}
@@ -315,7 +315,7 @@ export default async function BlogPostPage({
 
         {/* Related Projects */}
         {post.relatedProjects && post.relatedProjects.length > 0 && (
-          <div className="border-t border-zinc-900 bg-zinc-950/20">
+          <div className="border-t border-zinc-900 bg-charcoal-light/20">
             <div className="max-w-4xl mx-auto px-6 sm:px-8 py-20 md:py-24">
               <div className="mb-10">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Related Case Studies</h2>
@@ -328,7 +328,7 @@ export default async function BlogPostPage({
                   <Link
                     key={project.slug}
                     href={`/portfolio/${project.slug}`}
-                    className="group block p-8 bg-zinc-950/50 border border-zinc-800 rounded-xl hover:border-zinc-700 hover:bg-zinc-950/70 hover:shadow-lg hover:shadow-zinc-900/30 hover:-translate-y-1 transition-all duration-300"
+                    className="group block p-8 bg-charcoal-light/50 border border-zinc-800 rounded-xl hover:border-zinc-700 hover:bg-charcoal-light/70 hover:shadow-lg hover:shadow-zinc-900/30 hover:-translate-y-1 transition-all duration-300"
                   >
                     <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-zinc-100 transition-colors">
                       {project.title}

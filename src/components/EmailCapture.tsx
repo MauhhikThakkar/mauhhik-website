@@ -47,7 +47,7 @@ export default function EmailCapture() {
   if (isSuccess) {
     return (
       <div className="not-prose my-16 -mx-0 max-w-2xl mx-auto">
-        <div className="bg-zinc-950/30 border border-emerald-900/50 rounded-2xl p-8 md:p-10">
+        <div className="bg-charcoal-light/30 border border-emerald-900/50 rounded-2xl p-8 md:p-10">
           <div className="text-center">
             {/* Success Icon */}
             <div className="flex justify-center mb-6">
@@ -84,7 +84,7 @@ export default function EmailCapture() {
   // Form state
   return (
     <div className="not-prose my-16 -mx-0 max-w-2xl mx-auto">
-      <div className="bg-zinc-950/30 border border-zinc-900 rounded-2xl p-8 md:p-10">
+      <div className="bg-charcoal-light/30 border border-zinc-900 rounded-2xl p-8 md:p-10">
         <div className="text-center">
           {/* Icon */}
           <div className="flex justify-center mb-6">

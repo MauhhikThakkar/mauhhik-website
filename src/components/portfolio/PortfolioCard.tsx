@@ -193,7 +193,7 @@ export default function PortfolioCard({ project, isRecommended }: PortfolioCardP
         className="group block h-full"
       >
         <article
-          className={`h-full bg-zinc-950/30 border rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors ${
+          className={`h-full bg-charcoal-light/30 border rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors ${
             isRecommended ? 'border-zinc-800' : 'border-zinc-900'
           }`}
         >

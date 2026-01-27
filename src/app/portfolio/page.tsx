@@ -162,7 +162,7 @@ export default async function PortfolioPage() {
   const projects = await getProjects()
 
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-charcoal text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20 sm:py-28">
         <PortfolioHeader />
 

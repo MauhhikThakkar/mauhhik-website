@@ -18,7 +18,7 @@ export default async function ProductsPage() {
   const products = await client.fetch<Product[]>(LIVE_PRODUCTS_QUERY)
 
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-charcoal text-white min-h-screen">
       {/* Hero Section */}
       <section className="border-b border-zinc-900">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-16 md:py-24">

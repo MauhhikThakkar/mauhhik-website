@@ -170,7 +170,7 @@ export default async function ProjectPage({
   }
 
   return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-charcoal text-white min-h-screen">
       {/* Case Study Intro Block */}
       <section className="border-b border-zinc-900">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
@@ -211,7 +211,7 @@ export default async function ProjectPage({
           )}
 
           {/* Context Card / Summary Block */}
-          <div className="mb-12 bg-zinc-950/50 border border-zinc-900 rounded-xl p-6 max-w-3xl">
+          <div className="mb-12 bg-charcoal-light/50 border border-zinc-900 rounded-xl p-6 max-w-3xl">
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               {project.categories && project.categories.length > 0 && (
                 <div>
@@ -281,7 +281,7 @@ export default async function ProjectPage({
       {/* Resume Context Block */}
       <section className="border-b border-zinc-900">
         <div className="max-w-4xl mx-auto px-6 sm:px-8 py-8">
-          <div className="bg-zinc-950/30 border border-zinc-900 rounded-xl p-6 max-w-3xl">
+          <div className="bg-charcoal-light/30 border border-zinc-900 rounded-xl p-6 max-w-3xl">
             <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
               Professional Context
             </div>
@@ -363,7 +363,7 @@ export default async function ProjectPage({
               {project.goals.map((metric, index) => (
                 <div
                   key={index}
-                  className="relative bg-zinc-950/50 border border-zinc-900 rounded-2xl p-8 backdrop-blur-sm min-h-[200px] flex flex-col justify-center"
+                  className="relative bg-charcoal-light/50 border border-zinc-900 rounded-2xl p-8 backdrop-blur-sm min-h-[200px] flex flex-col justify-center"
                 >
                   <div className="text-5xl font-bold text-white mb-4 tracking-tight">
                     {metric.value}
@@ -450,10 +450,10 @@ export default async function ProjectPage({
                       return (
                         <div
                           key={index}
-                          className="group relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-800 transition-all"
+                          className="group relative bg-charcoal-light/30 border border-zinc-900 rounded-2xl overflow-hidden hover:border-zinc-800 transition-all"
                         >
                           {/* Image - Full mobile screen visible */}
-                          <div className="relative w-full bg-zinc-950 flex items-center justify-center p-8 min-h-[400px]">
+                          <div className="relative w-full bg-charcoal-light flex items-center justify-center p-8 min-h-[400px]">
                             <div className="relative w-full max-w-sm mx-auto h-full">
                               <Image
                                 src={imageUrl}
@@ -535,7 +535,7 @@ export default async function ProjectPage({
             <div className="space-y-6 max-w-4xl">
               {/* Intended Impact Card */}
               {project.intendedImpact && (
-                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                       <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -554,7 +554,7 @@ export default async function ProjectPage({
 
               {/* Success Criteria Card */}
               {project.successCriteria && project.successCriteria.length > 0 && (
-                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                       <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -578,7 +578,7 @@ export default async function ProjectPage({
 
               {/* Key Assumptions Card */}
               {project.keyAssumptions && project.keyAssumptions.length > 0 && (
-                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                       <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -602,7 +602,7 @@ export default async function ProjectPage({
 
               {/* Trade-offs Card */}
               {project.tradeoffs && project.tradeoffs.length > 0 && (
-                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                       <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -626,7 +626,7 @@ export default async function ProjectPage({
 
               {/* What This Demonstrates Card */}
               {project.whatThisDemonstrates && (
-                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                       <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -645,7 +645,7 @@ export default async function ProjectPage({
 
               {/* Key Learnings */}
               {isValidPortableText(project.learnings) && (
-                <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+                <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                       <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -663,7 +663,7 @@ export default async function ProjectPage({
               )}
 
               {/* PM Skills Demonstrated */}
-              <div className="bg-zinc-950/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
+              <div className="bg-charcoal-light/50 border border-zinc-900/80 rounded-xl p-8 hover:border-zinc-800/80 transition-colors">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/50 flex items-center justify-center border border-zinc-800/50">
                     <svg className="w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -721,7 +721,7 @@ export default async function ProjectPage({
                 <Link
                   key={blog._id}
                   href={`/blog/${blog.slug}`}
-                  className="group block p-6 bg-zinc-950/30 border border-zinc-900 rounded-xl hover:border-zinc-800 hover:bg-zinc-950/50 transition-all duration-200"
+                  className="group block p-6 bg-charcoal-light/30 border border-zinc-900 rounded-xl hover:border-zinc-800 hover:bg-charcoal-light/50 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between gap-4 mb-3">
                     {blog.category && (
@@ -798,7 +798,7 @@ export default async function ProjectPage({
               {project.previousProject ? (
                 <Link
                   href={`/portfolio/${project.previousProject.slug}`}
-                  className="group flex flex-col justify-between bg-zinc-950/30 border border-zinc-900 rounded-xl p-6 hover:border-zinc-800 transition-all"
+                  className="group flex flex-col justify-between bg-charcoal-light/30 border border-zinc-900 rounded-xl p-6 hover:border-zinc-800 transition-all"
                 >
                   <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
                     ← Previous
@@ -815,7 +815,7 @@ export default async function ProjectPage({
               {project.nextProject && (
                 <Link
                   href={`/portfolio/${project.nextProject.slug}`}
-                  className="group flex flex-col justify-between bg-zinc-950/30 border border-zinc-900 rounded-xl p-6 hover:border-zinc-800 transition-all text-right"
+                  className="group flex flex-col justify-between bg-charcoal-light/30 border border-zinc-900 rounded-xl p-6 hover:border-zinc-800 transition-all text-right"
                 >
                   <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">
                     Next →

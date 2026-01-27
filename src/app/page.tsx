@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
@@ -12,8 +11,7 @@ export const metadata = generateSEOMetadata({
 
 export default function Home() {
   return (
-    <main className="bg-black text-white">
-      <Navbar />
+    <main className="bg-charcoal text-white">
       <Hero />
       
       {/* Thinking Section */}

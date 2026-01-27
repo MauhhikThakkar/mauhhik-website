@@ -69,7 +69,7 @@ function DownloadContent() {
 
   if (state.status === 'loading' || state.status === 'downloading') {
     return (
-      <main className="bg-black text-white min-h-screen flex items-center justify-center">
+      <main className="bg-charcoal text-white min-h-screen flex items-center justify-center">
         <div className="max-w-md mx-auto px-6 text-center">
           <div className="mb-6">
             <div className="w-12 h-12 border-4 border-zinc-700 border-t-white rounded-full animate-spin mx-auto"></div>
@@ -87,9 +87,9 @@ function DownloadContent() {
 
   if (state.status === 'error') {
     return (
-      <main className="bg-black text-white min-h-screen flex items-center justify-center">
+      <main className="bg-charcoal text-white min-h-screen flex items-center justify-center">
         <div className="max-w-md mx-auto px-6">
-          <div className="bg-zinc-950/30 border border-red-900/50 rounded-2xl p-8 text-center">
+          <div className="bg-charcoal-light/30 border border-red-900/50 rounded-2xl p-8 text-center">
             {/* Error Icon */}
             <div className="flex justify-center mb-6" aria-hidden="true">
               <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
@@ -144,7 +144,7 @@ export default function ResumeDownloadPage() {
   return (
     <Suspense
       fallback={
-        <main className="bg-black text-white min-h-screen flex items-center justify-center">
+        <main className="bg-charcoal text-white min-h-screen flex items-center justify-center">
           <div className="max-w-md mx-auto px-6 text-center">
             <div className="mb-6">
               <div className="w-12 h-12 border-4 border-zinc-700 border-t-white rounded-full animate-spin mx-auto"></div>

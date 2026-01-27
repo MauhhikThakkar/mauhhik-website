@@ -80,7 +80,7 @@ export default async function BlogPage() {
     }, {} as Record<string, { category: BlogCategory; posts: BlogPost[] }>)
 
     return (
-    <main className="bg-black text-white min-h-screen">
+    <main className="bg-charcoal text-white min-h-screen">
       {/* Hero Section */}
       <section className="border-b border-zinc-900">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-16 md:py-24">
@@ -240,7 +240,7 @@ export default async function BlogPage() {
   } catch {
     // Silently handle errors in production, show user-friendly message
     return (
-      <main className="bg-black text-white min-h-screen">
+      <main className="bg-charcoal text-white min-h-screen">
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-20">
           <h1 className="text-4xl font-bold mb-4">Error Loading Blog</h1>
           <p className="text-zinc-400">There was an error loading the blog posts. Please try again later.</p>

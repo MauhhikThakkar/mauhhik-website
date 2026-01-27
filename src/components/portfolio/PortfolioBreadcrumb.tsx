@@ -15,7 +15,7 @@ export default function PortfolioBreadcrumb({
           <Link
             href="/"
             itemProp="item"
-            className="hover:text-zinc-400 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-black rounded"
+            className="hover:text-zinc-400 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-charcoal rounded"
           >
             <span itemProp="name">Home</span>
           </Link>
@@ -45,7 +45,7 @@ export default function PortfolioBreadcrumb({
           <Link
             href="/portfolio"
             itemProp="item"
-            className="hover:text-zinc-400 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-black rounded"
+            className="hover:text-zinc-400 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-charcoal rounded"
           >
             <span itemProp="name">Portfolio</span>
           </Link>

@@ -5,6 +5,7 @@ import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION } from "@/
 import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
 import Footer from "@/components/Footer"
+import Navbar from "@/components/Navbar"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,8 +35,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased flex flex-col min-h-screen">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-charcoal`}>
+      <body className="antialiased flex flex-col min-h-screen bg-charcoal">
+        <Navbar />
         <div className="flex-1">
           {children}
         </div>

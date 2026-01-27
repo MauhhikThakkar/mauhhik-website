@@ -47,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <motion.article
-      className="relative bg-zinc-950/30 border border-zinc-900 rounded-2xl overflow-hidden transition-all duration-300 h-full flex flex-col hover:border-zinc-700 group"
+      className="relative bg-charcoal-light/30 border border-zinc-900 rounded-2xl overflow-hidden transition-all duration-300 h-full flex flex-col hover:border-zinc-700 group"
       variants={cardVariants}
       initial="rest"
       whileHover="hover"
@@ -56,7 +56,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       <Link
         href={`/products/${product.slug}`}
-        className="block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
+        className="block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-charcoal rounded-2xl"
       >
         {/* Content */}
         <div className="p-6 flex-1 flex flex-col">
