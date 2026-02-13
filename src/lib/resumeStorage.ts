@@ -1,5 +1,12 @@
-import { promises as fs } from 'fs'
-import { join } from 'path'
+/**
+ * Serverless-safe resume request storage
+ * 
+ * NOTE: This is a temporary logging-only implementation for serverless environments.
+ * In production, replace with a proper database (e.g., Vercel Postgres, Supabase, etc.)
+ * 
+ * All filesystem write operations have been removed to ensure compatibility with
+ * serverless platforms like Vercel where the filesystem is read-only.
+ */
 
 /**
  * UTM parameters structure
@@ -12,6 +19,10 @@ export interface UtmParams {
   utm_content?: string
 }
 
+/**
+ * Resume Request Data structure
+ * Used for logging and future database integration
+ */
 export interface ResumeRequestData {
   token: string
   email: string
@@ -22,116 +33,74 @@ export interface ResumeRequestData {
   utmParams?: UtmParams
 }
 
-const STORAGE_FILE = join(process.cwd(), 'data', 'resume-requests.json')
-
-/**
- * Ensure data directory exists
- */
-async function ensureDataDirectory(): Promise<void> {
-  const dataDir = join(process.cwd(), 'data')
-  try {
-    await fs.access(dataDir)
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true })
-  }
-}
-
-/**
- * Read all resume requests from storage
- */
-async function readRequests(): Promise<ResumeRequestData[]> {
-  try {
-    await ensureDataDirectory()
-    const data = await fs.readFile(STORAGE_FILE, 'utf-8')
-    return JSON.parse(data) as ResumeRequestData[]
-  } catch (error) {
-    // File doesn't exist yet, return empty array
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      return []
-    }
-    throw error
-  }
-}
-
-/**
- * Write resume requests to storage
- */
-async function writeRequests(requests: ResumeRequestData[]): Promise<void> {
-  await ensureDataDirectory()
-  await fs.writeFile(STORAGE_FILE, JSON.stringify(requests, null, 2), 'utf-8')
-}
-
 /**
  * Store a new resume request
+ * 
+ * SERVERLESS-SAFE: Logs to console instead of filesystem
+ * 
+ * @param data - Resume request data including token, email, and UTM params
  */
 export async function storeResumeRequest(data: ResumeRequestData): Promise<void> {
-  const requests = await readRequests()
+  // Log resume request with full details for analytics/debugging
+  console.log('[RESUME_STORAGE] Resume request logged:')
+  console.log(JSON.stringify({
+    timestamp: new Date().toISOString(),
+    token: data.token,
+    email: data.email,
+    expiry: data.expiry,
+    maxDownloads: data.maxDownloads,
+    utmParams: data.utmParams || null,
+    createdAt: data.createdAt,
+  }, null, 2))
   
-  // Remove expired requests
-  const now = new Date()
-  const validRequests = requests.filter(
-    (req) => new Date(req.expiry) > now
-  )
-  
-  // Add new request
-  validRequests.push(data)
-  
-  await writeRequests(validRequests)
+  // TODO: Replace with database storage when ready
+  // Example: await db.resumeRequests.create({ data })
 }
 
 /**
  * Get resume request by token
+ * 
+ * SERVERLESS-SAFE: Returns null (no filesystem reads)
+ * 
+ * NOTE: Token validation is currently disabled in download route.
+ * For production, implement JWT tokens or database lookup.
+ * 
+ * @param token - Resume request token
+ * @returns null (always returns null in serverless mode)
  */
 export async function getResumeRequestByToken(token: string): Promise<ResumeRequestData | null> {
-  const requests = await readRequests()
-  const request = requests.find((req) => req.token === token)
+  // In serverless mode, we can't validate tokens without storage
+  // This function is kept for API compatibility but always returns null
+  // TODO: Replace with database lookup when ready
+  // Example: return await db.resumeRequests.findUnique({ where: { token } })
   
-  if (!request) {
-    return null
-  }
-  
-  // Check if expired
-  if (new Date(request.expiry) < new Date()) {
-    return null
-  }
-  
-  return request
+  console.log(`[RESUME_STORAGE] Token lookup requested: ${token.substring(0, 8)}... (serverless mode - validation disabled)`)
+  return null
 }
 
 /**
- * Increment download count for a token atomically
+ * Increment download count for a token
  * 
- * This function validates and increments in a single operation to minimize race conditions.
- * For file-based storage, minor race conditions are acceptable at low concurrency.
- * Returns false if token is invalid, expired, or limit reached.
+ * SERVERLESS-SAFE: Returns success without filesystem writes
+ * 
+ * NOTE: Download tracking is currently disabled in serverless mode.
+ * For production, implement database-based tracking.
+ * 
+ * @param token - Resume request token
+ * @returns Always returns success (validation disabled in serverless mode)
  */
 export async function incrementDownloadCount(token: string): Promise<{
   success: boolean
   reason?: 'not_found' | 'expired' | 'limit_reached'
 }> {
-  const requests = await readRequests()
-  const requestIndex = requests.findIndex((req) => req.token === token)
+  // In serverless mode, we can't track downloads without storage
+  // This function is kept for API compatibility but always returns success
+  // TODO: Replace with database update when ready
+  // Example: await db.resumeRequests.update({ where: { token }, data: { downloadCount: { increment: 1 } } })
   
-  if (requestIndex === -1) {
-    return { success: false, reason: 'not_found' }
-  }
+  console.log(`[RESUME_STORAGE] Download count increment requested for token: ${token.substring(0, 8)}... (serverless mode - tracking disabled)`)
   
-  const request = requests[requestIndex]
-  const now = new Date()
-  
-  // Check if expired
-  if (new Date(request.expiry) < now) {
-    return { success: false, reason: 'expired' }
-  }
-  
-  // Check if max downloads reached
-  if (request.downloadCount >= request.maxDownloads) {
-    return { success: false, reason: 'limit_reached' }
-  }
-  
-  // Increment count atomically
-  requests[requestIndex].downloadCount += 1
-  await writeRequests(requests)
-  
+  // Always return success in serverless mode
+  // Token validation and download limits are disabled
   return { success: true }
 }

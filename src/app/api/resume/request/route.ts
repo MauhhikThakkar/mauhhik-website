@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
 import { sendResumeEmail } from '@/lib/email'
-import { storeResumeRequest } from '@/lib/resumeStorage'
 
-// Ensure Node.js runtime (not Edge) for crypto and file system access
+// Ensure Node.js runtime (not Edge) for crypto
 export const runtime = 'nodejs'
 
 interface UtmParams {
@@ -48,32 +47,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate secure random token (32 bytes = 64 hex characters)
+    // Token is generated for tracking purposes (can be used for future JWT implementation)
     const token = randomBytes(32).toString('hex')
 
-    // Calculate expiry (6 hours from now)
+    // Calculate expiry (6 hours from now) - for logging purposes
     const expiry = new Date()
     expiry.setHours(expiry.getHours() + 6)
 
-    // Store request data with UTM params if available
-    const requestData = {
-      token,
+    // Log resume request with full metadata (serverless-safe - console.log only)
+    const requestMetadata = {
+      timestamp: new Date().toISOString(),
+      token: token.substring(0, 16) + '...', // Log partial token for security
       email: email.toLowerCase().trim(),
       expiry: expiry.toISOString(),
-      downloadCount: 0,
-      maxDownloads: 3,
-      createdAt: new Date().toISOString(),
-      ...(utmParams && Object.keys(utmParams).length > 0 && { utmParams }),
+      utmParams: utmParams && Object.keys(utmParams).length > 0 ? utmParams : null,
     }
     
-    // Log UTM params if present
-    if (utmParams && Object.keys(utmParams).length > 0) {
-      console.log(`[RESUME_REQUEST] UTM params:`, JSON.stringify(utmParams, null, 2))
-    }
+    console.log('[RESUME_REQUEST] Resume request received:')
+    console.log(JSON.stringify(requestMetadata, null, 2))
 
-    await storeResumeRequest(requestData)
-
-    // Send email with static resume PDF link
-    // Use explicit production URL to ensure reliability
+    // Send email with direct link to static resume PDF
+    // File is served from /public/resume/ via Next.js static file serving
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.com'
     const resumeUrl = `${siteUrl}/resume/Mauhik_Thakkar_Product_Manager_Resume.pdf`
 

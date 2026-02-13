@@ -27,18 +27,25 @@ function DownloadContent() {
       return
     }
 
-    // Trigger download
+    // Trigger download directly from static file
     const downloadResume = async () => {
       try {
         setState({ status: 'downloading' })
 
-        const response = await fetch(`/api/resume/download?token=${encodeURIComponent(token)}`)
+        // Log download attempt (serverless-safe)
+        console.log(`[RESUME_DOWNLOAD] Download initiated for token: ${token.substring(0, 8)}...`)
+
+        // Download directly from static file in /public/resume/
+        // Next.js automatically serves files from /public/ folder
+        const resumeUrl = '/resume/Mauhik_Thakkar_Product_Manager_Resume.pdf'
+        
+        // Fetch the static file and trigger download
+        const response = await fetch(resumeUrl)
 
         if (!response.ok) {
-          const data = await response.json().catch(() => ({ error: 'Unknown error' }))
           setState({
             status: 'error',
-            error: data.error || 'Failed to download resume. Please try again.',
+            error: 'Failed to download resume. Please try again.',
           })
           return
         }
@@ -48,7 +55,7 @@ function DownloadContent() {
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = 'Mauhhik-Resume.pdf'
+        a.download = 'Mauhik_Thakkar_Product_Manager_Resume.pdf'
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
@@ -67,7 +74,7 @@ function DownloadContent() {
           window.location.href = '/resume?downloaded=true'
         }, 1000)
       } catch (error) {
-        console.error('Download error:', error)
+        console.error('[RESUME_DOWNLOAD] Download error:', error)
         setState({
           status: 'error',
           error: 'An error occurred while downloading. Please try again.',
