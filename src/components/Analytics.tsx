@@ -1,92 +1,113 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import Script from 'next/script'
+import { trackPageView } from '@/lib/analytics'
 
-declare global {
-  interface Window {
-    plausible?: (event: string, options?: { props?: Record<string, string | number> }) => void
-  }
-}
-
-interface AnalyticsProps {
-  domain?: string
-  enabled?: boolean
-}
-
-export default function Analytics({ domain, enabled = true }: AnalyticsProps) {
+/**
+ * Analytics Component
+ * 
+ * Unified component for Google Analytics 4 and Microsoft Clarity integration.
+ * 
+ * Features:
+ * - Loads scripts only in production (NODE_ENV === 'production')
+ * - Uses next/script for optimal performance (afterInteractive strategy)
+ * - SSR-safe implementation (client component with mounting check)
+ * - Tracks GA4 pageviews on route changes
+ * - Prevents duplicate script injection
+ * 
+ * Environment Variables Required:
+ * - NEXT_PUBLIC_GA_ID: Google Analytics 4 Measurement ID (format: G-XXXXXXXXXX)
+ * - NEXT_PUBLIC_CLARITY_ID: Microsoft Clarity Project ID (alphanumeric string)
+ * 
+ * Usage:
+ * Import directly in layout.tsx (no dynamic import needed):
+ * ```tsx
+ * import Analytics from '@/components/Analytics'
+ * 
+ * // In layout:
+ * <Analytics />
+ * ```
+ */
+export default function Analytics() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
 
-  // Load Plausible script
+  // Get IDs from environment variables
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || ''
+  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID || ''
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  // Ensure component only renders on client (prevents hydration mismatch)
   useEffect(() => {
-    if (!enabled || !domain) {
-      return
-    }
+    setMounted(true)
+  }, [])
 
-    // Check if script already exists
-    if (document.querySelector(`script[data-domain="${domain}"]`)) {
-      return
-    }
-
-    // Load Plausible script
-    const script = document.createElement('script')
-    script.defer = true
-    script.setAttribute('data-domain', domain)
-    script.src = 'https://plausible.io/js/script.js'
-    script.async = true
-    document.head.appendChild(script)
-
-    return () => {
-      // Cleanup on unmount (though unlikely in app layout)
-      const existingScript = document.querySelector(`script[data-domain="${domain}"]`)
-      if (existingScript) {
-        existingScript.remove()
-      }
-    }
-  }, [domain, enabled])
-
-  // Track outbound link clicks
+  // Track GA4 pageviews on route change
   useEffect(() => {
-    if (!enabled || !domain) {
-      return
-    }
+    // Only track after mount and in production
+    if (!mounted) return
+    if (!isProduction) return
+    if (!gaId || typeof window === 'undefined') return
 
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      const link = target.closest('a')
-      
-      if (!link) return
+    // Include search params if they exist
+    const url = pathname + (window.location.search || '')
+    trackPageView(url)
+  }, [pathname, gaId, mounted, isProduction])
 
-      const href = link.getAttribute('href')
-      if (!href) return
+  // Don't render anything until mounted (prevents hydration mismatch)
+  if (!mounted) {
+    return null
+  }
 
-      // Check if it's an outbound link
-      const isOutbound =
-        href.startsWith('http') &&
-        !href.includes(window.location.hostname) &&
-        !href.startsWith('mailto:') &&
-        !href.startsWith('tel:')
+  // Only load scripts in production
+  if (!isProduction) {
+    return null
+  }
 
-      if (isOutbound && window.plausible) {
-        // Track outbound link click
-        window.plausible('Outbound Link: Click', {
-          props: {
-            url: href,
-            path: pathname,
-          },
-        })
-      }
-    }
+  return (
+    <>
+      {/* Google Analytics 4 - gtag.js */}
+      {gaId && (
+        <>
+          <Script
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          />
+          <Script
+            id="google-analytics"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}', {
+                  page_path: window.location.pathname,
+                });
+              `,
+            }}
+          />
+        </>
+      )}
 
-    // Use capture phase to catch all clicks
-    document.addEventListener('click', handleClick, true)
-
-    return () => {
-      document.removeEventListener('click', handleClick, true)
-    }
-  }, [pathname, domain, enabled])
-
-  // Plausible automatically tracks pageviews via SPA mode
-  // We just need to ensure the script is loaded
-  return null
+      {/* Microsoft Clarity - Official snippet structure */}
+      {clarityId && (
+        <Script
+          id="microsoft-clarity"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "${clarityId}");
+            `,
+          }}
+        />
+      )}
+    </>
+  )
 }
