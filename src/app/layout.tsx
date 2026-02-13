@@ -1,11 +1,18 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
+import dynamic from "next/dynamic"
 import "./globals.css"
-import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION } from "@/lib/constants"
+import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION, GA_ID } from "@/lib/constants"
 import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
+
+// Dynamically import GoogleAnalytics with SSR disabled to prevent hydration errors
+const GoogleAnalytics = dynamic(
+  () => import("@/components/GoogleAnalytics"),
+  { ssr: false }
+)
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,8 +42,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-charcoal`}>
-      <body className="antialiased flex flex-col min-h-screen bg-charcoal">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-charcoal`} suppressHydrationWarning>
+      <body className="antialiased flex flex-col min-h-screen bg-charcoal" suppressHydrationWarning>
         <Navbar />
         <div className="flex-1">
           {children}
@@ -46,6 +53,8 @@ export default function RootLayout({
         {(IS_PRODUCTION || ANALYTICS_ENABLED) && PLAUSIBLE_DOMAIN && (
           <Analytics domain={PLAUSIBLE_DOMAIN} enabled={true} />
         )}
+        {/* Google Analytics 4 - only loads in production */}
+        {IS_PRODUCTION && GA_ID && <GoogleAnalytics gaId={GA_ID} />}
       </body>
     </html>
   )
