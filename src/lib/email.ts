@@ -88,7 +88,7 @@ export interface EmailSendResult {
  *   - data.id is missing
  */
 export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendResult> {
-  const { to, downloadUrl, expiresAt, attachPdf = false } = config
+  const { to, downloadUrl, attachPdf = false } = config
 
   const isDevelopment = process.env.NODE_ENV === 'development'
 

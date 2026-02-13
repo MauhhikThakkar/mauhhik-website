@@ -527,7 +527,7 @@ export default defineType({
       status: 'status',
       featured: 'featured',
     },
-    prepare({ title, subtitle: _subtitle, media, productType, price, isFree, currency, status, featured }) {
+    prepare({ title, media, productType, price, isFree, currency, status, featured }) {
       const type = productType ? productType.charAt(0).toUpperCase() + productType.slice(1) : 'Product'
       const priceDisplay = isFree ? 'Free' : `${currency} ${price}`
       const statusIcon = status === 'live' ? '🟢' : status === 'draft' ? '⚪' : status === 'coming-soon' ? '🟡' : '⚫'

@@ -36,7 +36,7 @@ export default function EmailCapture() {
 
       setIsSuccess(true)
       setEmail('')
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.')
     } finally {
       setIsSubmitting(false)

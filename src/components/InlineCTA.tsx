@@ -93,7 +93,9 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
     checkScrollProgress()
 
     // Use Intersection Observer for better performance
-    if (containerRef.current) {
+    // Capture ref value to avoid stale closure in cleanup
+    const containerElement = containerRef.current
+    if (containerElement) {
       observerRef.current = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -109,7 +111,7 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
         }
       )
 
-      observerRef.current.observe(containerRef.current)
+      observerRef.current.observe(containerElement)
     }
 
     // Fallback: scroll listener
@@ -117,8 +119,8 @@ export default function InlineCTA({ cta }: InlineCTAProps) {
 
     return () => {
       window.removeEventListener('scroll', checkScrollProgress)
-      if (observerRef.current && containerRef.current) {
-        observerRef.current.unobserve(containerRef.current)
+      if (observerRef.current && containerElement) {
+        observerRef.current.unobserve(containerElement)
       }
     }
   }, [cta, hasShown])

@@ -1,6 +1,17 @@
 import { promises as fs } from 'fs'
 import { join } from 'path'
 
+/**
+ * UTM parameters structure
+ */
+export interface UtmParams {
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
 export interface ResumeRequestData {
   token: string
   email: string
@@ -8,6 +19,7 @@ export interface ResumeRequestData {
   downloadCount: number
   maxDownloads: number
   createdAt: string
+  utmParams?: UtmParams
 }
 
 const STORAGE_FILE = join(process.cwd(), 'data', 'resume-requests.json')

@@ -6,8 +6,17 @@ import { storeResumeRequest } from '@/lib/resumeStorage'
 // Ensure Node.js runtime (not Edge) for crypto and file system access
 export const runtime = 'nodejs'
 
+interface UtmParams {
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
 interface ResumeRequest {
   email: string
+  utmParams?: UtmParams
 }
 
 /**
@@ -19,7 +28,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body: ResumeRequest = await request.json()
-    const { email } = body
+    const { email, utmParams } = body
 
     // Validate email
     if (!email || typeof email !== 'string') {
@@ -45,7 +54,7 @@ export async function POST(request: NextRequest) {
     const expiry = new Date()
     expiry.setHours(expiry.getHours() + 6)
 
-    // Store request data
+    // Store request data with UTM params if available
     const requestData = {
       token,
       email: email.toLowerCase().trim(),
@@ -53,6 +62,12 @@ export async function POST(request: NextRequest) {
       downloadCount: 0,
       maxDownloads: 3,
       createdAt: new Date().toISOString(),
+      ...(utmParams && Object.keys(utmParams).length > 0 && { utmParams }),
+    }
+    
+    // Log UTM params if present
+    if (utmParams && Object.keys(utmParams).length > 0) {
+      console.log(`[RESUME_REQUEST] UTM params:`, JSON.stringify(utmParams, null, 2))
     }
 
     await storeResumeRequest(requestData)

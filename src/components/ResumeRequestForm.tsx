@@ -1,12 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
+import { useUtmTracker } from '@/hooks/useUtmTracker'
 
-export default function ResumeRequestForm() {
+/**
+ * Internal form component that uses UTM tracker
+ */
+function ResumeRequestFormInner() {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState('')
+  
+  // Track UTM parameters
+  const { utmParams } = useUtmTracker()
 
   const validateEmail = (emailValue: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -31,12 +38,22 @@ export default function ResumeRequestForm() {
     setIsSubmitting(true)
 
     try {
+      // Include UTM params if available
+      const requestBody: { email: string; utmParams?: { utm_source?: string; utm_medium?: string; utm_campaign?: string; utm_term?: string; utm_content?: string } } = {
+        email: email.trim(),
+      }
+      
+      // Attach UTM metadata if available
+      if (utmParams && Object.keys(utmParams).length > 0) {
+        requestBody.utmParams = utmParams
+      }
+      
       const response = await fetch('/api/resume/request', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify(requestBody),
       })
 
       // UI TRUTH GUARANTEE: Show success ONLY on HTTP 200
@@ -239,5 +256,25 @@ export default function ResumeRequestForm() {
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Resume Request Form with Suspense boundary for UTM tracking
+ */
+export default function ResumeRequestForm() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-md mx-auto">
+        <div className="bg-charcoal-light/30 border border-zinc-900 rounded-2xl p-8 md:p-10">
+          <div className="space-y-4">
+            <div className="h-12 bg-zinc-900 rounded-lg animate-pulse" />
+            <div className="h-12 bg-zinc-900 rounded-lg animate-pulse" />
+          </div>
+        </div>
+      </div>
+    }>
+      <ResumeRequestFormInner />
+    </Suspense>
   )
 }
