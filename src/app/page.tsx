@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import MetricsStrip from "@/components/MetricsStrip";
 import PositioningSection from "@/components/PositioningSection";
 import ProductThinkingSection from "@/components/ProductThinkingSection";
+import AuthorityValidationSection from "@/components/AuthorityValidationSection";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 export const metadata = generateSEOMetadata({
@@ -43,6 +44,9 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* Authority & Validation Section */}
+      <AuthorityValidationSection />
 
       {/* Secondary Links */}
       <section className="border-t border-zinc-900 py-8">

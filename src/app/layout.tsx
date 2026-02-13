@@ -7,6 +7,7 @@ import Analytics from "@/components/Analytics"
 import PlausibleAnalytics from "@/components/PlausibleAnalytics"
 import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
 import ScrollDepthTracker from "@/components/ScrollDepthTracker"
+import PersonSchema from "@/components/PersonSchema"
 import AnnouncementBanner from "@/components/AnnouncementBanner"
 import CTAFooter from "@/components/CTAFooter"
 import Footer from "@/components/Footer"
@@ -42,6 +43,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-charcoal`} suppressHydrationWarning>
       <body className="antialiased flex flex-col min-h-screen bg-charcoal" suppressHydrationWarning>
+        {/* JSON-LD Person Schema - structured data for search engines */}
+        <PersonSchema />
         {/* Global UTM Initializer - captures UTM params on first visit to any page */}
         <GlobalUtmInitializer />
         {/* Scroll Depth Tracker - tracks scroll milestones globally */}
