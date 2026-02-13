@@ -4,7 +4,6 @@ interface EmailConfig {
   to: string
   downloadUrl: string
   expiresAt: Date
-  attachPdf?: boolean // Optional: attach PDF by fetching from URL
 }
 
 /**
@@ -88,7 +87,7 @@ export interface EmailSendResult {
  *   - data.id is missing
  */
 export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendResult> {
-  const { to, downloadUrl, attachPdf = false } = config
+  const { to, downloadUrl } = config
 
   const isDevelopment = process.env.NODE_ENV === 'development'
 
@@ -162,9 +161,13 @@ export async function sendResumeEmail(config: EmailConfig): Promise<EmailSendRes
               href="${downloadUrl}" 
               style="display: inline-block; background-color: #000000; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500; font-size: 16px;"
             >
-              View Resume (PDF)
+              Download Resume (PDF)
             </a>
           </div>
+          
+          <p style="color: #6b7280; font-size: 13px; margin: 16px 0 0 0; line-height: 1.6;">
+            <strong>Note:</strong> This secure download link is valid for 6 hours and allows up to 3 downloads.
+          </p>
           
           <div style="border-top: 1px solid #e5e7eb; padding-top: 24px; margin-top: 32px;">
             <p style="color: #4b5563; font-size: 15px; margin: 0 0 16px 0; font-weight: 500;">
@@ -196,8 +199,10 @@ Resume: Mauhik Thakkar
 
 Product Manager focused on clarity, judgment, and execution in complex, high-trust environments.
 
-View resume:
+Download resume:
 ${downloadUrl}
+
+Note: This secure download link is valid for 6 hours and allows up to 3 downloads.
 
 Next steps:
 
@@ -215,32 +220,7 @@ If you did not request this resume, please ignore this email.
 
   console.log(`[EMAIL_ATTEMPT] Subject: Resume: Mauhik Thakkar`)
   console.log(`[EMAIL_ATTEMPT] Format: HTML + Text`)
-  console.log(`[EMAIL_ATTEMPT] Attach PDF: ${attachPdf}`)
-
-  // Optionally fetch and attach PDF from URL
-  let pdfAttachment: { filename: string; content: Buffer } | undefined
-  if (attachPdf) {
-    try {
-      console.log(`[EMAIL_ATTEMPT] Fetching PDF from URL: ${downloadUrl}`)
-      const pdfResponse = await fetch(downloadUrl)
-      
-      if (!pdfResponse.ok) {
-        console.error(`[EMAIL_WARNING] Failed to fetch PDF: ${pdfResponse.status} ${pdfResponse.statusText}`)
-        console.error(`[EMAIL_WARNING] PDF attachment will be skipped, but email will still be sent with link`)
-      } else {
-        const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer())
-        pdfAttachment = {
-          filename: 'Mauhik_Thakkar_Product_Manager_Resume.pdf',
-          content: pdfBuffer,
-        }
-        console.log(`[EMAIL_ATTEMPT] PDF fetched successfully (${pdfBuffer.length} bytes)`)
-      }
-    } catch (fetchError) {
-      console.error(`[EMAIL_WARNING] Error fetching PDF for attachment:`, fetchError)
-      console.error(`[EMAIL_WARNING] PDF attachment will be skipped, but email will still be sent with link`)
-      // Don't throw - email can still be sent with just the link
-    }
-  }
+  console.log(`[EMAIL_ATTEMPT] Download URL: ${downloadUrl}`)
 
   try {
     const emailPayload: {
@@ -249,19 +229,12 @@ If you did not request this resume, please ignore this email.
       subject: string
       html: string
       text: string
-      attachments?: Array<{ filename: string; content: Buffer }>
     } = {
       from: `"${siteName}" <${from}>`,
       to,
       subject: 'Resume: Mauhik Thakkar',
       html: htmlContent,
       text: textContent,
-    }
-
-    // Add attachment if available
-    if (pdfAttachment) {
-      emailPayload.attachments = [pdfAttachment]
-      console.log(`[EMAIL_ATTEMPT] PDF attachment included`)
     }
 
     const result = await resend.emails.send(emailPayload)

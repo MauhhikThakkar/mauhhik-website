@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react'
 import { usePathname } from 'next/navigation'
 import { useUtmTracker } from '@/hooks/useUtmTracker'
-import { trackResumeButtonClick, trackResumeFormSubmit } from '@/lib/analytics'
+import { trackResumeButtonClick, trackResumeFormSubmit, trackResumeLinkGenerated } from '@/lib/analytics'
 
 /**
  * Internal form component that uses UTM tracker
@@ -87,6 +87,12 @@ function ResumeRequestFormInner() {
         ...utmParams,
       })
 
+      // Track resume link generated
+      trackResumeLinkGenerated({
+        page_path: pathname,
+        ...utmParams,
+      })
+
       // Only set success if we got HTTP 200
       setIsSuccess(true)
       setEmail('')
@@ -129,7 +135,10 @@ function ResumeRequestFormInner() {
               Check Your Email
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed mb-4">
-              A secure download link has been sent to your email address. The link will be valid for 6 hours and allows up to 3 downloads.
+              A secure download link has been sent to your email address.
+            </p>
+            <p className="text-xs text-zinc-500 mb-4">
+              The link will be valid for 6 hours and allows up to 3 downloads.
             </p>
             <p className="text-xs text-zinc-500">
               If you don&apos;t see the email, please check your spam folder.

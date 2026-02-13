@@ -314,3 +314,163 @@ export const trackResumeDownload = (payload: ResumeDownloadPayload): void => {
 
   window.gtag('event', 'resume_download', eventParams)
 }
+
+/**
+ * Resume Link Generated Event Payload
+ * Tracks when a secure download link is generated and sent via email
+ */
+export interface ResumeLinkGeneratedPayload {
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Download Success Event Payload
+ * Tracks successful resume download via secure link
+ */
+export interface ResumeDownloadSuccessPayload {
+  download_count: number
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Download Expired Event Payload
+ * Tracks when a download link is expired or invalid
+ */
+export interface ResumeDownloadExpiredPayload {
+  reason: 'expired' | 'invalid_token' | 'download_limit_reached'
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Track resume link generated event
+ * 
+ * @param payload - Event payload with page path and UTM params
+ */
+export const trackResumeLinkGenerated = (payload: ResumeLinkGeneratedPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_link_generated', eventParams)
+}
+
+/**
+ * Track resume download success event
+ * 
+ * @param payload - Event payload with download count and UTM params
+ */
+export const trackResumeDownloadSuccess = (payload: ResumeDownloadSuccessPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    download_count: payload.download_count,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_download_success', eventParams)
+}
+
+/**
+ * Track resume download expired event
+ * 
+ * @param payload - Event payload with reason and UTM params
+ */
+export const trackResumeDownloadExpired = (payload: ResumeDownloadExpiredPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    reason: payload.reason,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_download_expired', eventParams)
+}

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { randomBytes } from 'crypto'
+import { signResumeToken } from '@/lib/jwt'
 import { sendResumeEmail } from '@/lib/email'
 
-// Ensure Node.js runtime (not Edge) for crypto
+// Ensure Node.js runtime (not Edge) for crypto operations
 export const runtime = 'nodejs'
 
 interface UtmParams {
@@ -46,35 +46,41 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate secure random token (32 bytes = 64 hex characters)
-    // Token is generated for tracking purposes (can be used for future JWT implementation)
-    const token = randomBytes(32).toString('hex')
+    // Calculate expiry (6 hours from now)
+    const now = Math.floor(Date.now() / 1000) // Current time in seconds
+    const expiresAt = now + 6 * 60 * 60 // 6 hours from now
 
-    // Calculate expiry (6 hours from now) - for logging purposes
-    const expiry = new Date()
-    expiry.setHours(expiry.getHours() + 6)
+    // Generate signed JWT token with embedded payload
+    const tokenPayload = {
+      email: email.toLowerCase().trim(),
+      issuedAt: now,
+      expiresAt,
+      downloadCount: 0,
+    }
+
+    const token = await signResumeToken(tokenPayload)
 
     // Log resume request with full metadata (serverless-safe - console.log only)
     const requestMetadata = {
       timestamp: new Date().toISOString(),
-      token: token.substring(0, 16) + '...', // Log partial token for security
+      token: token.substring(0, 20) + '...', // Log partial token for security
       email: email.toLowerCase().trim(),
-      expiry: expiry.toISOString(),
+      expiresAt: new Date(expiresAt * 1000).toISOString(),
+      downloadCount: 0,
       utmParams: utmParams && Object.keys(utmParams).length > 0 ? utmParams : null,
     }
     
     console.log('[RESUME_REQUEST] Resume request received:')
     console.log(JSON.stringify(requestMetadata, null, 2))
 
-    // Send email with direct link to static resume PDF
-    // File is served from /public/resume/ via Next.js static file serving
+    // Send email with secure download link containing JWT token
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mauhhik.com'
-    const resumeUrl = `${siteUrl}/resume/Mauhik_Thakkar_Product_Manager_Resume.pdf`
+    const resumeUrl = `${siteUrl}/resume/download?token=${encodeURIComponent(token)}`
 
     console.log(`[RESUME_REQUEST] Processing resume request`)
     console.log(`[RESUME_REQUEST] Email: ${email.trim()}`)
     console.log(`[RESUME_REQUEST] Resume URL: ${resumeUrl}`)
-    console.log(`[RESUME_REQUEST] Expires: ${expiry.toISOString()}`)
+    console.log(`[RESUME_REQUEST] Expires: ${new Date(expiresAt * 1000).toISOString()}`)
 
     // Attempt to send email - HARD FAIL if it doesn't work
     let emailResult: { emailId: string; provider: 'resend' }
@@ -82,8 +88,7 @@ export async function POST(request: NextRequest) {
       emailResult = await sendResumeEmail({
         to: email.trim(),
         downloadUrl: resumeUrl,
-        expiresAt: expiry,
-        attachPdf: true, // Attach PDF by fetching from URL
+        expiresAt: new Date(expiresAt * 1000),
       })
       console.log(`[RESUME_REQUEST] Email sent successfully`)
       console.log(`[RESUME_REQUEST] Email ID: ${emailResult.emailId}`)

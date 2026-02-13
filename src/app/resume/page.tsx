@@ -155,8 +155,11 @@ export default async function ResumePage({
             <h2 className="text-2xl sm:text-3xl font-semibold mb-4">
               Request Resume Access
             </h2>
-            <p className="text-base text-zinc-400 leading-relaxed max-w-xl mx-auto">
+            <p className="text-base text-zinc-400 leading-relaxed max-w-xl mx-auto mb-2">
               My resume is available to verified professionals. Enter your email to receive a secure download link.
+            </p>
+            <p className="text-sm text-zinc-500 max-w-xl mx-auto">
+              Secure download link valid for 6 hours. Up to 3 downloads per request.
             </p>
           </div>
           
