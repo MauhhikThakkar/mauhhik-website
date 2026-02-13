@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { getUtmParams } from '@/hooks/useUtmTracker'
+import { trackResumeDownload } from '@/lib/analytics'
 
 interface DownloadState {
   status: 'loading' | 'error' | 'downloading'
@@ -11,6 +13,7 @@ interface DownloadState {
 
 function DownloadContent() {
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const [state, setState] = useState<DownloadState>({ status: 'loading' })
 
   useEffect(() => {
@@ -51,6 +54,14 @@ function DownloadContent() {
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
 
+        // Track successful download
+        const utmParams = getUtmParams()
+        trackResumeDownload({
+          download_method: 'email_link',
+          page_path: pathname,
+          ...(utmParams || {}),
+        })
+
         // Success - redirect to resume page after a moment
         setTimeout(() => {
           window.location.href = '/resume?downloaded=true'
@@ -65,7 +76,7 @@ function DownloadContent() {
     }
 
     downloadResume()
-  }, [searchParams])
+  }, [searchParams, pathname])
 
   if (state.status === 'loading' || state.status === 'downloading') {
     return (

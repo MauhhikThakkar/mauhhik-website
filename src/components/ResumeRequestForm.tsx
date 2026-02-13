@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, Suspense } from 'react'
+import { usePathname } from 'next/navigation'
 import { useUtmTracker } from '@/hooks/useUtmTracker'
+import { trackResumeButtonClick, trackResumeFormSubmit } from '@/lib/analytics'
 
 /**
  * Internal form component that uses UTM tracker
@@ -11,6 +13,7 @@ function ResumeRequestFormInner() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState('')
+  const pathname = usePathname()
   
   // Track UTM parameters
   const { utmParams } = useUtmTracker()
@@ -34,6 +37,13 @@ function ResumeRequestFormInner() {
       setError('Please enter a valid email address')
       return
     }
+
+    // Track button click event
+    trackResumeButtonClick({
+      button_location: 'resume_page',
+      page_path: pathname,
+      ...utmParams,
+    })
 
     setIsSubmitting(true)
 
@@ -60,8 +70,22 @@ function ResumeRequestFormInner() {
       if (!response.ok) {
         const data = await response.json().catch(() => ({ error: 'Unknown error' }))
         setError(data.error || 'Resume request failed. This is a system error.')
+        
+        // Track failed form submit
+        trackResumeFormSubmit({
+          success: false,
+          page_path: pathname,
+          ...utmParams,
+        })
         return
       }
+
+      // Track successful form submit
+      trackResumeFormSubmit({
+        success: true,
+        page_path: pathname,
+        ...utmParams,
+      })
 
       // Only set success if we got HTTP 200
       setIsSuccess(true)

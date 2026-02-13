@@ -141,3 +141,176 @@ export const trackEvent = (
 
   window.gtag('event', action, eventParams)
 }
+
+/**
+ * UTM Parameters structure (matches useUtmTracker)
+ */
+export interface UtmParams {
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Button Click Event Payload
+ * Tracks when user clicks the resume request button
+ */
+export interface ResumeButtonClickPayload {
+  button_location: 'resume_page' | 'homepage' | 'other'
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Form Submit Event Payload
+ * Tracks successful resume form submission
+ */
+export interface ResumeFormSubmitPayload {
+  success: boolean
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Download Event Payload
+ * Tracks successful resume download
+ */
+export interface ResumeDownloadPayload {
+  download_method: 'email_link' | 'direct'
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Track resume button click event
+ * 
+ * @param payload - Event payload with location and UTM params
+ */
+export const trackResumeButtonClick = (payload: ResumeButtonClickPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    button_location: payload.button_location,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_button_click', eventParams)
+}
+
+/**
+ * Track resume form submit event
+ * 
+ * @param payload - Event payload with success status and UTM params
+ */
+export const trackResumeFormSubmit = (payload: ResumeFormSubmitPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    success: payload.success,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_form_submit', eventParams)
+}
+
+/**
+ * Track resume download event
+ * 
+ * @param payload - Event payload with download method and UTM params
+ */
+export const trackResumeDownload = (payload: ResumeDownloadPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    download_method: payload.download_method,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_download', eventParams)
+}
