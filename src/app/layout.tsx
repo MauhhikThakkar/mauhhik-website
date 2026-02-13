@@ -7,6 +7,7 @@ import Analytics from "@/components/Analytics"
 import PlausibleAnalytics from "@/components/PlausibleAnalytics"
 import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
 import AnnouncementBanner from "@/components/AnnouncementBanner"
+import CTAFooter from "@/components/CTAFooter"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <div className="flex-1">
           {children}
         </div>
+        <CTAFooter />
         <Footer />
         {/* Plausible Analytics - only enabled in production or if explicitly enabled */}
         {(IS_PRODUCTION || ANALYTICS_ENABLED) && PLAUSIBLE_DOMAIN && (

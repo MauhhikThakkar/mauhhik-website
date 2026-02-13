@@ -158,7 +158,7 @@ export interface UtmParams {
  * Tracks when user clicks the resume request button
  */
 export interface ResumeButtonClickPayload {
-  button_location: 'resume_page' | 'homepage' | 'other'
+  button_location: 'resume_page' | 'homepage' | 'footer' | 'other'
   page_path: string
   utm_source?: string
   utm_medium?: string
