@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import MetricsStrip from "@/components/MetricsStrip";
+import PositioningSection from "@/components/PositioningSection";
 import ProductThinkingSection from "@/components/ProductThinkingSection";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
@@ -16,6 +17,7 @@ export default function Home() {
     <main className="bg-charcoal text-white">
       <Hero />
       <MetricsStrip />
+      <PositioningSection />
       <ProductThinkingSection />
       
       {/* Thinking Section */}

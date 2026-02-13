@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useUtmTracker } from '@/hooks/useUtmTracker'
 import { trackResumeButtonClick, trackResumeFormSubmit, trackResumeLinkGenerated } from '@/lib/analytics'
 
@@ -11,9 +11,9 @@ import { trackResumeButtonClick, trackResumeFormSubmit, trackResumeLinkGenerated
 function ResumeRequestFormInner() {
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState('')
   const pathname = usePathname()
+  const router = useRouter()
   
   // Track UTM parameters
   const { utmParams } = useUtmTracker()
@@ -93,60 +93,16 @@ function ResumeRequestFormInner() {
         ...utmParams,
       })
 
-      // Only set success if we got HTTP 200
-      setIsSuccess(true)
-      setEmail('')
+      // Redirect to success page with masked email
+      // Encode email for URL (will be masked on success page)
+      const encodedEmail = encodeURIComponent(email.trim())
+      router.push(`/resume/success?email=${encodedEmail}`)
     } catch {
       // Network errors or JSON parse errors
       setError('Resume request failed. This is a system error.')
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  // Success state
-  if (isSuccess) {
-    return (
-      <div className="max-w-md mx-auto">
-        <div className="bg-charcoal-light/30 border border-emerald-900/50 rounded-2xl p-8 md:p-10">
-          <div className="text-center">
-            {/* Success Icon */}
-            <div className="flex justify-center mb-6" aria-hidden="true">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-emerald-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            {/* Success Message */}
-            <h2 className="text-lg font-semibold text-white mb-2">
-              Check Your Email
-            </h2>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-4">
-              A secure download link has been sent to your email address.
-            </p>
-            <p className="text-xs text-zinc-500 mb-4">
-              The link will be valid for 6 hours and allows up to 3 downloads.
-            </p>
-            <p className="text-xs text-zinc-500">
-              If you don&apos;t see the email, please check your spam folder.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   // Form state
