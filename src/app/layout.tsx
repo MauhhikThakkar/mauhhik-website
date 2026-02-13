@@ -5,6 +5,7 @@ import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION } from "@/
 import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
 import PlausibleAnalytics from "@/components/PlausibleAnalytics"
+import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 
@@ -38,6 +39,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-charcoal`} suppressHydrationWarning>
       <body className="antialiased flex flex-col min-h-screen bg-charcoal" suppressHydrationWarning>
+        {/* Global UTM Initializer - captures UTM params on first visit to any page */}
+        <GlobalUtmInitializer />
         <Navbar />
         <div className="flex-1">
           {children}
