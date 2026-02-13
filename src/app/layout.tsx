@@ -2,15 +2,20 @@ import type { Metadata } from "next"
 import localFont from "next/font/local"
 import dynamic from "next/dynamic"
 import "./globals.css"
-import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION, GA_ID } from "@/lib/constants"
+import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION, GA_ID, CLARITY_ID } from "@/lib/constants"
 import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 
-// Dynamically import GoogleAnalytics with SSR disabled to prevent hydration errors
+// Dynamically import analytics components with SSR disabled to prevent hydration errors
 const GoogleAnalytics = dynamic(
   () => import("@/components/GoogleAnalytics"),
+  { ssr: false }
+)
+
+const MicrosoftClarity = dynamic(
+  () => import("@/components/MicrosoftClarity"),
   { ssr: false }
 )
 
@@ -55,6 +60,8 @@ export default function RootLayout({
         )}
         {/* Google Analytics 4 - only loads in production */}
         {IS_PRODUCTION && GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+        {/* Microsoft Clarity - only loads in production */}
+        {IS_PRODUCTION && CLARITY_ID && <MicrosoftClarity clarityId={CLARITY_ID} />}
       </body>
     </html>
   )
