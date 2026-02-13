@@ -3,7 +3,12 @@ import Link from "next/link";
 export default function Navbar() {
   return (
     <nav 
-      className="fixed top-0 w-full z-50 backdrop-blur bg-charcoal/60 border-b border-white/10"
+      className="fixed top-0 w-full z-50 backdrop-blur bg-charcoal/60 border-b border-white/10 transition-all duration-300"
+      style={{ 
+        // Account for announcement banner height (48px) when visible
+        // Banner will push navbar down if present
+        paddingTop: 'var(--banner-height, 0px)'
+      }}
       aria-label="Main navigation"
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">

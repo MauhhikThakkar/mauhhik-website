@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
+import MetricsStrip from "@/components/MetricsStrip";
+import ProductThinkingSection from "@/components/ProductThinkingSection";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 export const metadata = generateSEOMetadata({
@@ -13,6 +15,8 @@ export default function Home() {
   return (
     <main className="bg-charcoal text-white">
       <Hero />
+      <MetricsStrip />
+      <ProductThinkingSection />
       
       {/* Thinking Section */}
       <section className="border-t border-zinc-900 py-16 md:py-20">

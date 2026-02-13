@@ -6,6 +6,7 @@ import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
 import PlausibleAnalytics from "@/components/PlausibleAnalytics"
 import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
+import AnnouncementBanner from "@/components/AnnouncementBanner"
 import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 
@@ -41,6 +42,8 @@ export default function RootLayout({
       <body className="antialiased flex flex-col min-h-screen bg-charcoal" suppressHydrationWarning>
         {/* Global UTM Initializer - captures UTM params on first visit to any page */}
         <GlobalUtmInitializer />
+        {/* Announcement Banner - dismissible top banner */}
+        <AnnouncementBanner />
         <Navbar />
         <div className="flex-1">
           {children}

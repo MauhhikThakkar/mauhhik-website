@@ -161,26 +161,73 @@ export const metadata = generateSEOMetadata({
 export default async function PortfolioPage() {
   const projects = await getProjects()
 
+  // Split projects into shipped vs certification/case study
+  // Heuristic: projects with real-world impact metrics are treated as shipped products.
+  const shippedProjects = projects.filter(
+    (project) => project.impact !== undefined && project.impact.length > 0
+  )
+
+  const certificationProjects = projects.filter(
+    (project) => !project.impact || project.impact.length === 0
+  )
+
   return (
     <main className="bg-charcoal text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20 sm:py-28">
         <PortfolioHeader />
 
         {projects && projects.length > 0 ? (
-          <div className="mt-16 sm:mt-20">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {projects.map((project, index) => {
-                const isRecommended = index === 0
-                return (
-                  <PortfolioCard
-                    key={project._id}
-                    project={project}
-                    index={index}
-                    isRecommended={isRecommended}
-                  />
-                )
-              })}
-            </div>
+          <div className="mt-16 sm:mt-20 space-y-16 sm:space-y-20">
+            {/* Shipped Products */}
+            {shippedProjects.length > 0 && (
+              <section>
+                <div className="mb-6 sm:mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">
+                    🚀 Shipped Products
+                  </h2>
+                  <p className="text-sm sm:text-base text-zinc-400 max-w-2xl">
+                    Real-world products deployed in production environments, with concrete impact
+                    metrics and execution under real constraints.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {shippedProjects.map((project, index) => (
+                    <PortfolioCard
+                      key={project._id}
+                      project={project}
+                      index={index}
+                      isRecommended={index === 0}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Certification / Case Study Projects */}
+            {certificationProjects.length > 0 && (
+              <section>
+                <div className="mb-6 sm:mb-8">
+                  <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">
+                    📚 Certification &amp; Case Study Projects
+                  </h2>
+                  <p className="text-sm sm:text-base text-zinc-400 max-w-2xl">
+                    Structured case studies and certification projects used to demonstrate product
+                    thinking, judgment, and decision-making in complex domains.
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {certificationProjects.map((project, index) => (
+                    <PortfolioCard
+                      key={project._id}
+                      project={project}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         ) : (
           <div className="mt-16 text-center py-20">
