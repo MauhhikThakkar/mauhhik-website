@@ -6,6 +6,7 @@ import { defaultMetadata } from "@/lib/seo"
 import Analytics from "@/components/Analytics"
 import PlausibleAnalytics from "@/components/PlausibleAnalytics"
 import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
+import ScrollDepthTracker from "@/components/ScrollDepthTracker"
 import AnnouncementBanner from "@/components/AnnouncementBanner"
 import CTAFooter from "@/components/CTAFooter"
 import Footer from "@/components/Footer"
@@ -43,6 +44,8 @@ export default function RootLayout({
       <body className="antialiased flex flex-col min-h-screen bg-charcoal" suppressHydrationWarning>
         {/* Global UTM Initializer - captures UTM params on first visit to any page */}
         <GlobalUtmInitializer />
+        {/* Scroll Depth Tracker - tracks scroll milestones globally */}
+        <ScrollDepthTracker />
         {/* Announcement Banner - dismissible top banner */}
         <AnnouncementBanner />
         <Navbar />

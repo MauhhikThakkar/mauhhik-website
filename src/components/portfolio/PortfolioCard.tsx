@@ -1,5 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { trackCaseStudyOpen } from '@/lib/analytics'
+import { useUtmTracker } from '@/hooks/useUtmTracker'
 
 interface ImpactMetric {
   label: string
@@ -185,12 +190,25 @@ function getCredibilitySignal(project: PortfolioProject): string | null {
 export default function PortfolioCard({ project, isRecommended }: PortfolioCardProps) {
   const problemStatement = getProblemStatement(project)
   const credibilitySignal = getCredibilitySignal(project)
+  const pathname = usePathname()
+  const { utmParams } = useUtmTracker()
+
+  const handleCaseStudyClick = (): void => {
+    trackCaseStudyOpen({
+      case_study_slug: project.slug,
+      case_study_title: project.title,
+      source_page: pathname,
+      page_path: pathname,
+      ...(utmParams || {}),
+    })
+  }
 
   return (
     <div>
       <Link
         href={`/portfolio/${project.slug}`}
         className="group block h-full"
+        onClick={handleCaseStudyClick}
       >
         <article
           className={`h-full bg-charcoal-light/30 border rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors ${

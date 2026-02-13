@@ -8,6 +8,8 @@ import PortableText from "@/components/PortableText"
 import { urlFor } from "@/sanity/lib/image"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 import PortfolioBreadcrumb from "@/components/portfolio/PortfolioBreadcrumb"
+import DecisionSnapshot from "@/components/portfolio/DecisionSnapshot"
+import CollapsibleImprovements from "@/components/portfolio/CollapsibleImprovements"
 
 // Type guard to check if value is a valid Portable Text array
 function isValidPortableText(value: unknown): value is unknown[] {
@@ -98,6 +100,11 @@ interface Project {
   relatedBlogs?: RelatedBlog[]
   previousProject?: NavProject
   nextProject?: NavProject
+  improvements?: {
+    technicalIteration?: string
+    gtmRefinement?: string
+    metricsEvolution?: string
+  }
 }
 
 export async function generateStaticParams() {
@@ -277,6 +284,16 @@ export default async function ProjectPage({
           </div>
         </div>
       </section>
+
+      {/* Decision Snapshot Section */}
+      <DecisionSnapshot
+        problemContext={isValidPortableText(project.problem) ? project.problem : undefined}
+        keyConstraints={project.keyAssumptions}
+        strategicTradeoffs={project.tradeoffs}
+        successMetrics={project.goals}
+        outcome={project.intendedImpact}
+        successCriteria={project.successCriteria}
+      />
 
       {/* Resume Context Block */}
       <section className="border-b border-zinc-900">
@@ -762,6 +779,9 @@ export default async function ProjectPage({
             </div>
           </section>
         )}
+
+        {/* What I Would Improve Today - Collapsible Section */}
+        <CollapsibleImprovements improvements={project.improvements} />
       </div>
 
       {/* Resume CTA Section */}

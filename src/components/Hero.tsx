@@ -1,7 +1,10 @@
 'use client'
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
+import { usePathname } from 'next/navigation'
 import CTAButton from "@/components/CTAButton"
+import { trackHomepageHeroCtaClick } from "@/lib/analytics"
+import { useUtmTracker } from "@/hooks/useUtmTracker"
 
 // Headline line animation variants
 // Properly typed to satisfy Framer Motion Variants type
@@ -68,6 +71,17 @@ const ctaContainerVariants: Variants = {
 
 export default function Hero() {
   const shouldReduceMotion = useReducedMotion()
+  const pathname = usePathname()
+  const { utmParams } = useUtmTracker()
+
+  const handleCtaClick = (): void => {
+    trackHomepageHeroCtaClick({
+      cta_text: 'View Portfolio',
+      cta_destination: '/portfolio',
+      page_path: pathname,
+      ...(utmParams || {}),
+    })
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center px-6 pt-24">
@@ -113,7 +127,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
-          <CTAButton href="/portfolio" variant="primary">
+          <CTAButton href="/portfolio" variant="primary" onClick={handleCtaClick}>
             View Portfolio
           </CTAButton>
         </motion.div>

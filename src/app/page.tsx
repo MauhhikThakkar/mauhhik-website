@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import Hero from "@/components/Hero";
 import MetricsStrip from "@/components/MetricsStrip";
 import PositioningSection from "@/components/PositioningSection";
@@ -15,8 +16,20 @@ export const metadata = generateSEOMetadata({
 export default function Home() {
   return (
     <main className="bg-charcoal text-white">
-      <Hero />
-      <MetricsStrip />
+      <Suspense fallback={
+        <section className="min-h-screen flex items-center justify-center px-6 pt-24">
+          <div className="max-w-3xl text-center">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto leading-[1.1]">
+              Product Manager focused on clarity, judgment, and execution.
+            </h1>
+          </div>
+        </section>
+      }>
+        <Hero />
+      </Suspense>
+      <Suspense fallback={null}>
+        <MetricsStrip />
+      </Suspense>
       <PositioningSection />
       <ProductThinkingSection />
       

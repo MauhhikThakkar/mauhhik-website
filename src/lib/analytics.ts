@@ -474,3 +474,334 @@ export const trackResumeDownloadExpired = (payload: ResumeDownloadExpiredPayload
 
   window.gtag('event', 'resume_download_expired', eventParams)
 }
+
+/**
+ * Homepage Hero CTA Click Event Payload
+ * Tracks when user clicks the primary CTA in the hero section
+ */
+export interface HomepageHeroCtaClickPayload {
+  cta_text: string
+  cta_destination: string
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Metrics Strip Interaction Event Payload
+ * Tracks when user interacts with the metrics strip (hover, click, or view)
+ */
+export interface MetricsStripInteractionPayload {
+  interaction_type: 'view' | 'hover' | 'click'
+  metric_index?: number
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Case Study Open Event Payload
+ * Tracks when user opens a case study from portfolio
+ */
+export interface CaseStudyOpenPayload {
+  case_study_slug: string
+  case_study_title: string
+  source_page: string
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Form View Event Payload
+ * Tracks when user views the resume request form
+ */
+export interface ResumeFormViewPayload {
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Resume Confirmation View Event Payload
+ * Tracks when user views the resume confirmation page
+ */
+export interface ResumeConfirmationViewPayload {
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Scroll Depth Event Payload
+ * Tracks scroll depth milestones
+ */
+export interface ScrollDepthPayload {
+  scroll_depth: 25 | 50 | 75 | 100
+  page_path: string
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  utm_term?: string
+  utm_content?: string
+}
+
+/**
+ * Track homepage hero CTA click event
+ * 
+ * @param payload - Event payload with CTA details and UTM params
+ */
+export const trackHomepageHeroCtaClick = (payload: HomepageHeroCtaClickPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    cta_text: payload.cta_text,
+    cta_destination: payload.cta_destination,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'homepage_hero_cta_click', eventParams)
+}
+
+/**
+ * Track metrics strip interaction event
+ * 
+ * @param payload - Event payload with interaction type and UTM params
+ */
+export const trackMetricsStripInteraction = (payload: MetricsStripInteractionPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    interaction_type: payload.interaction_type,
+    page_path: payload.page_path,
+  }
+
+  if (payload.metric_index !== undefined) {
+    eventParams.metric_index = payload.metric_index
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'metrics_strip_interaction', eventParams)
+}
+
+/**
+ * Track case study open event
+ * 
+ * @param payload - Event payload with case study details and UTM params
+ */
+export const trackCaseStudyOpen = (payload: CaseStudyOpenPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    case_study_slug: payload.case_study_slug,
+    case_study_title: payload.case_study_title,
+    source_page: payload.source_page,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'case_study_open', eventParams)
+}
+
+/**
+ * Track resume form view event
+ * 
+ * @param payload - Event payload with page path and UTM params
+ */
+export const trackResumeFormView = (payload: ResumeFormViewPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_form_view', eventParams)
+}
+
+/**
+ * Track resume confirmation view event
+ * 
+ * @param payload - Event payload with page path and UTM params
+ */
+export const trackResumeConfirmationView = (payload: ResumeConfirmationViewPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'resume_confirmation_view', eventParams)
+}
+
+/**
+ * Track scroll depth event
+ * 
+ * @param payload - Event payload with scroll depth and UTM params
+ */
+export const trackScrollDepth = (payload: ScrollDepthPayload): void => {
+  if (typeof window === 'undefined' || !window.gtag) {
+    return
+  }
+
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID
+  if (!measurementId) {
+    return
+  }
+
+  const eventParams: GA4EventParams = {
+    scroll_depth: payload.scroll_depth,
+    page_path: payload.page_path,
+  }
+
+  // Add UTM parameters if available
+  if (payload.utm_source) {
+    eventParams.utm_source = payload.utm_source
+  }
+  if (payload.utm_medium) {
+    eventParams.utm_medium = payload.utm_medium
+  }
+  if (payload.utm_campaign) {
+    eventParams.utm_campaign = payload.utm_campaign
+  }
+  if (payload.utm_term) {
+    eventParams.utm_term = payload.utm_term
+  }
+  if (payload.utm_content) {
+    eventParams.utm_content = payload.utm_content
+  }
+
+  window.gtag('event', 'scroll_depth', eventParams)
+}

@@ -169,6 +169,11 @@ export const PROJECT_BY_SLUG_QUERY = `
       tradeoff
     },
     whatThisDemonstrates,
+    improvements {
+      technicalIteration,
+      gtmRefinement,
+      metricsEvolution
+    },
     goals[] {
       label,
       value,

@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { client } from '@/sanity/lib/client'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
 import PortfolioHeader from '@/components/portfolio/PortfolioHeader'
@@ -193,12 +194,15 @@ export default async function PortfolioPage() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {shippedProjects.map((project, index) => (
-                    <PortfolioCard
-                      key={project._id}
-                      project={project}
-                      index={index}
-                      isRecommended={index === 0}
-                    />
+                    <Suspense key={project._id} fallback={
+                      <div className="h-full bg-charcoal-light/30 border rounded-2xl border-zinc-900 animate-pulse min-h-[400px]" />
+                    }>
+                      <PortfolioCard
+                        project={project}
+                        index={index}
+                        isRecommended={index === 0}
+                      />
+                    </Suspense>
                   ))}
                 </div>
               </section>
@@ -219,11 +223,14 @@ export default async function PortfolioPage() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {certificationProjects.map((project, index) => (
-                    <PortfolioCard
-                      key={project._id}
-                      project={project}
-                      index={index}
-                    />
+                    <Suspense key={project._id} fallback={
+                      <div className="h-full bg-charcoal-light/30 border rounded-2xl border-zinc-900 animate-pulse min-h-[400px]" />
+                    }>
+                      <PortfolioCard
+                        project={project}
+                        index={index}
+                      />
+                    </Suspense>
                   ))}
                 </div>
               </section>

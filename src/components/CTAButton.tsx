@@ -10,6 +10,7 @@ interface CTAButtonProps {
   variant?: 'primary' | 'secondary'
   className?: string
   external?: boolean
+  onClick?: () => void
 }
 
 export default function CTAButton({
@@ -18,6 +19,7 @@ export default function CTAButton({
   variant = 'primary',
   className = '',
   external = false,
+  onClick,
 }: CTAButtonProps) {
   const shouldReduceMotion = useReducedMotion()
   const [isTouchDevice, setIsTouchDevice] = useState(false)
@@ -81,6 +83,7 @@ export default function CTAButton({
         whileHover="hover"
         whileTap="tap"
         whileFocus="hover"
+        onClick={onClick}
       >
         {children}
       </motion.a>
@@ -98,6 +101,7 @@ export default function CTAButton({
       <Link
         href={href}
         className={`${baseClasses} ${focusClasses} transition-colors duration-200 ${className}`}
+        onClick={onClick}
       >
         {children}
       </Link>

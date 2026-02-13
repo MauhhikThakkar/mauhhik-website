@@ -1,3 +1,10 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { trackMetricsStripInteraction } from '@/lib/analytics'
+import { useUtmTracker } from '@/hooks/useUtmTracker'
+
 /**
  * MetricsStrip Component
  * 
@@ -10,6 +17,35 @@
  * - Mobile: Stacked
  */
 export default function MetricsStrip() {
+  const pathname = usePathname()
+  const { utmParams } = useUtmTracker()
+  const hasTrackedView = useRef(false)
+
+  // Track view on mount (when component enters viewport)
+  useEffect(() => {
+    if (!hasTrackedView.current) {
+      // Small delay to ensure component is rendered
+      const timer = setTimeout(() => {
+        trackMetricsStripInteraction({
+          interaction_type: 'view',
+          page_path: pathname,
+          ...(utmParams || {}),
+        })
+        hasTrackedView.current = true
+      }, 100)
+
+      return () => clearTimeout(timer)
+    }
+  }, [pathname, utmParams])
+
+  const handleMetricInteraction = (index: number, type: 'hover' | 'click'): void => {
+    trackMetricsStripInteraction({
+      interaction_type: type,
+      metric_index: index,
+      page_path: pathname,
+      ...(utmParams || {}),
+    })
+  }
   const metrics = [
     {
       value: '9+ Years',
@@ -37,6 +73,8 @@ export default function MetricsStrip() {
             <div
               key={index}
               className="text-center min-h-[120px] md:min-h-[140px] flex flex-col justify-center"
+              onMouseEnter={() => handleMetricInteraction(index, 'hover')}
+              onClick={() => handleMetricInteraction(index, 'click')}
             >
               <div className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight leading-none">
                 {metric.value}

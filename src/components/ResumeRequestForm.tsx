@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useUtmTracker } from '@/hooks/useUtmTracker'
-import { trackResumeButtonClick, trackResumeFormSubmit, trackResumeLinkGenerated } from '@/lib/analytics'
+import { trackResumeButtonClick, trackResumeFormSubmit, trackResumeLinkGenerated, trackResumeFormView } from '@/lib/analytics'
 
 /**
  * Internal form component that uses UTM tracker
@@ -17,6 +17,18 @@ function ResumeRequestFormInner() {
   
   // Track UTM parameters
   const { utmParams } = useUtmTracker()
+  const hasTrackedView = useRef(false)
+
+  // Track form view on mount
+  useEffect(() => {
+    if (!hasTrackedView.current) {
+      trackResumeFormView({
+        page_path: pathname,
+        ...(utmParams || {}),
+      })
+      hasTrackedView.current = true
+    }
+  }, [pathname, utmParams])
 
   const validateEmail = (emailValue: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
