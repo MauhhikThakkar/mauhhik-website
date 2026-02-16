@@ -8,10 +8,6 @@ import PlausibleAnalytics from "@/components/PlausibleAnalytics"
 import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
 import ScrollDepthTracker from "@/components/ScrollDepthTracker"
 import PersonSchema from "@/components/PersonSchema"
-import AnnouncementBanner from "@/components/AnnouncementBanner"
-import CTAFooter from "@/components/CTAFooter"
-import Footer from "@/components/Footer"
-import Navbar from "@/components/Navbar"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,6 +31,21 @@ export const metadata: Metadata = {
   },
 }
 
+/**
+ * Root Layout
+ * 
+ * This is the root layout for all routes. It provides:
+ * - HTML structure
+ * - Global styles
+ * - Analytics (only for marketing pages via route groups)
+ * - SEO schema
+ * 
+ * Marketing UI (Navbar, Footer, etc.) is handled by:
+ * - app/(marketing)/layout.tsx - for marketing pages
+ * 
+ * Studio UI is isolated via:
+ * - app/studio/layout.tsx - minimal layout, no marketing components
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,14 +60,13 @@ export default function RootLayout({
         <GlobalUtmInitializer />
         {/* Scroll Depth Tracker - tracks scroll milestones globally */}
         <ScrollDepthTracker />
-        {/* Announcement Banner - dismissible top banner */}
-        <AnnouncementBanner />
-        <Navbar />
-        <div className="flex-1">
-          {children}
-        </div>
-        <CTAFooter />
-        <Footer />
+        {/* 
+          Children will be wrapped by:
+          - (marketing)/layout.tsx for marketing pages (includes Navbar/Footer/AnnouncementBanner)
+          - studio/layout.tsx for /studio (minimal, no marketing UI)
+          - Direct rendering for API routes
+        */}
+        {children}
         {/* Plausible Analytics - only enabled in production or if explicitly enabled */}
         {(IS_PRODUCTION || ANALYTICS_ENABLED) && PLAUSIBLE_DOMAIN && (
           <PlausibleAnalytics domain={PLAUSIBLE_DOMAIN} enabled={true} />
