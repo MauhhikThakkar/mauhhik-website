@@ -189,6 +189,9 @@ export async function incrementDownloadCount(tokenHash: string): Promise<number 
   
   const result = await db.query<{ download_count: number; expires_at: Date }>(query, [tokenHash])
   
+  // Diagnostic: Log update result (safe, no secrets)
+  console.log('[DB_UPDATE] UPDATE RESULT rowCount:', result.rowCount)
+  
   if (result.rows.length === 0) {
     return null // Update failed - token expired, limit reached, or invalid
   }

@@ -68,6 +68,9 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Diagnostic: Token length (safe, no secret)
+    console.log('[RESUME_DOWNLOAD] TOKEN LENGTH:', token.length)
+
     // Log download attempt
     console.log(`[RESUME_DOWNLOAD] Download attempt`)
     console.log(`[RESUME_DOWNLOAD] Token: ${token.substring(0, 20)}...`)
@@ -76,6 +79,7 @@ export async function GET(request: NextRequest) {
     // Step 2: Verify JWT signature and decode payload
     try {
       tokenPayload = await verifyResumeToken(token)
+      console.log('[RESUME_DOWNLOAD] JWT VERIFIED, exp:', tokenPayload.exp)
       console.log(`[RESUME_DOWNLOAD] Token verified successfully`)
       console.log(`[RESUME_DOWNLOAD] Token ID: ${tokenPayload.token_id}`)
       console.log(`[RESUME_DOWNLOAD] Email: ${tokenPayload.email.substring(0, 3)}...`)
@@ -104,12 +108,14 @@ export async function GET(request: NextRequest) {
 
     // Step 3: Hash token for database lookup
     tokenHash = hashToken(token)
+    console.log('[RESUME_DOWNLOAD] TOKEN HASH PREFIX:', tokenHash.substring(0, 8))
     console.log(`[RESUME_DOWNLOAD] Token hashed: ${tokenHash.substring(0, 20)}...`)
 
     // Step 4: ATOMIC DATABASE UPDATE (THE GATE)
     // This is the CRITICAL enforcement point - database is the gate
     // NO LOGIC BEFORE THIS - database decides if download is allowed
     const newDownloadCount = await incrementDownloadCount(tokenHash)
+    console.log('[RESUME_DOWNLOAD] UPDATE RESULT:', newDownloadCount !== null ? `SUCCESS (count: ${newDownloadCount})` : 'FAILED')
 
     // Step 5: Check if update succeeded
     if (newDownloadCount === null) {
