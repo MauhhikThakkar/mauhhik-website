@@ -25,20 +25,13 @@ export interface ResumeTokenPayload {
 /**
  * Get the secret key for JWT signing/verification
  * 
- * @throws Error if RESUME_TOKEN_SECRET is not set
+ * @throws Error if RESUME_JWT_SECRET is not set
  */
 function getSecretKey(): Uint8Array {
-  const secret = process.env.RESUME_TOKEN_SECRET
-
-  if (!secret || secret.trim().length === 0) {
-    throw new Error(
-      'RESUME_TOKEN_SECRET environment variable is MISSING or EMPTY. ' +
-      'Please set RESUME_TOKEN_SECRET in your environment variables.'
-    )
+  const secret = process.env.RESUME_JWT_SECRET
+  if (!secret) {
+    throw new Error('RESUME_JWT_SECRET not configured')
   }
-
-  // Convert secret string to Uint8Array for jose
-  // jose expects the secret as a Uint8Array or a KeyObject
   return new TextEncoder().encode(secret)
 }
 

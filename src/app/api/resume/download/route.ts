@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createReadStream, statSync } from 'fs'
 import { join } from 'path'
 import { verifyResumeToken, type ResumeTokenPayload } from '@/lib/jwt'
-import { hashToken, incrementDownloadCount, isTokenExpired, getEmailForToken } from '@/lib/db/resumeRequests'
+import { hashToken, incrementDownloadCount } from '@/lib/db/resumeRequests'
 
 // Ensure Node.js runtime (not Edge) for filesystem operations
 export const runtime = 'nodejs'
@@ -43,6 +43,11 @@ const RESUME_FILE_PATH = join(process.cwd(), 'data', 'private', 'resume.pdf')
  * - Token not regenerated (single token remains valid until limit reached)
  */
 export async function GET(request: NextRequest) {
+  // Fail fast if JWT secret is not configured
+  if (!process.env.RESUME_JWT_SECRET) {
+    throw new Error('Server misconfiguration: RESUME_JWT_SECRET missing')
+  }
+
   const downloadAttemptTimestamp = new Date().toISOString()
   let token: string | null = null
   let tokenPayload: ResumeTokenPayload | null = null
@@ -108,22 +113,21 @@ export async function GET(request: NextRequest) {
 
     // Step 5: Check if update succeeded
     if (newDownloadCount === null) {
-      // Update failed - check reason
+      // Update failed - no SELECT queries, use JWT payload for logging
       console.warn(`[RESUME_DOWNLOAD] Atomic update failed (token expired, limit reached, or invalid)`)
       console.warn(`[RESUME_DOWNLOAD] Token hash: ${tokenHash.substring(0, 20)}...`)
+      console.warn(`[RESUME_DOWNLOAD] Email: ${tokenPayload.email.substring(0, 3)}...`)
+      console.warn(`[RESUME_DOWNLOAD] Token expires at: ${new Date(tokenPayload.exp * 1000).toISOString()}`)
+      console.warn(`[RESUME_DOWNLOAD] Current time: ${new Date().toISOString()}`)
       console.warn(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
 
-      // Check if token is expired
-      const isExpired = await isTokenExpired(tokenHash)
+      // Determine error type without SELECT queries
+      // Use JWT expiration time to determine if expired
+      const now = Math.floor(Date.now() / 1000)
+      const isExpired = tokenPayload.exp < now
       
       if (isExpired) {
-        // Get email for logging
-        email = await getEmailForToken(tokenHash)
-        
         console.warn(`[RESUME_DOWNLOAD] Download blocked: Token expired`)
-        console.warn(`[RESUME_DOWNLOAD] Email: ${email ? email.substring(0, 3) + '...' : 'unknown'}`)
-        console.warn(`[RESUME_DOWNLOAD] Token hash: ${tokenHash.substring(0, 20)}...`)
-        console.warn(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
         
         // Return 410 (Gone) for expired tokens
         return NextResponse.json(
@@ -134,13 +138,7 @@ export async function GET(request: NextRequest) {
           { status: 410 }
         )
       } else {
-        // Get email and current count for logging
-        email = await getEmailForToken(tokenHash)
-        
         console.warn(`[RESUME_DOWNLOAD] Download blocked: Limit reached or invalid token`)
-        console.warn(`[RESUME_DOWNLOAD] Email: ${email ? email.substring(0, 3) + '...' : 'unknown'}`)
-        console.warn(`[RESUME_DOWNLOAD] Token hash: ${tokenHash.substring(0, 20)}...`)
-        console.warn(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
         
         // Return 403 (Forbidden) for limit reached or invalid
         return NextResponse.json(
@@ -154,8 +152,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Step 6: Update succeeded - proceed with file streaming
-    // Get email for logging
-    email = await getEmailForToken(tokenHash) || tokenPayload.email
+    // Use JWT payload email for logging (no SELECT query)
+    email = tokenPayload.email
 
     console.log(`[RESUME_DOWNLOAD] Atomic update succeeded`)
     console.log(`[RESUME_DOWNLOAD] Email: ${email.substring(0, 3)}...`)

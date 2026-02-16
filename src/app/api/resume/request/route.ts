@@ -27,6 +27,11 @@ interface ResumeRequest {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Fail fast if JWT secret is not configured
+    if (!process.env.RESUME_JWT_SECRET) {
+      throw new Error('Server misconfiguration: RESUME_JWT_SECRET missing')
+    }
+
     // Parse request body
     const body: ResumeRequest = await request.json()
     const { email, utmParams } = body

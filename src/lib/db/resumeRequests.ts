@@ -52,19 +52,33 @@ export function hashToken(token: string): string {
 /**
  * Get database connection
  * 
+ * Uses DATABASE_URL for all database queries.
+ * 
  * Supports:
- * 1. Vercel Postgres (@vercel/postgres) - recommended for Vercel deployments
- * 2. Generic PostgreSQL via DATABASE_URL (using pg library)
- * 3. Other databases via DATABASE_URL (requires custom client setup)
+ * 1. DATABASE_URL environment variable (primary method)
+ * 2. Vercel Postgres (@vercel/postgres) - uses DATABASE_URL internally
  * 
  * Installation:
- * - For Vercel: npm install @vercel/postgres
+ * - For Vercel: npm install @vercel/postgres (sets DATABASE_URL automatically)
  * - For other PostgreSQL: npm install pg @types/pg
+ * 
+ * DATABASE_URL format: postgresql://user:password@host:port/database
  */
 function getDatabase(): DatabaseConnection {
-  // Try Vercel Postgres first (recommended for Vercel)
+  // DATABASE_URL is the source of truth for all database connections
+  const connectionString = process.env.DATABASE_URL
+  
+  if (!connectionString) {
+    throw new Error(
+      'DATABASE_URL environment variable is required.\n' +
+      'Please set DATABASE_URL with your database connection string.\n' +
+      'For Vercel Postgres, DATABASE_URL is set automatically when you install @vercel/postgres.'
+    )
+  }
+
+  // Try Vercel Postgres first (uses DATABASE_URL internally)
+  // Vercel Postgres SDK is optimized for serverless environments
   try {
-    // Dynamic import to avoid build errors if package not installed
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const vercelPostgres = require('@vercel/postgres')
     if (vercelPostgres && vercelPostgres.sql) {
@@ -79,46 +93,39 @@ function getDatabase(): DatabaseConnection {
       }
     }
   } catch {
-    // Vercel Postgres not available, try other options
+    // Vercel Postgres not available, use generic PostgreSQL client with DATABASE_URL
   }
 
-  // Try generic PostgreSQL via DATABASE_URL
-  const connectionString = process.env.DATABASE_URL
-  if (connectionString) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { Client } = require('pg')
-      const client = new Client({ connectionString })
-      
-      // Note: Connection pooling should be handled at application level
-      // For production, use a connection pool manager
-      return {
-        query: async (queryText: string, params?: unknown[]) => {
-          await client.connect()
-          try {
-            const result = await client.query(queryText, params || [])
-            return {
-              rows: result.rows || [],
-              rowCount: result.rowCount || 0,
-            }
-          } finally {
-            await client.end()
+  // Use generic PostgreSQL client with DATABASE_URL
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { Client } = require('pg')
+    const client = new Client({ connectionString })
+    
+    // Note: Connection pooling should be handled at application level
+    // For production, use a connection pool manager
+    return {
+      query: async (queryText: string, params?: unknown[]) => {
+        await client.connect()
+        try {
+          const result = await client.query(queryText, params || [])
+          return {
+            rows: result.rows || [],
+            rowCount: result.rowCount || 0,
           }
-        },
-      }
-    } catch {
-      // pg library not available or connection failed
+        } finally {
+          await client.end()
+        }
+      },
     }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    throw new Error(
+      `Failed to create database connection using DATABASE_URL.\n` +
+      `Error: ${errorMessage}\n` +
+      `Please ensure DATABASE_URL is set correctly and pg library is installed.`
+    )
   }
-
-  // No database connection available
-  throw new Error(
-    'No database connection available.\n' +
-    'Please install one of the following:\n' +
-    '  - @vercel/postgres (for Vercel deployments)\n' +
-    '  - pg (for PostgreSQL via DATABASE_URL)\n' +
-    'Or set DATABASE_URL environment variable with your connection string.'
-  )
 }
 
 /**
