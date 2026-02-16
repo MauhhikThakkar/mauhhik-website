@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { randomUUID } from 'crypto'
 import { signResumeToken } from '@/lib/jwt'
 import { sendResumeEmail } from '@/lib/email'
+import { createResumeRequest, hashToken } from '@/lib/db/resumeRequests'
 
 // Ensure Node.js runtime (not Edge) for crypto operations
 export const runtime = 'nodejs'
@@ -49,24 +51,44 @@ export async function POST(request: NextRequest) {
     // Calculate expiry (6 hours from now)
     const now = Math.floor(Date.now() / 1000) // Current time in seconds
     const expiresAt = now + 6 * 60 * 60 // 6 hours from now
+    const expiresAtDate = new Date(expiresAt * 1000)
 
-    // Generate signed JWT token with embedded payload
+    // Generate unique token ID
+    const tokenId = randomUUID()
+
+    // Generate signed JWT token (simplified payload - database is source of truth)
     const tokenPayload = {
+      token_id: tokenId,
       email: email.toLowerCase().trim(),
-      issuedAt: now,
-      expiresAt,
-      downloadCount: 0,
+      exp: expiresAt,
     }
 
     const token = await signResumeToken(tokenPayload)
 
-    // Log resume request with full metadata (serverless-safe - console.log only)
+    // Hash token for database storage
+    const tokenHash = hashToken(token)
+
+    // Create database record (source of truth for download limits)
+    try {
+      await createResumeRequest(
+        email.toLowerCase().trim(),
+        tokenHash,
+        expiresAtDate
+      )
+      console.log(`[RESUME_REQUEST] Database record created for token_id: ${tokenId}`)
+    } catch (dbError) {
+      const errorMessage = dbError instanceof Error ? dbError.message : String(dbError)
+      console.error(`[RESUME_REQUEST] Failed to create database record: ${errorMessage}`)
+      throw new Error(`Failed to create resume request record: ${errorMessage}`)
+    }
+
+    // Log resume request with full metadata
     const requestMetadata = {
       timestamp: new Date().toISOString(),
-      token: token.substring(0, 20) + '...', // Log partial token for security
+      token_id: tokenId,
+      token_hash: tokenHash.substring(0, 20) + '...', // Log partial hash for security
       email: email.toLowerCase().trim(),
-      expiresAt: new Date(expiresAt * 1000).toISOString(),
-      downloadCount: 0,
+      expiresAt: expiresAtDate.toISOString(),
       utmParams: utmParams && Object.keys(utmParams).length > 0 ? utmParams : null,
     }
     
@@ -79,8 +101,9 @@ export async function POST(request: NextRequest) {
 
     console.log(`[RESUME_REQUEST] Processing resume request`)
     console.log(`[RESUME_REQUEST] Email: ${email.trim()}`)
+    console.log(`[RESUME_REQUEST] Token ID: ${tokenId}`)
     console.log(`[RESUME_REQUEST] Resume URL: ${resumeUrl}`)
-    console.log(`[RESUME_REQUEST] Expires: ${new Date(expiresAt * 1000).toISOString()}`)
+    console.log(`[RESUME_REQUEST] Expires: ${expiresAtDate.toISOString()}`)
 
     // Attempt to send email - HARD FAIL if it doesn't work
     let emailResult: { emailId: string; provider: 'resend' }
@@ -88,7 +111,7 @@ export async function POST(request: NextRequest) {
       emailResult = await sendResumeEmail({
         to: email.trim(),
         downloadUrl: resumeUrl,
-        expiresAt: new Date(expiresAt * 1000),
+        expiresAt: expiresAtDate,
       })
       console.log(`[RESUME_REQUEST] Email sent successfully`)
       console.log(`[RESUME_REQUEST] Email ID: ${emailResult.emailId}`)

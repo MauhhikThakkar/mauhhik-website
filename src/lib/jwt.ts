@@ -9,13 +9,17 @@ import { SignJWT, jwtVerify } from 'jose'
 
 /**
  * JWT Token Payload
- * Contains all data embedded in the signed token
+ * 
+ * Simplified payload - database is source of truth for download limits.
+ * JWT only contains:
+ * - token_id: Unique identifier for this token
+ * - email: User email
+ * - exp: Expiration timestamp (standard JWT claim)
  */
 export interface ResumeTokenPayload {
+  token_id: string // Unique token identifier (UUID)
   email: string
-  issuedAt: number // Unix timestamp (seconds)
-  expiresAt: number // Unix timestamp (seconds)
-  downloadCount: number // Current download count (0-3)
+  exp: number // Expiration timestamp (Unix seconds) - standard JWT claim
 }
 
 /**
@@ -41,7 +45,7 @@ function getSecretKey(): Uint8Array {
 /**
  * Sign a resume token with embedded payload
  * 
- * @param payload - Token payload containing email, expiry, and download count
+ * @param payload - Token payload containing token_id, email, and expiration
  * @returns Signed JWT token string
  * @throws Error if secret is missing or signing fails
  */
@@ -49,14 +53,11 @@ export async function signResumeToken(payload: ResumeTokenPayload): Promise<stri
   const secretKey = getSecretKey()
 
   const jwt = await new SignJWT({
+    token_id: payload.token_id,
     email: payload.email,
-    issuedAt: payload.issuedAt,
-    expiresAt: payload.expiresAt,
-    downloadCount: payload.downloadCount,
   })
     .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt(payload.issuedAt)
-    .setExpirationTime(payload.expiresAt)
+    .setExpirationTime(payload.exp)
     .setSubject(payload.email)
     .sign(secretKey)
 
@@ -80,20 +81,18 @@ export async function verifyResumeToken(token: string): Promise<ResumeTokenPaylo
 
     // Validate payload structure
     if (
+      typeof payload.token_id !== 'string' ||
       typeof payload.email !== 'string' ||
-      typeof payload.issuedAt !== 'number' ||
-      typeof payload.expiresAt !== 'number' ||
-      typeof payload.downloadCount !== 'number'
+      typeof payload.exp !== 'number'
     ) {
       throw new Error('Invalid token payload structure')
     }
 
     // Return typed payload
     return {
+      token_id: payload.token_id as string,
       email: payload.email as string,
-      issuedAt: payload.issuedAt as number,
-      expiresAt: payload.expiresAt as number,
-      downloadCount: payload.downloadCount as number,
+      exp: payload.exp as number,
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -104,22 +103,3 @@ export async function verifyResumeToken(token: string): Promise<ResumeTokenPaylo
   }
 }
 
-/**
- * Create a new token with incremented download count
- * Used when a download is successful and we need to allow more downloads
- * 
- * @param currentPayload - Current token payload
- * @returns New signed token with incremented downloadCount
- */
-export async function incrementDownloadCount(
-  currentPayload: ResumeTokenPayload
-): Promise<string> {
-  const newPayload: ResumeTokenPayload = {
-    email: currentPayload.email,
-    issuedAt: currentPayload.issuedAt,
-    expiresAt: currentPayload.expiresAt,
-    downloadCount: currentPayload.downloadCount + 1,
-  }
-
-  return signResumeToken(newPayload)
-}
