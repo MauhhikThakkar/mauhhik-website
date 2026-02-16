@@ -175,7 +175,15 @@ export async function createResumeRequest(
  * @returns Updated download count, or null if update failed
  */
 export async function incrementDownloadCount(tokenHash: string): Promise<number | null> {
-  const db = getDatabase()
+  let db: DatabaseConnection
+  try {
+    db = getDatabase()
+  } catch (dbError) {
+    const errorMessage = dbError instanceof Error ? dbError.message : String(dbError)
+    console.error('[DB_UPDATE] Failed to get database connection')
+    console.error(`[DB_UPDATE] Error: ${errorMessage}`)
+    throw new Error(`Database connection failed: ${errorMessage}`)
+  }
   
   // Atomic update: only succeeds if all conditions are met
   const query = `
@@ -187,16 +195,31 @@ export async function incrementDownloadCount(tokenHash: string): Promise<number 
     RETURNING download_count, expires_at
   `
   
-  const result = await db.query<{ download_count: number; expires_at: Date }>(query, [tokenHash])
-  
-  // Diagnostic: Log update result (safe, no secrets)
-  console.log('[DB_UPDATE] UPDATE RESULT rowCount:', result.rowCount)
-  
-  if (result.rows.length === 0) {
-    return null // Update failed - token expired, limit reached, or invalid
+  try {
+    const result = await db.query<{ download_count: number; expires_at: Date }>(query, [tokenHash])
+    
+    // Diagnostic: Log update result (safe, no secrets)
+    console.log('[DB_UPDATE] UPDATE RESULT rowCount:', result.rowCount)
+    console.log('[DB_UPDATE] UPDATE RESULT rows length:', result.rows.length)
+    
+    if (result.rows.length === 0) {
+      console.log('[DB_UPDATE] No rows updated - token expired, limit reached, or invalid')
+      return null // Update failed - token expired, limit reached, or invalid
+    }
+    
+    const updatedCount = result.rows[0].download_count
+    console.log('[DB_UPDATE] Update successful, new count:', updatedCount)
+    return updatedCount
+  } catch (queryError) {
+    const errorMessage = queryError instanceof Error ? queryError.message : String(queryError)
+    const errorName = queryError instanceof Error ? queryError.name : 'UnknownError'
+    console.error('[DB_UPDATE] Database query failed')
+    console.error(`[DB_UPDATE] Error name: ${errorName}`)
+    console.error(`[DB_UPDATE] Error message: ${errorMessage}`)
+    console.error(`[DB_UPDATE] Token hash: ${tokenHash.substring(0, 20)}...`)
+    console.error(`[DB_UPDATE] Full error:`, queryError instanceof Error ? queryError.stack : String(queryError))
+    throw new Error(`Database query failed: ${errorMessage}`)
   }
-  
-  return result.rows[0].download_count
 }
 
 /**

@@ -14,9 +14,44 @@ const MAX_DOWNLOADS = 3
 
 /**
  * Server-only path to resume PDF file
- * Located outside /public to prevent direct URL access
+ * 
+ * PRODUCTION NOTE: For Vercel deployment, the file must be in the repository.
+ * We use a non-standard path that's not in /public to prevent direct URL access.
+ * 
+ * File locations checked in order:
+ * 1. lib/assets/resume.pdf (recommended for production - gets deployed)
+ * 2. data/private/resume.pdf (local development only - gitignored)
+ * 3. public/resume/Mauhik_Thakkar_Product_Manager_Resume.pdf (fallback - publicly accessible)
  */
-const RESUME_FILE_PATH = join(process.cwd(), 'data', 'private', 'resume.pdf')
+function getResumeFilePath(): string {
+  // Try production path first (deployed with code)
+  const productionPath = join(process.cwd(), 'lib', 'assets', 'resume.pdf')
+  try {
+    statSync(productionPath)
+    return productionPath
+  } catch {
+    // File doesn't exist in production path
+  }
+
+  // Try local development path
+  const localPath = join(process.cwd(), 'data', 'private', 'resume.pdf')
+  try {
+    statSync(localPath)
+    return localPath
+  } catch {
+    // File doesn't exist in local path
+  }
+
+  // Fallback to public path (less secure but works)
+  const publicPath = join(process.cwd(), 'public', 'resume', 'Mauhik_Thakkar_Product_Manager_Resume.pdf')
+  try {
+    statSync(publicPath)
+    return publicPath
+  } catch {
+    // File doesn't exist anywhere
+    throw new Error('Resume file not found in any expected location')
+  }
+}
 
 /**
  * GET /api/resume/download?token=...
@@ -43,11 +78,6 @@ const RESUME_FILE_PATH = join(process.cwd(), 'data', 'private', 'resume.pdf')
  * - Token not regenerated (single token remains valid until limit reached)
  */
 export async function GET(request: NextRequest) {
-  // Fail fast if JWT secret is not configured
-  if (!process.env.RESUME_JWT_SECRET) {
-    throw new Error('Server misconfiguration: RESUME_JWT_SECRET missing')
-  }
-
   const downloadAttemptTimestamp = new Date().toISOString()
   let token: string | null = null
   let tokenPayload: ResumeTokenPayload | null = null
@@ -55,6 +85,29 @@ export async function GET(request: NextRequest) {
   let email: string | null = null
 
   try {
+    // Fail fast if JWT secret is not configured
+    if (!process.env.RESUME_JWT_SECRET) {
+      console.error('[RESUME_DOWNLOAD] CRITICAL: RESUME_JWT_SECRET not configured')
+      return NextResponse.json(
+        { 
+          error: 'System configuration error. Please contact support.',
+          reason: 'configuration_error'
+        },
+        { status: 500 }
+      )
+    }
+
+    // Check DATABASE_URL
+    if (!process.env.DATABASE_URL) {
+      console.error('[RESUME_DOWNLOAD] CRITICAL: DATABASE_URL not configured')
+      return NextResponse.json(
+        { 
+          error: 'System configuration error. Please contact support.',
+          reason: 'configuration_error'
+        },
+        { status: 500 }
+      )
+    }
     // Step 1: Extract token from query params
     // Next.js automatically decodes URL-encoded query params
     const searchParams = request.nextUrl.searchParams
@@ -86,12 +139,16 @@ export async function GET(request: NextRequest) {
 
     // Step 2: Verify JWT signature and decode payload
     try {
+      console.log('[RESUME_DOWNLOAD] Attempting JWT verification...')
+      console.log('[RESUME_DOWNLOAD] Has RESUME_JWT_SECRET:', !!process.env.RESUME_JWT_SECRET)
       tokenPayload = await verifyResumeToken(token)
       console.log('[RESUME_DOWNLOAD] JWT VERIFIED, exp:', tokenPayload.exp)
       console.log(`[RESUME_DOWNLOAD] Token verified successfully`)
       console.log(`[RESUME_DOWNLOAD] Token ID: ${tokenPayload.token_id}`)
       console.log(`[RESUME_DOWNLOAD] Email: ${tokenPayload.email.substring(0, 3)}...`)
       console.log(`[RESUME_DOWNLOAD] Expires at: ${new Date(tokenPayload.exp * 1000).toISOString()}`)
+      console.log(`[RESUME_DOWNLOAD] Current time: ${new Date().toISOString()}`)
+      console.log(`[RESUME_DOWNLOAD] Time until expiry: ${Math.floor((tokenPayload.exp * 1000 - Date.now()) / 1000 / 60)} minutes`)
     } catch (verifyError) {
       const errorMessage = verifyError instanceof Error ? verifyError.message : 'Unknown error'
       const errorName = verifyError instanceof Error ? verifyError.name : 'UnknownError'
@@ -127,19 +184,72 @@ export async function GET(request: NextRequest) {
 
     // Ensure tokenPayload is not null (TypeScript guard)
     if (!tokenPayload) {
-      throw new Error('Token payload is null after verification')
+      console.error('[RESUME_DOWNLOAD] CRITICAL: Token payload is null after verification')
+      return NextResponse.json(
+        { 
+          error: 'Invalid download link',
+          reason: 'invalid_token'
+        },
+        { status: 401 }
+      )
     }
 
     // Step 3: Hash token for database lookup
-    tokenHash = hashToken(token)
-    console.log('[RESUME_DOWNLOAD] TOKEN HASH PREFIX:', tokenHash.substring(0, 8))
-    console.log(`[RESUME_DOWNLOAD] Token hashed: ${tokenHash.substring(0, 20)}...`)
+    try {
+      tokenHash = hashToken(token)
+      console.log('[RESUME_DOWNLOAD] TOKEN HASH PREFIX:', tokenHash.substring(0, 8))
+      console.log(`[RESUME_DOWNLOAD] Token hashed: ${tokenHash.substring(0, 20)}...`)
+    } catch (hashError) {
+      const errorMessage = hashError instanceof Error ? hashError.message : String(hashError)
+      console.error(`[RESUME_DOWNLOAD] Token hashing failed`)
+      console.error(`[RESUME_DOWNLOAD] Error: ${errorMessage}`)
+      return NextResponse.json(
+        { 
+          error: 'Invalid download link',
+          reason: 'invalid_token'
+        },
+        { status: 401 }
+      )
+    }
 
     // Step 4: ATOMIC DATABASE UPDATE (THE GATE)
     // This is the CRITICAL enforcement point - database is the gate
     // NO LOGIC BEFORE THIS - database decides if download is allowed
-    const newDownloadCount = await incrementDownloadCount(tokenHash)
-    console.log('[RESUME_DOWNLOAD] UPDATE RESULT:', newDownloadCount !== null ? `SUCCESS (count: ${newDownloadCount})` : 'FAILED')
+    console.log('[RESUME_DOWNLOAD] Attempting atomic database update...')
+    console.log('[RESUME_DOWNLOAD] Has DATABASE_URL:', !!process.env.DATABASE_URL)
+    let newDownloadCount: number | null = null
+    try {
+      newDownloadCount = await incrementDownloadCount(tokenHash)
+      console.log('[RESUME_DOWNLOAD] UPDATE RESULT:', newDownloadCount !== null ? `SUCCESS (count: ${newDownloadCount})` : 'FAILED')
+    } catch (dbError) {
+      const errorMessage = dbError instanceof Error ? dbError.message : String(dbError)
+      const errorName = dbError instanceof Error ? dbError.name : 'UnknownError'
+      console.error(`[RESUME_DOWNLOAD] Database update failed`)
+      console.error(`[RESUME_DOWNLOAD] Error name: ${errorName}`)
+      console.error(`[RESUME_DOWNLOAD] Error message: ${errorMessage}`)
+      console.error(`[RESUME_DOWNLOAD] Token hash: ${tokenHash ? tokenHash.substring(0, 20) + '...' : 'missing'}`)
+      console.error(`[RESUME_DOWNLOAD] Full error:`, dbError instanceof Error ? dbError.stack : String(dbError))
+      
+      // Check if it's a database connection error
+      if (errorMessage.includes('DATABASE_URL') || errorMessage.includes('connection') || errorMessage.includes('database')) {
+        return NextResponse.json(
+          { 
+            error: 'System configuration error. Please contact support.',
+            reason: 'database_error'
+          },
+          { status: 500 }
+        )
+      }
+      
+      // For other database errors, treat as invalid token
+      return NextResponse.json(
+        { 
+          error: 'Invalid download link',
+          reason: 'invalid_token'
+        },
+        { status: 401 }
+      )
+    }
 
     // Step 5: Check if update succeeded
     if (newDownloadCount === null) {
@@ -191,28 +301,83 @@ export async function GET(request: NextRequest) {
     console.log(`[RESUME_DOWNLOAD] Token hash: ${tokenHash.substring(0, 20)}...`)
     console.log(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
 
-    // Verify file exists and get file stats
-    let fileStats: ReturnType<typeof statSync>
+    // Get resume file path (tries multiple locations)
+    let resumeFilePath: string
     try {
-      fileStats = statSync(RESUME_FILE_PATH)
-      console.log(`[RESUME_DOWNLOAD] Resume file found: ${fileStats.size} bytes`)
-    } catch (fileStatError) {
-      const errorMessage = fileStatError instanceof Error ? fileStatError.message : String(fileStatError)
-      console.error(`[RESUME_DOWNLOAD] Failed to access resume file`)
-      console.error(`[RESUME_DOWNLOAD] Path: ${RESUME_FILE_PATH}`)
+      resumeFilePath = getResumeFilePath()
+      console.log(`[RESUME_DOWNLOAD] Resume file located at: ${resumeFilePath}`)
+    } catch (pathError) {
+      const errorMessage = pathError instanceof Error ? pathError.message : String(pathError)
+      console.error(`[RESUME_DOWNLOAD] CRITICAL: Resume file not found in any location`)
       console.error(`[RESUME_DOWNLOAD] Error: ${errorMessage}`)
+      console.error(`[RESUME_DOWNLOAD] Process CWD: ${process.cwd()}`)
       console.error(`[RESUME_DOWNLOAD] Email: ${email.substring(0, 3)}...`)
       console.error(`[RESUME_DOWNLOAD] Download count: ${newDownloadCount}/${MAX_DOWNLOADS}`)
       console.error(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
+      return NextResponse.json(
+        { 
+          error: 'Resume file not available. Please contact support.',
+          reason: 'file_not_found'
+        },
+        { status: 500 }
+      )
+    }
+
+    // Verify file exists and get file stats
+    let fileStats: ReturnType<typeof statSync>
+    try {
+      fileStats = statSync(resumeFilePath)
+      console.log(`[RESUME_DOWNLOAD] Resume file found: ${fileStats.size} bytes`)
+    } catch (fileStatError) {
+      const errorMessage = fileStatError instanceof Error ? fileStatError.message : String(fileStatError)
+      const errorCode = fileStatError && typeof fileStatError === 'object' && 'code' in fileStatError ? fileStatError.code : 'UNKNOWN'
+      console.error(`[RESUME_DOWNLOAD] Failed to access resume file`)
+      console.error(`[RESUME_DOWNLOAD] Path: ${resumeFilePath}`)
+      console.error(`[RESUME_DOWNLOAD] Error code: ${errorCode}`)
+      console.error(`[RESUME_DOWNLOAD] Error message: ${errorMessage}`)
+      console.error(`[RESUME_DOWNLOAD] Email: ${email.substring(0, 3)}...`)
+      console.error(`[RESUME_DOWNLOAD] Download count: ${newDownloadCount}/${MAX_DOWNLOADS}`)
+      console.error(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
+      console.error(`[RESUME_DOWNLOAD] Process CWD: ${process.cwd()}`)
+      
+      // Check if file doesn't exist
+      if (errorCode === 'ENOENT') {
+        console.error(`[RESUME_DOWNLOAD] CRITICAL: Resume file not found at path`)
+        return NextResponse.json(
+          { 
+            error: 'Resume file not available. Please contact support.',
+            reason: 'file_not_found'
+          },
+          { status: 500 }
+        )
+      }
       
       return NextResponse.json(
-        { error: 'Failed to retrieve resume file' },
+        { 
+          error: 'Failed to retrieve resume file',
+          reason: 'file_access_error'
+        },
         { status: 500 }
       )
     }
 
     // Create read stream and return PDF
-    const fileStream = createReadStream(RESUME_FILE_PATH)
+    let fileStream: ReturnType<typeof createReadStream>
+    try {
+      fileStream = createReadStream(resumeFilePath)
+    } catch (streamError) {
+      const errorMessage = streamError instanceof Error ? streamError.message : String(streamError)
+      console.error(`[RESUME_DOWNLOAD] Failed to create file stream`)
+      console.error(`[RESUME_DOWNLOAD] Path: ${resumeFilePath}`)
+      console.error(`[RESUME_DOWNLOAD] Error: ${errorMessage}`)
+      return NextResponse.json(
+        { 
+          error: 'Failed to retrieve resume file',
+          reason: 'stream_error'
+        },
+        { status: 500 }
+      )
+    }
     
     console.log(`[RESUME_DOWNLOAD] Download successful`)
     console.log(`[RESUME_DOWNLOAD] Email: ${email.substring(0, 3)}...`)
@@ -232,7 +397,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    // Comprehensive error logging
+    // Comprehensive error logging - this should rarely be hit now with all try-catch blocks
     const errorDetails = {
       timestamp: downloadAttemptTimestamp,
       token: token ? `${token.substring(0, 20)}...` : 'missing',
@@ -248,14 +413,25 @@ export async function GET(request: NextRequest) {
         message: error.message,
         stack: error.stack,
       } : String(error),
+      hasJwtSecret: !!process.env.RESUME_JWT_SECRET,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
     }
     
-    console.error('[RESUME_DOWNLOAD] Unexpected error occurred')
+    console.error('[RESUME_DOWNLOAD] UNEXPECTED ERROR - Top level catch block')
+    console.error(`[RESUME_DOWNLOAD] This should not happen - all errors should be caught earlier`)
     console.error(`[RESUME_DOWNLOAD] Error details: ${JSON.stringify(errorDetails, null, 2)}`)
+    
+    // Log the full error stack
+    if (error instanceof Error) {
+      console.error(`[RESUME_DOWNLOAD] Error stack: ${error.stack}`)
+    }
     
     // Return generic error response (don't expose internal details)
     return NextResponse.json(
-      { error: 'An error occurred while processing your download request.' },
+      { 
+        error: 'An error occurred while processing your download request.',
+        reason: 'unexpected_error'
+      },
       { status: 500 }
     )
   }
