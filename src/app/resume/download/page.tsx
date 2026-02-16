@@ -19,9 +19,24 @@ function DownloadContent() {
   const [state, setState] = useState<DownloadState>({ status: 'loading' })
 
   useEffect(() => {
-    const token = searchParams.get('token')
+    // Next.js automatically decodes URL-encoded query params
+    let token = searchParams.get('token')
 
     if (!token) {
+      console.error('[RESUME_DOWNLOAD_PAGE] No token in URL')
+      setState({
+        status: 'expired',
+        reason: 'invalid_token',
+      })
+      return
+    }
+
+    // Ensure token is properly trimmed (no whitespace issues)
+    token = token.trim()
+
+    // Validate token format (JWT should have 3 parts separated by dots)
+    if (token.split('.').length !== 3) {
+      console.error('[RESUME_DOWNLOAD_PAGE] Invalid token format:', token.substring(0, 20))
       setState({
         status: 'expired',
         reason: 'invalid_token',
@@ -35,7 +50,9 @@ function DownloadContent() {
         setState({ status: 'downloading' })
 
         // Fetch from API route which handles token verification and PDF streaming
+        // Re-encode token to ensure proper URL encoding
         const apiUrl = `/api/resume/download?token=${encodeURIComponent(token)}`
+        console.log('[RESUME_DOWNLOAD_PAGE] Calling API with token length:', token.length)
         const response = await fetch(apiUrl)
 
         // Handle error responses (expired, invalid, limit reached)

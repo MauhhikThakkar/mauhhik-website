@@ -65,10 +65,24 @@ export async function signResumeToken(payload: ResumeTokenPayload): Promise<stri
  * @throws Error if token is invalid, expired, or secret is missing
  */
 export async function verifyResumeToken(token: string): Promise<ResumeTokenPayload> {
+  // Validate token format before attempting verification
+  if (!token || typeof token !== 'string') {
+    throw new Error('Token is required and must be a string')
+  }
+
+  // JWT format validation: should have 3 parts separated by dots
+  const parts = token.split('.')
+  if (parts.length !== 3) {
+    throw new Error(`Invalid JWT format: expected 3 parts, got ${parts.length}`)
+  }
+
+  // Trim token to remove any whitespace
+  const trimmedToken = token.trim()
+
   const secretKey = getSecretKey()
 
   try {
-    const { payload } = await jwtVerify(token, secretKey, {
+    const { payload } = await jwtVerify(trimmedToken, secretKey, {
       algorithms: ['HS256'],
     })
 
@@ -89,6 +103,13 @@ export async function verifyResumeToken(token: string): Promise<ResumeTokenPaylo
     }
   } catch (error) {
     if (error instanceof Error) {
+      // Provide more specific error messages
+      if (error.message.includes('signature') || error.message.includes('invalid')) {
+        throw new Error(`Token verification failed: Invalid signature or token format - ${error.message}`)
+      }
+      if (error.message.includes('expired')) {
+        throw new Error(`Token verification failed: Token expired - ${error.message}`)
+      }
       // Re-throw with more context
       throw new Error(`Token verification failed: ${error.message}`)
     }

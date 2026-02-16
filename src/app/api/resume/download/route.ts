@@ -56,20 +56,28 @@ export async function GET(request: NextRequest) {
 
   try {
     // Step 1: Extract token from query params
+    // Next.js automatically decodes URL-encoded query params
     const searchParams = request.nextUrl.searchParams
     token = searchParams.get('token')
 
     if (!token) {
       console.log('[RESUME_DOWNLOAD] Download requested without token')
       console.log(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
+      console.log(`[RESUME_DOWNLOAD] Raw URL: ${request.url}`)
+      console.log(`[RESUME_DOWNLOAD] Search params: ${request.nextUrl.search}`)
       return NextResponse.json(
         { error: 'Token is required' },
         { status: 400 }
       )
     }
 
-    // Diagnostic: Token length (safe, no secret)
+    // Ensure token is properly trimmed (no whitespace issues)
+    token = token.trim()
+
+    // Diagnostic: Token length and format (safe, no secret)
     console.log('[RESUME_DOWNLOAD] TOKEN LENGTH:', token.length)
+    console.log('[RESUME_DOWNLOAD] TOKEN STARTS WITH:', token.substring(0, 10))
+    console.log('[RESUME_DOWNLOAD] TOKEN IS VALID JWT FORMAT:', token.split('.').length === 3)
 
     // Log download attempt
     console.log(`[RESUME_DOWNLOAD] Download attempt`)
@@ -86,10 +94,26 @@ export async function GET(request: NextRequest) {
       console.log(`[RESUME_DOWNLOAD] Expires at: ${new Date(tokenPayload.exp * 1000).toISOString()}`)
     } catch (verifyError) {
       const errorMessage = verifyError instanceof Error ? verifyError.message : 'Unknown error'
+      const errorName = verifyError instanceof Error ? verifyError.name : 'UnknownError'
       console.error(`[RESUME_DOWNLOAD] Token verification failed`)
       console.error(`[RESUME_DOWNLOAD] Token: ${token.substring(0, 20)}...`)
-      console.error(`[RESUME_DOWNLOAD] Error: ${errorMessage}`)
+      console.error(`[RESUME_DOWNLOAD] Token length: ${token.length}`)
+      console.error(`[RESUME_DOWNLOAD] Error name: ${errorName}`)
+      console.error(`[RESUME_DOWNLOAD] Error message: ${errorMessage}`)
+      console.error(`[RESUME_DOWNLOAD] Full error:`, verifyError instanceof Error ? verifyError.stack : String(verifyError))
       console.error(`[RESUME_DOWNLOAD] Timestamp: ${downloadAttemptTimestamp}`)
+      
+      // Check if it's a secret mismatch error
+      if (errorMessage.includes('RESUME_JWT_SECRET') || errorMessage.includes('secret')) {
+        console.error(`[RESUME_DOWNLOAD] CRITICAL: JWT secret configuration issue`)
+        return NextResponse.json(
+          { 
+            error: 'System configuration error. Please contact support.',
+            reason: 'invalid_token'
+          },
+          { status: 500 }
+        )
+      }
       
       // Return invalid token response
       return NextResponse.json(
