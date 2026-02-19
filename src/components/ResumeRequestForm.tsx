@@ -120,9 +120,9 @@ function ResumeRequestFormInner() {
   // Form state
   return (
     <div className="max-w-md mx-auto">
-      <div className="bg-charcoal-light/30 border border-zinc-900 rounded-2xl p-8 md:p-10">
+      <div className="bg-charcoal-light/30 border border-zinc-900 rounded-2xl p-6 sm:p-8 md:p-10">
         <form onSubmit={handleSubmit} noValidate>
-          <div className="space-y-4">
+          <div className="space-y-5 sm:space-y-6">
             {/* Email Input */}
             <div>
               <label htmlFor="resume-email" className="sr-only">
@@ -137,9 +137,9 @@ function ResumeRequestFormInner() {
                   setError('')
                 }}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 bg-zinc-900 border rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700 focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-zinc-950 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3.5 sm:py-4 bg-zinc-900 border rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700 focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-zinc-950 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[52px] text-base"
                 style={{
-                  borderColor: error ? '#ef4444' : '#27272a',
+                  borderColor: error ? '#dc2626' : '#27272a',
                 }}
                 disabled={isSubmitting}
                 required
@@ -151,7 +151,7 @@ function ResumeRequestFormInner() {
               {error && (
                 <p
                   id="email-error"
-                  className="text-xs text-red-400 mt-2"
+                  className="text-sm text-red-300/90 mt-2.5 px-1"
                   role="alert"
                 >
                   {error}
@@ -159,16 +159,16 @@ function ResumeRequestFormInner() {
               )}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit Button - Improved prominence and tap target */}
             <button
               type="submit"
-              className="w-full px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-950"
+              className="w-full px-6 py-4 sm:py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 active:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-950 min-h-[56px] text-base"
               disabled={isSubmitting || !email.trim()}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg
-                    className="animate-spin h-4 w-4"
+                    className="animate-spin h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
                     aria-hidden="true"

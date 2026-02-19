@@ -242,8 +242,8 @@ export default async function ProjectPage({
 
           {/* Problem Statement */}
           {isValidPortableText(project.problem) && (
-            <div className="mb-12 max-w-3xl">
-              <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">Problem Statement</h2>
+            <div className="mb-12 sm:mb-16 max-w-3xl">
+              <h2 className="text-xl font-semibold text-white mb-4 sm:mb-6 tracking-tight">Problem Statement</h2>
               <div className="text-zinc-300 leading-relaxed">
                 <PortableText value={project.problem.slice(0, 1)} />
               </div>
@@ -251,7 +251,7 @@ export default async function ProjectPage({
           )}
 
           {/* What I Was Responsible For */}
-          <div className="mb-8 max-w-3xl">
+          <div className="mb-12 sm:mb-16 max-w-3xl">
             <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">What I Was Responsible For</h2>
             <ul className="space-y-2 text-zinc-300 leading-relaxed list-none pl-0 mb-4">
               <li className="flex items-start gap-3">

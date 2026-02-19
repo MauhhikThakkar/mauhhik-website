@@ -150,15 +150,15 @@ export default async function ResumePage({
         </div>
 
         {/* Resume Request Section */}
-        <div className="mb-12 print:hidden">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-4">
+        <div className="mb-12 sm:mb-16 print:hidden">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-5">
               Request Resume Access
             </h2>
-            <p className="text-base text-zinc-400 leading-relaxed max-w-xl mx-auto mb-2">
+            <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-xl mx-auto mb-3 sm:mb-4 px-4">
               My resume is available to verified professionals. Enter your email to receive a secure download link.
             </p>
-            <p className="text-sm text-zinc-500 max-w-xl mx-auto">
+            <p className="text-sm sm:text-base text-zinc-500 max-w-xl mx-auto px-4">
               Secure download link valid for 6 hours. Up to 3 downloads per request.
             </p>
           </div>

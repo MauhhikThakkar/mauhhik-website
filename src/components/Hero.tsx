@@ -85,11 +85,11 @@ export default function Hero() {
   }
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 pt-24">
-      <div className="max-w-3xl text-center">
-        {/* Headline with staggered line reveal */}
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 pt-20 sm:pt-24 pb-16 sm:pb-20">
+      <div className="max-w-3xl text-center w-full">
+        {/* Headline with staggered line reveal - Improved mobile typography */}
         <motion.h1
-          className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto leading-[1.1]"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 sm:mb-8 max-w-3xl mx-auto leading-[1.1]"
           variants={headlineContainerVariants}
           initial="hidden"
           animate="visible"
@@ -110,9 +110,9 @@ export default function Hero() {
           </motion.span>
         </motion.h1>
 
-        {/* Subheadline - animates after headline */}
+        {/* Subheadline - animates after headline - Improved mobile spacing */}
         <motion.p
-          className="text-gray-400 text-lg md:text-xl mb-10 leading-relaxed max-w-2xl mx-auto"
+          className="text-gray-400 text-base sm:text-lg md:text-xl mb-8 sm:mb-10 md:mb-12 leading-relaxed max-w-2xl mx-auto px-2"
           variants={subheadlineVariants}
           initial="hidden"
           animate="visible"
@@ -122,27 +122,31 @@ export default function Hero() {
           AI, fintech, and enterprise platforms.
         </motion.p>
 
-        {/* CTA Hierarchy - Mobile First */}
+        {/* CTA Hierarchy - Mobile First with improved spacing and visual dominance */}
         <motion.div
           variants={ctaContainerVariants}
           initial="hidden"
           animate="visible"
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-4"
+          className="flex flex-col items-center justify-center gap-3 sm:gap-4 px-4"
         >
-          {/* Primary CTA - Portfolio */}
-          <CTAButton href="/portfolio" variant="primary" onClick={handleCtaClick}>
-            View Portfolio
-          </CTAButton>
+          {/* Primary CTA - Portfolio - Visually dominant */}
+          <div className="w-full max-w-xs sm:max-w-none">
+            <CTAButton href="/portfolio" variant="primary" onClick={handleCtaClick} className="w-full sm:w-auto">
+              View Portfolio
+            </CTAButton>
+          </div>
 
           {/* Secondary CTA - Download Resume */}
-          <CTAButton href="/resume" variant="secondary">
-            Download Resume
-          </CTAButton>
+          <div className="w-full max-w-xs sm:max-w-none">
+            <CTAButton href="/resume" variant="secondary" className="w-full sm:w-auto">
+              Download Resume
+            </CTAButton>
+          </div>
 
-          {/* Tertiary CTA - About Me */}
+          {/* Tertiary CTA - About Me - Smaller, less prominent */}
           <Link
             href="/about"
-            className="text-sm text-gray-400 hover:text-white transition-colors underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal rounded px-2 py-1"
+            className="text-sm text-gray-400 hover:text-white transition-colors underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal rounded px-2 py-2 min-h-[44px] flex items-center"
           >
             About Me
           </Link>

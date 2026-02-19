@@ -136,7 +136,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Slide-in Drawer */}
+      {/* Mobile Full-Screen Overlay Navigation */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -146,51 +146,56 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 md:hidden"
               onClick={closeMobileMenu}
               aria-hidden="true"
             />
 
-            {/* Drawer */}
+            {/* Full-Screen Overlay */}
             <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ 
                 type: 'tween',
                 duration: 0.3,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-charcoal border-l border-white/10 z-50 md:hidden overflow-y-auto"
+              className="fixed inset-0 z-50 md:hidden flex items-center justify-center"
               role="dialog"
               aria-modal="true"
               aria-label="Mobile navigation menu"
             >
-              <div className="pt-20 px-6 pb-8">
-                <nav aria-label="Mobile navigation">
-                  <ul className="flex flex-col gap-1">
-                    {navLinks.map((link, index) => (
+              <nav aria-label="Mobile navigation" className="w-full max-w-sm px-6">
+                <ul className="flex flex-col gap-2">
+                  {navLinks.map((link, index) => {
+                    const isResume = link.href === '/resume'
+                    return (
                       <motion.li
                         key={link.href}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ 
-                          delay: index * 0.05,
-                          duration: 0.2
+                          delay: index * 0.06,
+                          duration: 0.25
                         }}
                       >
                         <Link
                           href={link.href}
-                          className="block px-4 py-3 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal"
+                          className={`block px-6 py-4 text-lg font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal min-h-[56px] flex items-center justify-center ${
+                            isResume
+                              ? 'bg-white text-black hover:bg-gray-200 font-semibold'
+                              : 'text-gray-300 hover:text-white hover:bg-white/5'
+                          }`}
                           onClick={closeMobileMenu}
                         >
                           {link.label}
                         </Link>
                       </motion.li>
-                    ))}
-                  </ul>
-                </nav>
-              </div>
+                    )
+                  })}
+                </ul>
+              </nav>
             </motion.div>
           </>
         )}
