@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, type Variants } from "framer-motion"
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import CTAButton from "@/components/CTAButton"
 import { trackHomepageHeroCtaClick } from "@/lib/analytics"
 import { useUtmTracker } from "@/hooks/useUtmTracker"
@@ -121,15 +122,30 @@ export default function Hero() {
           AI, fintech, and enterprise platforms.
         </motion.p>
 
-        {/* Primary CTA - Portfolio */}
+        {/* CTA Hierarchy - Mobile First */}
         <motion.div
           variants={ctaContainerVariants}
           initial="hidden"
           animate="visible"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-4"
         >
+          {/* Primary CTA - Portfolio */}
           <CTAButton href="/portfolio" variant="primary" onClick={handleCtaClick}>
             View Portfolio
           </CTAButton>
+
+          {/* Secondary CTA - Download Resume */}
+          <CTAButton href="/resume" variant="secondary">
+            Download Resume
+          </CTAButton>
+
+          {/* Tertiary CTA - About Me */}
+          <Link
+            href="/about"
+            className="text-sm text-gray-400 hover:text-white transition-colors underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal rounded px-2 py-1"
+          >
+            About Me
+          </Link>
         </motion.div>
       </div>
     </section>

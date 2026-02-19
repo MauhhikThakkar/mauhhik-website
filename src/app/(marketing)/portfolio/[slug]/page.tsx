@@ -10,6 +10,7 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 import PortfolioBreadcrumb from "@/components/portfolio/PortfolioBreadcrumb"
 import DecisionSnapshot from "@/components/portfolio/DecisionSnapshot"
 import CollapsibleImprovements from "@/components/portfolio/CollapsibleImprovements"
+import CaseStudyBottomBar from "@/components/portfolio/CaseStudyBottomBar"
 
 // Type guard to check if value is a valid Portable Text array
 function isValidPortableText(value: unknown): value is unknown[] {
@@ -850,8 +851,11 @@ export default async function ProjectPage({
         </div>
       )}
 
-      {/* Bottom Spacing */}
-      <div className="h-32"></div>
+      {/* Bottom Spacing for Mobile Bottom Bar */}
+      <div className="h-32 md:h-0"></div>
+      
+      {/* Mobile Bottom Action Bar */}
+      <CaseStudyBottomBar />
     </main>
   )
 }

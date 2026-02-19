@@ -20,6 +20,7 @@
  */
 
 import { createHash } from 'crypto'
+import { Pool } from 'pg'
 
 /**
  * Database connection interface
@@ -50,81 +51,58 @@ export function hashToken(token: string): string {
 }
 
 /**
+ * Shared PostgreSQL connection pool (canonical configuration)
+ *
+ * All database access in this project MUST go through this pool.
+ *
+ * Environment:
+ * - Uses ONLY `process.env.DATABASE_URL` as the canonical connection string.
+ * - Fails fast if `DATABASE_URL` is missing.
+ *
+ * Security / connectivity:
+ * - SSL enabled with `rejectUnauthorized: false` to support managed providers
+ *   like Neon, Supabase, or Vercel Postgres-compatible services.
+ */
+let pool: Pool | null = null
+
+function getPool(): Pool {
+  const connectionString = process.env.DATABASE_URL
+
+  if (!connectionString) {
+    // Canonical, explicit failure when database URL is not configured
+    throw new Error('DATABASE_URL is not configured.')
+  }
+
+  if (!pool) {
+    pool = new Pool({
+      connectionString,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    })
+  }
+
+  return pool
+}
+
+/**
  * Get database connection
- * 
- * Uses DATABASE_URL for all database queries.
- * 
- * Supports:
- * 1. DATABASE_URL environment variable (primary method)
- * 2. Vercel Postgres (@vercel/postgres) - uses DATABASE_URL internally
- * 
- * Installation:
- * - For Vercel: npm install @vercel/postgres (sets DATABASE_URL automatically)
- * - For other PostgreSQL: npm install pg @types/pg
- * 
- * DATABASE_URL format: postgresql://user:password@host:port/database
+ *
+ * Returns a light wrapper around the shared Pool instance that matches the
+ * `DatabaseConnection` interface used throughout this file.
  */
 function getDatabase(): DatabaseConnection {
-  // DATABASE_URL is the source of truth for all database connections
-  const connectionString = process.env.DATABASE_URL
-  
-  if (!connectionString) {
-    throw new Error(
-      'DATABASE_URL environment variable is required.\n' +
-      'Please set DATABASE_URL with your database connection string.\n' +
-      'For Vercel Postgres, DATABASE_URL is set automatically when you install @vercel/postgres.'
-    )
-  }
+  const poolInstance = getPool()
 
-  // Try Vercel Postgres first (uses DATABASE_URL internally)
-  // Vercel Postgres SDK is optimized for serverless environments
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const vercelPostgres = require('@vercel/postgres')
-    if (vercelPostgres && vercelPostgres.sql) {
+  return {
+    query: async <T = unknown>(sql: string, params?: unknown[]) => {
+      const result = await poolInstance.query(sql, params)
+
       return {
-        query: async (queryText: string, params?: unknown[]) => {
-          const result = await vercelPostgres.sql.query(queryText, params || [])
-          return {
-            rows: result.rows || [],
-            rowCount: result.rowCount || 0,
-          }
-        },
+        rows: (result.rows || []) as T[],
+        rowCount: result.rowCount ?? result.rows?.length ?? 0,
       }
-    }
-  } catch {
-    // Vercel Postgres not available, use generic PostgreSQL client with DATABASE_URL
-  }
-
-  // Use generic PostgreSQL client with DATABASE_URL
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { Client } = require('pg')
-    const client = new Client({ connectionString })
-    
-    // Note: Connection pooling should be handled at application level
-    // For production, use a connection pool manager
-    return {
-      query: async (queryText: string, params?: unknown[]) => {
-        await client.connect()
-        try {
-          const result = await client.query(queryText, params || [])
-          return {
-            rows: result.rows || [],
-            rowCount: result.rowCount || 0,
-          }
-        } finally {
-          await client.end()
-        }
-      },
-    }
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    throw new Error(
-      `Failed to create database connection using DATABASE_URL.\n` +
-      `Error: ${errorMessage}\n` +
-      `Please ensure DATABASE_URL is set correctly and pg library is installed.`
-    )
+    },
   }
 }
 
