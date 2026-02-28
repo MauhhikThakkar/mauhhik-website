@@ -63,6 +63,7 @@ export const PROJECT_BY_SLUG_QUERY = `
       }
     },
     "categories": categories[]->{ 
+      _id,
       title, 
       "slug": slug.current 
     },
@@ -174,6 +175,9 @@ export const PROJECT_BY_SLUG_QUERY = `
       gtmRefinement,
       metricsEvolution
     },
+    risksIdentified,
+    v2Roadmap,
+    monetizationExpansion,
     goals[] {
       label,
       value,
@@ -221,6 +225,76 @@ export const PROJECT_BY_SLUG_QUERY = `
       }
     },
     prototypeLink,
+    targetUsers[] {
+      ...,
+      _type == "image" => {
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata { dimensions { width, height, aspectRatio } }
+        }
+      }
+    },
+    marketOpportunity[] {
+      ...,
+      _type == "image" => {
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata { dimensions { width, height, aspectRatio } }
+        }
+      }
+    },
+    productVision[] {
+      ...,
+      _type == "image" => {
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata { dimensions { width, height, aspectRatio } }
+        }
+      }
+    },
+    architectureWorkflow[] {
+      title,
+      description
+    },
+    mvpScope[] {
+      ...,
+      _type == "image" => {
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata { dimensions { width, height, aspectRatio } }
+        }
+      }
+    },
+    monetizationStrategy[] {
+      ...,
+      _type == "image" => {
+        _type,
+        _key,
+        alt,
+        asset->{
+          _id,
+          url,
+          metadata { dimensions { width, height, aspectRatio } }
+        }
+      }
+    },
+    northStarMetric,
     "relatedBlogs": relatedBlogs[]->{
       _id,
       title,

@@ -1,8 +1,10 @@
 import { Suspense } from 'react'
 import { client } from '@/sanity/lib/client'
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
+import { getProjectFilterCategory } from '@/lib/portfolioCategories'
+import type { FilterCategory } from '@/lib/portfolioCategories'
 import PortfolioHeader from '@/components/portfolio/PortfolioHeader'
-import PortfolioCard from '@/components/portfolio/PortfolioCard'
+import PortfolioFilterableGrid from '@/components/portfolio/PortfolioFilterableGrid'
 
 // Enhanced query for portfolio index page
 const PORTFOLIO_INDEX_QUERY = `
@@ -11,6 +13,8 @@ const PORTFOLIO_INDEX_QUERY = `
     title,
     "slug": slug.current,
     shortDescription,
+    featured,
+    prototypeLink,
     coverImage {
       alt,
       asset->{
@@ -57,6 +61,8 @@ interface PortfolioProject {
   title: string
   slug: string
   shortDescription?: string
+  featured?: boolean
+  prototypeLink?: string
   coverImage?: {
     alt?: string
     asset?: {
@@ -159,82 +165,102 @@ export const metadata = generateSEOMetadata({
   imageAlt: 'Mauhhik — Product Case Studies',
 })
 
+const FEATURED_ITEMS = [
+  {
+    id: 'founder-os',
+    title: 'Founder OS',
+    positioning: 'AI-powered operating system for founders. Streamlines decision-making, prioritization, and execution across product, growth, and operations.',
+    caseStudySlug: 'founder-os',
+    prototypeLink: 'https://founder-os-hub.lovable.app',
+    filterCategory: 'AI Strategy' as const,
+  },
+  {
+    id: 'triage-genius',
+    title: 'Triage Genius',
+    positioning: 'Enterprise AI support triage system. Automates ticket routing with high accuracy, reducing response time and improving customer satisfaction.',
+    caseStudySlug: 'ai-enterprise-support-triage',
+    prototypeLink: 'https://triage-genius-hub.lovable.app',
+    filterCategory: 'Enterprise AI' as const,
+  },
+]
+
+/** Slugs used by hardcoded flagship cards — exclude these from the general grid to avoid duplicates */
+const FEATURED_CASE_STUDY_SLUGS = new Set(
+  FEATURED_ITEMS.map((item) => item.caseStudySlug)
+)
+
+const DEFAULT_FILTER_CATEGORY: FilterCategory = 'AI Strategy'
+
+/** Convert a flagship Sanity project into FeaturedItem shape for the grid */
+function toFeaturedItem(project: PortfolioProject): {
+  id: string
+  title: string
+  positioning: string
+  caseStudySlug: string
+  prototypeLink: string
+  filterCategory: FilterCategory
+} {
+  const filterCategory =
+    getProjectFilterCategory(project.slug, project.title, project.categories) ??
+    DEFAULT_FILTER_CATEGORY
+  return {
+    id: project._id,
+    title: project.title,
+    positioning: project.shortDescription ?? '',
+    caseStudySlug: project.slug,
+    prototypeLink: project.prototypeLink ?? '',
+    filterCategory,
+  }
+}
+
 export default async function PortfolioPage() {
   const projects = await getProjects()
 
-  // Split projects into shipped vs certification/case study
-  // Heuristic: projects with real-world impact metrics are treated as shipped products.
-  const shippedProjects = projects.filter(
-    (project) => project.impact !== undefined && project.impact.length > 0
+  const flagshipProjects = projects.filter(
+    (p): p is PortfolioProject => p.featured === true
+  )
+  // Exclude flagship projects AND any project whose slug is already shown as a hardcoded flagship card
+  const regularProjects = projects.filter(
+    (p): p is PortfolioProject =>
+      !p.featured && !FEATURED_CASE_STUDY_SLUGS.has(p.slug)
   )
 
-  const certificationProjects = projects.filter(
-    (project) => !project.impact || project.impact.length === 0
-  )
+  const featuredItems = [
+    ...FEATURED_ITEMS,
+    ...flagshipProjects.map(toFeaturedItem),
+  ]
+
+  const hasContent = featuredItems.length > 0 || regularProjects.length > 0
 
   return (
     <main className="bg-charcoal text-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20 sm:py-28">
         <PortfolioHeader />
 
-        {projects && projects.length > 0 ? (
-          <div className="mt-16 sm:mt-20 space-y-16 sm:space-y-20">
-            {/* Shipped Products */}
-            {shippedProjects.length > 0 && (
-              <section>
-                <div className="mb-6 sm:mb-8">
-                  <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">
-                    🚀 Shipped Products
-                  </h2>
-                  <p className="text-sm sm:text-base text-zinc-400 max-w-2xl">
-                    Real-world products deployed in production environments, with concrete impact
-                    metrics and execution under real constraints.
-                  </p>
-                </div>
+        {hasContent ? (
+          <div className="mt-16 sm:mt-20">
+            <section>
+              <div className="mb-8 sm:mb-10">
+                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
+                  Case Studies
+                </h2>
+                <p className="text-base sm:text-lg text-zinc-400 max-w-2xl">
+                  Product case studies across AI, FinTech, and enterprise — filter by category.
+                </p>
+              </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                  {shippedProjects.map((project, index) => (
-                    <Suspense key={project._id} fallback={
-                      <div className="h-full bg-charcoal-light/30 border rounded-2xl border-zinc-900 animate-pulse min-h-[400px]" />
-                    }>
-                      <PortfolioCard
-                        project={project}
-                        index={index}
-                        isRecommended={index === 0}
-                      />
-                    </Suspense>
-                  ))}
+              <Suspense fallback={
+                <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+                  <div className="h-64 bg-charcoal-light/30 border rounded-2xl border-zinc-900 animate-pulse" />
+                  <div className="h-64 bg-charcoal-light/30 border rounded-2xl border-zinc-900 animate-pulse" />
                 </div>
-              </section>
-            )}
-
-            {/* Certification / Case Study Projects */}
-            {certificationProjects.length > 0 && (
-              <section>
-                <div className="mb-6 sm:mb-8">
-                  <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-2">
-                    📚 Certification &amp; Case Study Projects
-                  </h2>
-                  <p className="text-sm sm:text-base text-zinc-400 max-w-2xl">
-                    Structured case studies and certification projects used to demonstrate product
-                    thinking, judgment, and decision-making in complex domains.
-                  </p>
-                </div>
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                  {certificationProjects.map((project, index) => (
-                    <Suspense key={project._id} fallback={
-                      <div className="h-full bg-charcoal-light/30 border rounded-2xl border-zinc-900 animate-pulse min-h-[400px]" />
-                    }>
-                      <PortfolioCard
-                        project={project}
-                        index={index}
-                      />
-                    </Suspense>
-                  ))}
-                </div>
-              </section>
-            )}
+              }>
+                <PortfolioFilterableGrid
+                  featuredItems={featuredItems}
+                  projects={regularProjects}
+                />
+              </Suspense>
+            </section>
           </div>
         ) : (
           <div className="mt-16 text-center py-20">

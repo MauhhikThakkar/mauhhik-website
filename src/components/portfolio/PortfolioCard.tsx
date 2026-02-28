@@ -22,6 +22,7 @@ interface PortfolioProject {
   title: string
   slug: string
   shortDescription?: string
+  prototypeLink?: string
   coverImage?: {
     alt?: string
     asset?: {
@@ -203,17 +204,19 @@ export default function PortfolioCard({ project, isRecommended }: PortfolioCardP
     })
   }
 
+  const hasPrototype = Boolean(project.prototypeLink)
+
   return (
-    <div>
-      <Link
-        href={`/portfolio/${project.slug}`}
-        className="group block h-full"
-        onClick={handleCaseStudyClick}
+    <div className="h-full flex flex-col">
+      <article
+        className={`h-full flex flex-col bg-charcoal-light/30 border rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors ${
+          isRecommended ? 'border-zinc-800' : 'border-zinc-900'
+        }`}
       >
-        <article
-          className={`h-full bg-charcoal-light/30 border rounded-2xl overflow-hidden hover:border-zinc-700 transition-colors ${
-            isRecommended ? 'border-zinc-800' : 'border-zinc-900'
-          }`}
+        <Link
+          href={`/portfolio/${project.slug}`}
+          className="group block flex-1"
+          onClick={handleCaseStudyClick}
         >
           {/* Cover Image */}
           {project.coverImage?.asset?.url && (
@@ -262,11 +265,40 @@ export default function PortfolioCard({ project, isRecommended }: PortfolioCardP
               </div>
             )}
 
-            {/* CTA */}
-            <div className="flex items-center text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">
-              <span>Read Case Study</span>
+            {!hasPrototype && (
+              <div className="flex items-center text-sm font-medium text-zinc-400 group-hover:text-zinc-300 transition-colors">
+                <span>Read Case Study</span>
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
+        </Link>
+
+        {/* CTA row: primary + optional prototype (outside Link to avoid nested anchors) */}
+        <div className="px-6 pb-6 sm:px-8 sm:pb-8 pt-0">
+          <div
+            className={`flex gap-3 ${hasPrototype ? 'flex-col sm:flex-row' : ''}`}
+          >
+            <Link
+              href={`/portfolio/${project.slug}`}
+              onClick={handleCaseStudyClick}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-black text-sm font-semibold rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-charcoal sm:flex-1"
+            >
+              Read Case Study
               <svg
-                className="w-4 h-4 ml-2"
+                className="w-4 h-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -278,10 +310,34 @@ export default function PortfolioCard({ project, isRecommended }: PortfolioCardP
                   d="M9 5l7 7-7 7"
                 />
               </svg>
-            </div>
+            </Link>
+            {project.prototypeLink && (
+              <a
+                href={project.prototypeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-900/50 border border-zinc-700/50 text-white text-sm font-medium rounded-lg hover:bg-zinc-800/50 hover:border-zinc-600/50 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-600 focus:ring-offset-2 focus:ring-offset-charcoal sm:flex-1"
+              >
+                View Live Prototype
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </a>
+            )}
           </div>
-        </article>
-      </Link>
+        </div>
+      </article>
     </div>
   )
 }

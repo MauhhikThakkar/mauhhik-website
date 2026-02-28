@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Hero from "@/components/Hero";
 import MetricsStrip from "@/components/MetricsStrip";
 import PositioningSection from "@/components/PositioningSection";
+import AINativeProductSystems from "@/components/AINativeProductSystems";
 import ProductThinkingSection from "@/components/ProductThinkingSection";
 import AuthorityValidationSection from "@/components/AuthorityValidationSection";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
@@ -32,6 +33,7 @@ export default function Home() {
         <MetricsStrip />
       </Suspense>
       <PositioningSection />
+      <AINativeProductSystems />
       <ProductThinkingSection />
       
       {/* Thinking Section */}

@@ -23,6 +23,14 @@ export default defineType({
     }),
 
     defineField({
+      name: 'featured',
+      type: 'boolean',
+      title: 'Flagship / Featured',
+      description: 'When true, this project appears only in the flagship section and is excluded from the general grid.',
+      initialValue: false,
+    }),
+
+    defineField({
       name: 'categories',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'category' }] }],
@@ -91,6 +99,71 @@ export default defineType({
       type: 'url',
       title: 'Prototype Link',
       description: 'Link to interactive prototype (Figma, Framer, etc.)',
+    }),
+
+    // Case Study Template Fields (reusable structure)
+    defineField({
+      name: 'targetUsers',
+      type: 'richText',
+      title: 'Target Users (ICP)',
+      description: 'Ideal Customer Profile — who is this product for?',
+    }),
+
+    defineField({
+      name: 'marketOpportunity',
+      type: 'richText',
+      title: 'Market Opportunity',
+      description: 'Size of the opportunity and why now',
+    }),
+
+    defineField({
+      name: 'productVision',
+      type: 'richText',
+      title: 'Product Vision & System Design',
+      description: 'High-level vision and system design approach',
+    }),
+
+    defineField({
+      name: 'architectureWorkflow',
+      type: 'array',
+      title: 'Architecture / Workflow Model',
+      description: 'Structured visual blocks for flow, architecture, or process',
+      of: [
+        {
+          type: 'object',
+          name: 'workflowBlock',
+          title: 'Workflow Block',
+          fields: [
+            { name: 'title', type: 'string', title: 'Block Title' },
+            { name: 'description', type: 'text', title: 'Description', rows: 3 },
+          ],
+          preview: {
+            select: { title: 'title' },
+            prepare: ({ title }) => ({ title: title || 'Untitled block' }),
+          },
+        },
+      ],
+    }),
+
+    defineField({
+      name: 'mvpScope',
+      type: 'richText',
+      title: 'MVP Scope',
+      description: 'What was in scope for the minimum viable product',
+    }),
+
+    defineField({
+      name: 'monetizationStrategy',
+      type: 'richText',
+      title: 'Monetization Strategy',
+      description: 'Revenue model and pricing approach',
+    }),
+
+    defineField({
+      name: 'northStarMetric',
+      type: 'string',
+      title: 'North Star Metric',
+      description: 'Primary success metric (e.g. "Daily active users")',
     }),
 
     defineField({
@@ -180,9 +253,58 @@ export default defineType({
       rows: 4,
       fieldset: 'credibilityAndJudgment',
     }),
+
+    defineField({
+      name: 'improvements',
+      type: 'object',
+      title: 'What I Would Improve Today',
+      description: 'Collapsible section for retrospective improvements',
+      fields: [
+        { name: 'technicalIteration', type: 'text', title: 'Technical Iteration', rows: 3 },
+        { name: 'gtmRefinement', type: 'text', title: 'GTM Refinement', rows: 3 },
+        { name: 'metricsEvolution', type: 'text', title: 'Metrics Evolution', rows: 3 },
+      ],
+    }),
+
+    // Strategic Reflection & Next Iteration
+    defineField({
+      name: 'risksIdentified',
+      type: 'array',
+      title: 'Risks Identified',
+      description: 'Key risks and uncertainties in the product approach',
+      of: [{ type: 'string' }],
+      fieldset: 'strategicReflection',
+    }),
+
+    defineField({
+      name: 'v2Roadmap',
+      type: 'array',
+      title: 'What I Would Build Next (V2 Roadmap)',
+      description: 'Prioritized next iteration items',
+      of: [{ type: 'string' }],
+      fieldset: 'strategicReflection',
+    }),
+
+    defineField({
+      name: 'monetizationExpansion',
+      type: 'text',
+      title: 'Monetization Expansion Strategy',
+      description: 'How revenue model would evolve beyond MVP',
+      rows: 4,
+      fieldset: 'strategicReflection',
+    }),
   ],
 
   fieldsets: [
+    {
+      name: 'strategicReflection',
+      title: 'Strategic Reflection & Next Iteration',
+      description: 'Executive-level reflection on assumptions, trade-offs, risks, and future direction.',
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+    },
     {
       name: 'credibilityAndJudgment',
       title: 'Credibility & Judgment',
