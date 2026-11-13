@@ -99,14 +99,14 @@ export default function Hero() {
             variants={headlineLineVariants}
             custom={shouldReduceMotion}
           >
-            Product Manager focused on
+            Project manager in financial infrastructure,
           </motion.span>
           <motion.span
             className="block"
             variants={headlineLineVariants}
             custom={shouldReduceMotion}
           >
-            clarity, judgment, and execution.
+            moving into product management.
           </motion.span>
         </motion.h1>
 
@@ -118,8 +118,8 @@ export default function Hero() {
           animate="visible"
           custom={shouldReduceMotion}
         >
-          Designing products for complex, high-trust environments. 
-          AI, fintech, and enterprise platforms.
+          9+ years delivering platforms in fintech and capital markets.
+          Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.
         </motion.p>
 
         {/* CTA Hierarchy - Mobile First with improved spacing and visual dominance */}

@@ -687,8 +687,8 @@ export default async function ProjectPage({
         <div className={CONTAINER_CLASS}>
           <div className="py-16 md:py-20 text-center">
             <p className="text-zinc-500 text-sm mb-6 max-w-xl mx-auto">
-              This case study demonstrates product thinking and execution that
-              aligns with my professional experience.
+              Figures in this case study are targets unless marked as measured.
+              My delivery experience is on my resume.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

@@ -5,14 +5,13 @@ import MetricsStrip from "@/components/MetricsStrip";
 import PositioningSection from "@/components/PositioningSection";
 import AINativeProductSystems from "@/components/AINativeProductSystems";
 import ProductThinkingSection from "@/components/ProductThinkingSection";
-import AuthorityValidationSection from "@/components/AuthorityValidationSection";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 export const metadata = generateSEOMetadata({
-  title: 'Product Manager | Mauhhik',
-  description: 'Product Manager focused on clarity, judgment, and execution. Designing products for complex, high-trust environments.',
+  title: 'Mauhhik Thakkar — Project Manager moving into Product Management',
+  description: 'Project manager with 9+ years in financial infrastructure, moving into product management. Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.',
   url: '/',
-  imageAlt: 'Mauhhik — Product Manager',
+  imageAlt: 'Mauhhik Thakkar — Project Manager moving into Product Management',
 })
 
 export default function Home() {
@@ -22,7 +21,7 @@ export default function Home() {
         <section className="min-h-screen flex items-center justify-center px-6 pt-24">
           <div className="max-w-3xl text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto leading-[1.1]">
-              Product Manager focused on clarity, judgment, and execution.
+              Project manager in financial infrastructure, moving into product management.
             </h1>
           </div>
         </section>
@@ -41,14 +40,13 @@ export default function Home() {
         <div className="max-w-2xl mx-auto px-6">
           <p className="text-zinc-400 text-base md:text-lg leading-relaxed text-center">
             Product decisions require clear problem framing, explicit trade-off evaluation, 
-            and judgment under constraints. My work demonstrates structured thinking across 
-            certification-based projects and shipped products.
+            and judgment under constraints. The case studies on this site are concept projects 
+            built to show that thinking. My delivery experience is on my resume.
           </p>
         </div>
       </section>
 
-      {/* Authority & Validation Section */}
-      <AuthorityValidationSection />
+      {/* Testimonials (AuthorityValidationSection) are hidden until each quote carries a real name and permission */}
 
       {/* Secondary Links */}
       <section className="border-t border-zinc-900 py-8">

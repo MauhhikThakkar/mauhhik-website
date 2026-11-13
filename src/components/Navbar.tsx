@@ -41,8 +41,7 @@ export default function Navbar() {
     { href: '/portfolio', label: 'Portfolio' },
     { href: '/resume', label: 'Resume' },
     { href: '/about', label: 'About' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/products', label: 'Products' },
+    // Blog and Products are hidden until they have content. The routes still work.
   ]
 
   return (
@@ -86,18 +85,6 @@ export default function Navbar() {
               className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal rounded px-2 py-1"
             >
               About
-            </Link>
-            <Link 
-              href="/blog" 
-              className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal rounded px-2 py-1"
-            >
-              Blog
-            </Link>
-            <Link 
-              href="/products" 
-              className="hover:text-white transition focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-charcoal rounded px-2 py-1"
-            >
-              Products
             </Link>
           </div>
 

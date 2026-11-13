@@ -21,7 +21,7 @@ const products: ProductCard[] = [
     title: "Triage Genius",
     positioning: "Enterprise AI support triage and decision engine.",
     description:
-      "Automates ticket routing with high accuracy, reducing response time and improving customer satisfaction. Designed for support teams scaling without proportional headcount.",
+      "Designed to route tickets by business impact, with humans approving the final call. Built for support teams scaling without proportional headcount.",
     caseStudySlug: "ai-enterprise-support-triage",
     prototypeLink: "https://triage-genius-hub.lovable.app",
   },
@@ -37,7 +37,7 @@ export default function AINativeProductSystems() {
             AI-Native Product Systems
           </h2>
           <p className="text-zinc-400 text-base md:text-lg max-w-2xl leading-relaxed">
-            Flagship products built with AI-first execution — from problem framing to prototype delivery.
+            Concept prototypes built with AI-first execution — from problem framing to a clickable prototype.
           </p>
         </div>
 

@@ -11,7 +11,7 @@ export default function PersonSchema() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Mauhhik Thakkar',
-    jobTitle: 'Product Manager',
+    jobTitle: 'Project Manager',
     url: SITE_URL,
     sameAs: [
       'https://www.linkedin.com/in/mauhhikthakkar/',
@@ -29,7 +29,7 @@ export default function PersonSchema() {
       'FinTech',
       'Enterprise Software',
     ],
-    description: 'Product Manager focused on clarity, judgment, and execution in complex, high-trust environments. Building products in FinTech, SaaS, and AI-native execution.',
+    description: 'Project manager with 9+ years in financial infrastructure, moving into product management. Concept work across FinTech, SaaS, and AI products.',
   }
 
   return (
