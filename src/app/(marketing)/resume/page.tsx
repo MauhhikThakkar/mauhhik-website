@@ -1,57 +1,14 @@
 import { generateMetadata as generateSEOMetadata } from '@/lib/seo'
-import ResumeRequestForm from '@/components/ResumeRequestForm'
-import { Suspense } from 'react'
+import ResumeDirectDownload from '@/components/ResumeDirectDownload'
 import Link from 'next/link'
 import { client } from '@/sanity/lib/client'
 
 export const metadata = generateSEOMetadata({
   title: 'Resume | Mauhhik',
-  description: 'Product Manager with hands-on experience in AI tools, Excel automation, SaaS MVPs, and real-world delivery.',
+  description: 'Resume of Mauhhik Thakkar: project manager with 9+ years in financial infrastructure, moving into product management.',
   url: '/resume',
   imageAlt: 'Mauhhik — Resume',
 })
-
-function DownloadSuccessMessage() {
-  return (
-    <div className="max-w-md mx-auto mb-8">
-      <div className="bg-emerald-950/30 border border-emerald-900/50 rounded-2xl p-6 text-center">
-        <div className="flex justify-center mb-4" aria-hidden="true">
-          <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-            <svg
-              className="w-5 h-5 text-emerald-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        </div>
-        <p className="text-emerald-400 text-sm">
-          Resume downloaded successfully!
-        </p>
-      </div>
-    </div>
-  )
-}
-
-async function DownloadSuccessMessageWrapper({
-  searchParams,
-}: {
-  searchParams: Promise<{ downloaded?: string }>
-}) {
-  const params = await searchParams
-  if (params.downloaded === 'true') {
-    return <DownloadSuccessMessage />
-  }
-  return null
-}
 
 // Fetch featured case studies that demonstrate resume experience
 const FEATURED_CASE_STUDIES_QUERY = `
@@ -83,11 +40,7 @@ async function getFeaturedCaseStudies(): Promise<FeaturedCaseStudy[]> {
   }
 }
 
-export default async function ResumePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ downloaded?: string }>
-}) {
+export default async function ResumePage() {
   const featuredCaseStudies = await getFeaturedCaseStudies()
 
   return (
@@ -100,11 +53,11 @@ export default async function ResumePage({
               Mauhik Thakkar
             </h1>
             <p className="text-lg sm:text-xl text-zinc-300 mb-2 print:text-base print:text-gray-800">
-              Product Manager
+              Project Manager moving into Product Management
             </p>
             <p className="text-sm sm:text-base text-zinc-500 leading-relaxed max-w-2xl mx-auto print:text-sm print:text-gray-600">
-              Focused on clarity, judgment, and execution in complex, high-trust environments. 
-              AI, fintech, and enterprise platforms.
+              9+ years delivering platforms in fintech and capital markets.
+              Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.
             </p>
           </div>
 
@@ -149,25 +102,18 @@ export default async function ResumePage({
           </div>
         </div>
 
-        {/* Resume Request Section */}
+        {/* Resume Download Section */}
         <div className="mb-12 sm:mb-16 print:hidden">
           <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-5">
-              Request Resume Access
+              Download Resume
             </h2>
-            <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-xl mx-auto mb-3 sm:mb-4 px-4">
-              My resume is available to verified professionals. Enter your email to receive a secure download link.
-            </p>
-            <p className="text-sm sm:text-base text-zinc-500 max-w-xl mx-auto px-4">
-              Secure download link valid for 6 hours. Up to 3 downloads per request.
+            <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-xl mx-auto px-4">
+              One click. No email or sign-up needed.
             </p>
           </div>
-          
-          <Suspense fallback={null}>
-            <DownloadSuccessMessageWrapper searchParams={searchParams} />
-          </Suspense>
-          
-          <ResumeRequestForm />
+
+          <ResumeDirectDownload />
         </div>
 
         {/* Related Case Studies Section */}
@@ -175,7 +121,7 @@ export default async function ResumePage({
           <div className="mt-16 pt-16 border-t border-zinc-900/50">
             <div className="max-w-2xl mx-auto">
               <p className="text-sm text-zinc-500 mb-6 text-center">
-                Detailed case studies that demonstrate the experience outlined in my resume:
+                Concept case studies that show how I approach product decisions:
               </p>
               <div className="space-y-3">
                 {featuredCaseStudies.map((caseStudy) => (
