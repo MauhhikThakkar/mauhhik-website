@@ -234,19 +234,15 @@ export default async function PortfolioPage() {
 
   return (
     <main className="bg-charcoal text-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20 sm:py-28">
+      <div className="site-container pb-20 pt-32 sm:pb-28 sm:pt-40">
         <PortfolioHeader />
 
         {hasContent ? (
           <div className="mt-16 sm:mt-20">
             <section>
               <div className="mb-8 sm:mb-10">
-                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
-                  Case Studies
-                </h2>
-                <p className="text-base sm:text-lg text-zinc-400 max-w-2xl">
-                  Product case studies across AI, FinTech, and enterprise — filter by category.
-                </p>
+                <h2 className="sr-only">Case studies</h2>
+                <p className="text-sm text-zinc-500">Filter by category</p>
               </div>
 
               <Suspense fallback={

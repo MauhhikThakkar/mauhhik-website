@@ -1,24 +1,14 @@
-import Navbar from "@/components/Navbar"
-import CTAFooter from "@/components/CTAFooter"
-import Footer from "@/components/Footer"
-import AnnouncementBanner from "@/components/AnnouncementBanner"
+import SiteNav from "@/components/site/SiteNav"
+import ContactSection from "@/components/site/ContactSection"
+import SiteFooter from "@/components/site/SiteFooter"
 
 /**
  * Marketing Layout
- * 
- * This layout applies to all marketing pages:
- * - / (homepage)
- * - /about
- * - /portfolio
- * - /blog
- * - /products
- * - /resume
- * 
- * It includes:
- * - AnnouncementBanner (dismissible top banner)
- * - Navbar (fixed, high z-index)
- * - CTAFooter
- * - Footer
+ *
+ * Wraps every public page (/, /about, /portfolio, /blog, /products, /resume) with:
+ * - SiteNav (fixed top navigation)
+ * - ContactSection (closing call to action)
+ * - SiteFooter
  */
 export default function MarketingLayout({
   children,
@@ -27,13 +17,12 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <AnnouncementBanner />
-      <Navbar />
+      <SiteNav />
       <div className="flex-1">
         {children}
       </div>
-      <CTAFooter />
-      <Footer />
+      <ContactSection />
+      <SiteFooter />
     </>
   )
 }
