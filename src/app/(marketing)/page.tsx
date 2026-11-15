@@ -6,7 +6,7 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo";
 
 export const metadata = generateSEOMetadata({
   title: 'Mauhhik Thakkar — Project Manager moving into Product Management',
-  description: 'Project manager with 9+ years in financial infrastructure, moving into product management. Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.',
+  description: 'Project manager with 9+ years of experience, including 4+ years managing IT delivery for global exchanges and fintech, moving into product management. Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.',
   url: '/',
   imageAlt: 'Mauhhik Thakkar — Project Manager moving into Product Management',
 })

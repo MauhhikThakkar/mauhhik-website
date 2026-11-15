@@ -4,10 +4,10 @@
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mauhhik.com'
 export const SITE_NAME = 'Mauhhik'
-export const SITE_DESCRIPTION = 'Project manager with 9+ years in financial infrastructure, moving into product management. Case studies and concept prototypes across AI, fintech, and enterprise platforms.'
+export const SITE_DESCRIPTION = 'Project manager with 9+ years of experience, including 4+ years managing IT delivery for global exchanges and fintech, moving into product management. Case studies and concept prototypes across AI, fintech, and enterprise platforms.'
 
 // Public resume PDF served from /public. Replace the file (or this path) when the resume is updated.
-export const RESUME_PDF_PATH = '/resume/Resume_Mauhik%20Thakkar_Public.pdf'
+export const RESUME_PDF_PATH = '/resume/Mauhhik-Thakkar-Resume.pdf'
 
 // Analytics configuration
 export const ANALYTICS_ENABLED = process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === 'true'

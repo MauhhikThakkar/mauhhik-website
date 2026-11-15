@@ -29,7 +29,7 @@ export default function PersonSchema() {
       'FinTech',
       'Enterprise Software',
     ],
-    description: 'Project manager with 9+ years in financial infrastructure, moving into product management. Concept work across FinTech, SaaS, and AI products.',
+    description: 'Project manager with 9+ years of experience, including 4+ years managing IT delivery for global exchanges and fintech, moving into product management. Concept work across FinTech, SaaS, and AI products.',
   }
 
   return (
