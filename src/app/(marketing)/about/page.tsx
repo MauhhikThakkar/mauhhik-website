@@ -1,3 +1,4 @@
+import Image from "next/image"
 import CareerTimeline from "@/components/about/CareerTimeline"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
@@ -15,17 +16,29 @@ export default function AboutPage() {
       <section className="relative overflow-hidden border-b border-line">
         <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="site-container relative pb-16 pt-32 sm:pt-40 md:pb-20">
-          <p className="eyebrow mb-5">About</p>
-          <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
-            I build products in high-trust environments where clarity and judgment matter.
-          </h1>
-          <div className="mt-8 max-w-2xl">
-              <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                This isn&apos;t about features or velocity. It&apos;s about making decisions when requirements are incomplete, when constraints are real, and when the cost of being wrong is high. In fintech, enterprise platforms, and AI products, product judgment matters as much as execution speed.
-              </p>
-              <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                I structure ambiguity rather than waiting for clarity. I make trade-offs explicit, validate assumptions systematically, and adjust course when evidence demands it. The discipline to reason through uncertainty—and the ability to ship products that work—are both necessary for effective product management.
-              </p>
+          <div className="grid items-start gap-10 lg:grid-cols-[1fr_18rem] lg:gap-16">
+            <div>
+              <p className="eyebrow mb-5">About</p>
+              <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+                I build products in high-trust environments where clarity and judgment matter.
+              </h1>
+              <div className="mt-8 max-w-2xl">
+                  <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
+                    This isn&apos;t about features or velocity. It&apos;s about making decisions when requirements are incomplete, when constraints are real, and when the cost of being wrong is high. In fintech, enterprise platforms, and AI products, product judgment matters as much as execution speed.
+                  </p>
+                  <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
+                    I structure ambiguity rather than waiting for clarity. I make trade-offs explicit, validate assumptions systematically, and adjust course when evidence demands it. The discipline to reason through uncertainty—and the ability to ship products that work—are both necessary for effective product management.
+                  </p>
+              </div>
+            </div>
+            <Image
+              src="/images/mauhhik-thakkar.jpg"
+              alt="Mauhhik Thakkar"
+              width={288}
+              height={288}
+              priority
+              className="order-first h-28 w-28 rounded-2xl border border-line-strong object-cover lg:order-none lg:h-72 lg:w-72"
+            />
           </div>
         </div>
       </section>

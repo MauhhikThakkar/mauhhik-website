@@ -5,7 +5,7 @@ import { client } from '@/sanity/lib/client'
 
 export const metadata = generateSEOMetadata({
   title: 'Resume | Mauhhik',
-  description: 'Resume of Mauhhik Thakkar: project manager with 9+ years in financial infrastructure, moving into product management.',
+  description: 'Resume of Mauhhik Thakkar: project manager with 9+ years of experience, moving into technical product roles.',
   url: '/resume',
   imageAlt: 'Mauhhik — Resume',
 })
@@ -50,13 +50,13 @@ export default async function ResumePage() {
         <div className="site-container relative pb-16 pt-32 sm:pt-40 md:pb-20">
           <p className="eyebrow mb-5">Resume</p>
           <h1 className="text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
-            Mauhik Thakkar
+            Mauhhik Thakkar
           </h1>
           <p className="mt-4 text-lg text-zinc-200 sm:text-xl">
             Project Manager moving into Product Management
           </p>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-zinc-400">
-            9+ years delivering platforms in fintech and capital markets.
+            9+ years of experience, including 4+ years managing IT delivery for global exchanges and fintech.
             Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.
           </p>
 

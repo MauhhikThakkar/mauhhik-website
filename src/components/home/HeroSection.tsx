@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import TrackedLink from '@/components/site/TrackedLink'
 import { PROFILE_FACTS } from '@/content/profile'
@@ -38,8 +39,9 @@ export default function HeroSection() {
               className="animate-fade-up mt-6 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg"
               style={{ animationDelay: '160ms' }}
             >
-              9+ years delivering platforms in fintech and capital markets. I now build product
-              concepts in payments and AI, and document the decisions behind each one.
+              9+ years of experience, including 4+ managing IT delivery. I currently deliver secure
+              network deployments for tier-1 global exchanges across 10+ countries, and build product
+              concepts in payments and AI.
             </p>
 
             <div
@@ -64,7 +66,20 @@ export default function HeroSection() {
             className="animate-fade-up card p-6 sm:p-7"
             style={{ animationDelay: '320ms' }}
           >
-            <p className="eyebrow mb-5">At a glance</p>
+            <div className="mb-6 flex items-center gap-4">
+              <Image
+                src="/images/mauhhik-thakkar.jpg"
+                alt="Mauhhik Thakkar"
+                width={64}
+                height={64}
+                priority
+                className="h-16 w-16 rounded-full border border-line-strong object-cover"
+              />
+              <div>
+                <p className="text-base font-medium text-white">Mauhhik Thakkar</p>
+                <p className="text-sm text-zinc-400">Gujarat, India</p>
+              </div>
+            </div>
             <dl className="divide-y divide-line">
               {PROFILE_FACTS.map((fact) => (
                 <div key={fact.label} className="grid grid-cols-[6.5rem_1fr] gap-4 py-3 first:pt-0 last:pb-0">
