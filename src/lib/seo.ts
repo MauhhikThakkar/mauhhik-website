@@ -17,7 +17,7 @@ export interface SEOConfig {
 }
 
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`
-const DEFAULT_OG_IMAGE_ALT = `${SITE_NAME} — Product Manager & AI Product Builder`
+const DEFAULT_OG_IMAGE_ALT = `${SITE_NAME} Thakkar — Project Manager moving into Product Management`
 const TWITTER_HANDLE = '@mauhhik'
 
 /**
@@ -44,9 +44,12 @@ export function generateMetadata(config: SEOConfig = {}): Metadata {
 
   // Build titles
   // Next.js template will automatically add site name to page titles
-  const defaultTitle = `${SITE_NAME} — Product Manager & AI Product Builder`
+  const defaultTitle = `${SITE_NAME} Thakkar — Project Manager moving into Product Management`
   // For OpenGraph/Twitter, we need the full title with site name
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : defaultTitle
+  // Pages that already include the site name in their title must not get it appended twice
+  const fullTitle = title
+    ? (title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`)
+    : defaultTitle
 
   // Build canonical URL
   const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL

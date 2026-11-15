@@ -177,7 +177,7 @@ const FEATURED_ITEMS = [
   {
     id: 'triage-genius',
     title: 'Triage Genius',
-    positioning: 'Enterprise AI support triage system. Automates ticket routing with high accuracy, reducing response time and improving customer satisfaction.',
+    positioning: 'Enterprise AI support triage concept. Routes tickets by business impact and keeps humans in control of the final decision.',
     caseStudySlug: 'ai-enterprise-support-triage',
     prototypeLink: 'https://triage-genius-hub.lovable.app',
     filterCategory: 'Enterprise AI' as const,

@@ -3,7 +3,7 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 export const metadata = generateSEOMetadata({
   title: 'About',
-  description: 'I build products in high-trust environments where clarity and judgment matter. Product Manager with experience across FinTech, SaaS, and AI-native execution.',
+  description: 'Project manager with experience across FinTech, SaaS, and AI-native execution, moving into product management. I work in high-trust environments where clarity and judgment matter.',
   url: '/about',
   imageAlt: 'Mauhhik — About',
 })

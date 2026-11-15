@@ -113,10 +113,10 @@ export default function AnnouncementBanner() {
               {/* Announcement Text */}
               <p className="text-sm sm:text-base text-zinc-300 text-center flex-1">
                 <span className="hidden sm:inline">
-                  Currently exploring Product Manager opportunities in UAE & India. Let&apos;s connect.
+                  Currently exploring Product Manager opportunities in UAE & Singapore. Let&apos;s connect.
                 </span>
                 <span className="sm:hidden">
-                  Exploring PM opportunities in UAE & India. Let&apos;s connect.
+                  Exploring PM opportunities in UAE & Singapore. Let&apos;s connect.
                 </span>
               </p>
 

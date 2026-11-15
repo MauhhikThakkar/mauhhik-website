@@ -24,7 +24,7 @@ export default function FeaturedProductCard({
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-white/60"></span>
               <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">
-                Flagship
+                Concept prototype
               </span>
             </div>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">

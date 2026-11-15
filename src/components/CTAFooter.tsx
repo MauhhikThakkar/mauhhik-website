@@ -62,13 +62,16 @@ function CTAFooterInner() {
             <p className="text-zinc-400 text-base sm:text-lg mb-8 leading-relaxed">
               Let&apos;s connect and explore how we can work together.
             </p>
-            <Link
-              href="/resume"
-              onClick={handleResumeClick}
-              className="inline-block px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-charcoal text-base sm:text-lg"
-            >
-              Request Resume
-            </Link>
+            {/* On /resume this button would link to the page it is on, so it is hidden there */}
+            {pathname !== '/resume' && (
+              <Link
+                href="/resume"
+                onClick={handleResumeClick}
+                className="inline-block px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-charcoal text-base sm:text-lg"
+              >
+                View Resume
+              </Link>
+            )}
           </div>
 
           {/* Secondary CTAs */}
@@ -133,7 +136,7 @@ function CTAFooterInner() {
  * Designed to increase resume interaction rate by at least 20%.
  * 
  * Features:
- * - Primary CTA: "Request Resume" button
+ * - Primary CTA: "View Resume" button (hidden on /resume)
  * - Secondary CTAs: LinkedIn and Email links
  * - GA4 event tracking for all interactions
  * - Premium design with clear visual hierarchy
@@ -162,7 +165,7 @@ export default function CTAFooter() {
                 href="/resume"
                 className="inline-block px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-charcoal text-base sm:text-lg"
               >
-                Request Resume
+                View Resume
               </Link>
             </div>
           </div>
