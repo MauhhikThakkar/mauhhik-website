@@ -5,10 +5,55 @@
 @layer base {
   html {
     @apply bg-charcoal;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
   }
   body {
-    @apply bg-charcoal text-white antialiased;
+    @apply bg-charcoal text-white antialiased font-sans;
     font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em;
+  }
+  ::selection {
+    background-color: rgba(127, 221, 187, 0.25);
+    color: white;
+  }
+  *:focus {
+    outline: none;
+  }
+  *:focus-visible {
+    outline: 2px solid rgba(127, 221, 187, 0.7);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Page-width wrapper used by every section */
+  .site-container {
+    @apply max-w-site mx-auto px-5 sm:px-8;
+  }
+  /* Small mono label that sits above a heading */
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.18em] text-zinc-500;
+  }
+  .section-title {
+    @apply text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-white;
+  }
+  .card {
+    @apply bg-charcoal-light/60 border border-line rounded-2xl transition-colors duration-300;
+  }
+  .card:hover {
+    @apply border-line-strong;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-full bg-white text-black text-sm sm:text-base font-semibold transition-colors duration-200 hover:bg-zinc-200;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-full border border-line-strong text-white text-sm sm:text-base font-medium transition-colors duration-200 hover:bg-white/5 hover:border-white/30;
+  }
+  .text-link {
+    @apply text-zinc-300 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white hover:decoration-accent;
   }
 }
 
@@ -16,32 +61,26 @@
   .text-balance {
     text-wrap: balance;
   }
+  /* Faint grid behind the hero, fading out towards the edges */
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 75%);
+  }
+  .hero-glow {
+    background: radial-gradient(ellipse 60% 50% at 30% 0%, rgba(127, 221, 187, 0.10), transparent 70%);
+  }
 }
 
-/* Premium typography improvements */
-h1, h2, h3, h4, h5, h6 {
-  font-feature-settings: 'ss01' on, 'ss02' on, 'cv01' on, 'cv02' on;
-  letter-spacing: -0.02em;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
-}
-
-/* Selection colors */
-::selection {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-/* Remove focus rings but keep for keyboard navigation */
-*:focus {
-  outline: none;
-}
-
-*:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.2);
-  outline-offset: 2px;
+/* Entrance animations never run for people who ask for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-fade-up {
+    animation: none !important;
+  }
 }

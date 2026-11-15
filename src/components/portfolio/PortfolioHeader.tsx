@@ -21,13 +21,13 @@ export default function PortfolioHeader() {
       }}
       className="max-w-3xl"
     >
-      <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
-        Product Case Studies
+      <p className="eyebrow mb-5">Work</p>
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 leading-[1.1] tracking-tight">
+        Product case studies
       </h1>
-      <p className="text-xl text-zinc-400 leading-relaxed">
-        Case studies demonstrating product judgment under ambiguity, trade-off evaluation, 
-        and decision-making in complex domains. Work spans enterprise platforms, fintech, 
-        AI products, and trust-heavy environments.
+      <p className="text-base sm:text-lg text-zinc-400 leading-relaxed">
+        Concept projects across fintech, enterprise AI and founder tools. Each one shows the
+        problem framing, the options considered and the trade-off behind every decision.
       </p>
     </motion.header>
   )

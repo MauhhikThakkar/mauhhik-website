@@ -44,83 +44,43 @@ export default async function ResumePage() {
   const featuredCaseStudies = await getFeaturedCaseStudies()
 
   return (
-    <main className="bg-charcoal text-white min-h-screen print:bg-white print:text-black">
-      <div className="max-w-4xl mx-auto px-6 sm:px-8 py-12 sm:py-20">
-        {/* Above-the-fold: Role positioning and context */}
-        <div className="mb-12 print:mb-8">
-          <div className="text-center mb-8 print:mb-6">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4 leading-tight print:text-2xl">
-              Mauhik Thakkar
-            </h1>
-            <p className="text-lg sm:text-xl text-zinc-300 mb-2 print:text-base print:text-gray-800">
-              Project Manager moving into Product Management
-            </p>
-            <p className="text-sm sm:text-base text-zinc-500 leading-relaxed max-w-2xl mx-auto print:text-sm print:text-gray-600">
-              9+ years delivering platforms in fintech and capital markets.
-              Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.
-            </p>
-          </div>
+    <main className="bg-charcoal text-white min-h-screen">
+      <section className="relative overflow-hidden border-b border-line">
+        <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div className="site-container relative pb-16 pt-32 sm:pt-40 md:pb-20">
+          <p className="eyebrow mb-5">Resume</p>
+          <h1 className="text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+            Mauhik Thakkar
+          </h1>
+          <p className="mt-4 text-lg text-zinc-200 sm:text-xl">
+            Project Manager moving into Product Management
+          </p>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-zinc-400">
+            9+ years delivering platforms in fintech and capital markets.
+            Open to Product Manager and Technical Product Owner roles in the UAE and Singapore.
+          </p>
 
-          {/* Subtle CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 print:hidden">
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-charcoal"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              View Case Studies
-            </Link>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <ResumeDirectDownload />
             <a
               href="https://www.linkedin.com/in/mauhhikthakkar/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-700 focus:ring-offset-2 focus:ring-offset-charcoal"
+              className="btn-secondary"
             >
-              <svg
-                className="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
               LinkedIn
             </a>
           </div>
+          <p className="mt-4 text-sm text-zinc-500">PDF. One click, no email or sign-up needed.</p>
         </div>
+      </section>
 
-        {/* Resume Download Section */}
-        <div className="mb-12 sm:mb-16 print:hidden">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-5">
-              Download Resume
-            </h2>
-            <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-xl mx-auto px-4">
-              One click. No email or sign-up needed.
-            </p>
-          </div>
-
-          <ResumeDirectDownload />
-        </div>
-
+      <div className="site-container py-16 md:py-20">
         {/* Related Case Studies Section */}
         {featuredCaseStudies && featuredCaseStudies.length > 0 && (
-          <div className="mt-16 pt-16 border-t border-zinc-900/50">
-            <div className="max-w-2xl mx-auto">
-              <p className="text-sm text-zinc-500 mb-6 text-center">
+          <div>
+            <div className="max-w-2xl">
+              <p className="eyebrow mb-6">
                 Concept case studies that show how I approach product decisions:
               </p>
               <div className="space-y-3">
@@ -128,7 +88,7 @@ export default async function ResumePage() {
                   <Link
                     key={caseStudy._id}
                     href={`/portfolio/${caseStudy.slug}`}
-                    className="block group p-4 bg-charcoal-light/30 border border-zinc-900/50 rounded-lg hover:border-zinc-800/50 transition-colors"
+                    className="block group p-4 card rounded-xl"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
@@ -163,10 +123,10 @@ export default async function ResumePage() {
                   </Link>
                 ))}
               </div>
-              <div className="mt-6 text-center">
+              <div className="mt-6">
                 <Link
                   href="/portfolio"
-                  className="text-sm text-zinc-500 hover:text-zinc-400 transition-colors underline underline-offset-4"
+                  className="text-link text-sm"
                 >
                   View all case studies
                 </Link>

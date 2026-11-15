@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import StatusChip from '@/components/site/StatusChip'
 
 interface FeaturedProductCardProps {
   title: string
@@ -16,25 +17,22 @@ export default function FeaturedProductCard({
   prototypeLink,
 }: FeaturedProductCardProps) {
   return (
-    <div className="group bg-charcoal-light/40 border border-zinc-800/50 rounded-2xl overflow-hidden hover:border-zinc-700/50 transition-all duration-300 shadow-lg hover:shadow-xl">
-      <div className="p-8 sm:p-10 md:p-12">
+    <div className="card group h-full overflow-hidden">
+      <div className="p-6 sm:p-8 md:p-10">
         {/* Header with Badge */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-white/60"></span>
-              <span className="text-xs font-semibold text-white/90 uppercase tracking-wider">
-                Concept prototype
-              </span>
+            <div className="mb-5">
+              <StatusChip status="concept" />
             </div>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+            <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-4 leading-tight">
               {title}
             </h3>
           </div>
         </div>
 
         {/* Positioning Statement */}
-        <p className="text-lg sm:text-xl text-zinc-300 leading-relaxed mb-8 max-w-2xl">
+        <p className="text-base sm:text-lg text-zinc-400 leading-relaxed mb-8 max-w-2xl">
           {positioning}
         </p>
 

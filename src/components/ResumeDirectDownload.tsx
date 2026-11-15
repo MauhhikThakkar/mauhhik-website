@@ -25,12 +25,11 @@ export default function ResumeDirectDownload() {
   }
 
   return (
-    <div className="max-w-md mx-auto text-center">
       <a
         href={RESUME_PDF_PATH}
         download
         onClick={handleClick}
-        className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-charcoal text-base sm:text-lg min-h-[52px]"
+        className="btn-primary"
       >
         <svg
           className="w-5 h-5"
@@ -48,6 +47,5 @@ export default function ResumeDirectDownload() {
         </svg>
         Download resume (PDF)
       </a>
-    </div>
   )
 }
