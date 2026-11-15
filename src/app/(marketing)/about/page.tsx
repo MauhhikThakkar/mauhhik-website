@@ -4,7 +4,7 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 export const metadata = generateSEOMetadata({
   title: 'About',
-  description: 'Project manager with experience across FinTech, SaaS, and AI-native execution, moving into product management. I work in high-trust environments where clarity and judgment matter.',
+  description: 'Project manager at Waypoint Trading Solutions with 9+ years across retail, data analytics and IT delivery, moving into product management.',
   url: '/about',
   imageAlt: 'Mauhhik — About',
 })
@@ -20,14 +20,14 @@ export default function AboutPage() {
             <div>
               <p className="eyebrow mb-5">About</p>
               <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
-                I build products in high-trust environments where clarity and judgment matter.
+                I manage delivery in financial infrastructure, and I am moving into product.
               </h1>
               <div className="mt-8 max-w-2xl">
                   <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                    This isn&apos;t about features or velocity. It&apos;s about making decisions when requirements are incomplete, when constraints are real, and when the cost of being wrong is high. In fintech, enterprise platforms, and AI products, product judgment matters as much as execution speed.
+                    I am a project manager at Waypoint Trading Solutions, where I deliver Secure SD-WAN deployments for tier-1 global exchanges across 10+ countries. Requirements arrive incomplete, the constraints are real, and the cost of being wrong is high.
                   </p>
                   <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                    I structure ambiguity rather than waiting for clarity. I make trade-offs explicit, validate assumptions systematically, and adjust course when evidence demands it. The discipline to reason through uncertainty—and the ability to ship products that work—are both necessary for effective product management.
+                    Across 9+ years I have run a retail business, analysed customer data and managed IT delivery for startups and fintech clients. The questions I keep asking are product questions: who is this for, what problem does it solve, and how will we know it worked. This site shows how I answer them.
                   </p>
               </div>
             </div>
@@ -52,21 +52,21 @@ export default function AboutPage() {
             <div>
               <p className="eyebrow mb-4">Background</p>
               <h2 id="pattern-heading" className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                Career pattern
+                How I got here
               </h2>
             </div>
             <div className="max-w-2xl">
               <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                <strong className="text-white">FinTech → SaaS → AI-native execution.</strong> What connects the dots?
+                <strong className="text-white">Business first, then data, then delivery.</strong>
               </p>
               <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                Each domain demands different skills, but they share a common requirement: operating in environments where trust, reliability, and judgment matter more than novelty. In fintech, regulatory compliance and risk management constrain the solution space. In enterprise SaaS, trust and reliability often outweigh feature velocity. In AI products, accuracy and reliability matter more than capability alone.
+                I started in sales and operations, then founded and ran a multibrand sports footwear store. From 2019 I spent three years in data analytics, doing customer segmentation and business analysis for clients in retail, finance and manufacturing.
               </p>
               <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                The pattern isn&apos;t about domain expertise—it&apos;s about product judgment under constraints. How do you make decisions when requirements are incomplete? How do you validate assumptions when data is limited? How do you balance user needs, business constraints, and risk when they exist in tension?
+                Since 2022 I have managed IT delivery: client projects in fintech, gaming and AI/ML, in-house product development at a software firm, a product-based startup, and now global network deployments for exchanges.
               </p>
               <p className="text-[17px] leading-[1.75] text-zinc-300 [&:not(:first-child)]:mt-5">
-                The answer: structured thinking, explicit trade-off evaluation, and systematic assumption validation. These skills transfer across domains because they&apos;re about reasoning through uncertainty, not domain-specific knowledge.
+                Product management draws on all three: commercial sense, evidence from data and the discipline to ship. I completed the ICPM Product Management Certification and the IBM AI Product Manager certificate, and I build concept products to practise the decisions the role requires.
               </p>
             </div>
           </div>
