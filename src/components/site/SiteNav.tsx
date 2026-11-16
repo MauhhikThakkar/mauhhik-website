@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react'
 
 const NAV_LINKS = [
   { href: '/portfolio', label: 'Work' },
+  { href: '/blog', label: 'Writing' },
   { href: '/about', label: 'About' },
   { href: '/resume', label: 'Resume' },
-  // Blog and Products are hidden until they have content. The routes still work.
+  // Products is hidden until it has content. The route still works.
 ]
 
 const CONTACT_EMAIL = 'mailto:hello@mauhhik.com'

@@ -33,16 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ])
 
   const staticPages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/portfolio/exchange-connectivity-delivery`, changeFrequency: 'monthly', priority: 0.9 },
     { url: SITE_URL, changeFrequency: 'monthly', priority: 1 },
     { url: `${SITE_URL}/portfolio`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE_URL}/about`, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE_URL}/resume`, changeFrequency: 'monthly', priority: 0.8 },
   ]
 
-  // The blog index is listed only once there is something to read
-  if (posts.length > 0) {
-    staticPages.push({ url: `${SITE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 })
-  }
+  staticPages.push({ url: `${SITE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 })
 
   return [
     ...staticPages,

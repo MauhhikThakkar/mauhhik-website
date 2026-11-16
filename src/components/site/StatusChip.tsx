@@ -3,14 +3,16 @@
  *
  * Says plainly what kind of work a card or case study is.
  * "concept" = a prototype with no users, "pilot" = tested with real users,
- * "shipped" = live work with measured results.
+ * "shipped" = live work with measured results, "delivered" = real client
+ * delivery from employment.
  */
-export type WorkStatus = 'concept' | 'pilot' | 'shipped'
+export type WorkStatus = 'concept' | 'pilot' | 'shipped' | 'delivered'
 
 const LABELS: Record<WorkStatus, string> = {
   concept: 'Concept prototype',
   pilot: 'Pilot',
   shipped: 'Shipped',
+  delivered: 'Delivered work',
 }
 
 export default function StatusChip({ status = 'concept' }: { status?: WorkStatus }) {

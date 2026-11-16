@@ -81,25 +81,24 @@ export default async function BlogPage() {
 
     return (
     <main className="bg-charcoal text-white min-h-screen">
-      {/* Hero Section */}
-      <section className="border-b border-zinc-900">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 py-16 md:py-24">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-[1.1] tracking-tight">
-            Writing
+      {/* Intro */}
+      <section className="relative overflow-hidden border-b border-line">
+        <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div className="site-container relative pb-14 pt-32 sm:pt-40 md:pb-16">
+          <p className="eyebrow mb-5">Writing</p>
+          <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+            Notes on delivery, payments and moving from project to product.
           </h1>
-          <p className="text-base sm:text-lg text-zinc-500 leading-relaxed max-w-3xl mb-4">
-            I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect.
-          </p>
-          <p className="text-xl sm:text-2xl text-zinc-400 leading-relaxed max-w-3xl">
-            Thoughts on product, strategy, and building things that matter.
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+            What I learn from delivering infrastructure for global exchanges, and how I apply it to product decisions.
           </p>
         </div>
       </section>
 
       {/* Categories Filter */}
       {categories && categories.length > 0 && (
-        <section className="border-b border-zinc-900/50">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8 py-8">
+        <section className="border-b border-line">
+          <div className="site-container py-8">
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/blog"
@@ -125,8 +124,8 @@ export default async function BlogPage() {
       {/* Featured Posts */}
       {featuredPosts.length > 0 && (
         <Reveal>
-          <section className="border-b border-zinc-900/50">
-            <div className="max-w-6xl mx-auto px-6 sm:px-8 py-16 md:py-20">
+          <section className="border-b border-line">
+            <div className="site-container py-16 md:py-20">
               <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
                 Featured
               </h2>
@@ -155,8 +154,8 @@ export default async function BlogPage() {
       {/* Latest Posts */}
       {latestPosts.length > 0 && (
         <Reveal>
-          <section className="border-b border-zinc-900/50 py-16 md:py-20">
-            <div className="max-w-6xl mx-auto px-6 sm:px-8">
+          <section className="border-b border-line py-16 md:py-20">
+            <div className="site-container">
               <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-10">
                 Latest
               </h2>
@@ -186,7 +185,7 @@ export default async function BlogPage() {
       {Object.keys(postsByCategory).length > 0 && (
         <Reveal>
           <section className="py-16 md:py-20">
-            <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="site-container">
               {Object.values(postsByCategory).map(({ category, posts }, index) => (
                 <Reveal key={category._id} delay={index * 0.1} className="mb-16 last:mb-0">
                 <div className="flex items-center gap-3 mb-8">
@@ -221,29 +220,24 @@ export default async function BlogPage() {
 
       {/* Empty State */}
       {validPosts.length === 0 && (
-        <section className="py-16 md:py-20">
-          <div className="max-w-6xl mx-auto px-6 sm:px-8">
-            <div className="text-center py-20">
-              <p className="text-zinc-500 text-lg mb-4">No blog posts found.</p>
-              <p className="text-zinc-600 text-sm">
-                Make sure your blog posts in Sanity have all required fields: title, slug, short description, and category.
-              </p>
-            </div>
+        <section className="py-20">
+          <div className="site-container">
+            <p className="text-zinc-400 text-lg">The first posts are being written. Check back soon.</p>
           </div>
         </section>
       )}
 
       {/* Bottom Spacing */}
-      <div className="h-32"></div>
+      <div className="h-16"></div>
     </main>
     )
   } catch {
     // Silently handle errors in production, show user-friendly message
     return (
       <main className="bg-charcoal text-white min-h-screen">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 py-20">
-          <h1 className="text-4xl font-bold mb-4">Error Loading Blog</h1>
-          <p className="text-zinc-400">There was an error loading the blog posts. Please try again later.</p>
+        <div className="site-container py-20">
+          <h1 className="text-3xl font-semibold mb-4 pt-16">Writing</h1>
+          <p className="text-zinc-400">Posts could not be loaded just now. Please try again shortly.</p>
         </div>
       </main>
     )
@@ -256,8 +250,8 @@ export default async function BlogPage() {
 export const revalidate = 3600
 
 export const metadata = generateSEOMetadata({
-  title: 'Writing | Product Thinking & Strategy',
-  description: 'I write to clarify how modern products are built — especially where AI, uncertainty, and human judgment intersect. Thoughts on product management, strategy, and building things that matter.',
+  title: 'Writing',
+  description: 'Notes by Mauhhik Thakkar on delivering infrastructure for global exchanges, payments, and moving from project to product management.',
   url: '/blog',
   imageAlt: 'Mauhhik — Writing',
 })

@@ -58,7 +58,7 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
 
   return (
     <motion.article
-      className="relative bg-charcoal-light/30 border border-zinc-900 rounded-2xl overflow-hidden h-full flex flex-col hover:border-zinc-700 group"
+      className="relative bg-charcoal-light/60 border border-line rounded-2xl overflow-hidden h-full flex flex-col hover:border-line-strong group"
       variants={cardVariants}
       initial="rest"
       whileHover="hover"
