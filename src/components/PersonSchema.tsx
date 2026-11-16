@@ -1,35 +1,54 @@
 import { SITE_URL } from '@/lib/constants'
 
+/** Stable identifier other structured data (blog posts) points to as the author */
+export const PERSON_ID = `${SITE_URL}/#person`
+
 /**
  * Person Schema Component
- * 
- * Server-rendered JSON-LD structured data for Person schema.
- * Provides rich snippets for search engines.
+ *
+ * Server-rendered JSON-LD describing Mauhhik for search engines and AI
+ * assistants. Every value here must match the resume and LinkedIn exactly:
+ * this is the record machines quote.
  */
 export default function PersonSchema() {
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': PERSON_ID,
     name: 'Mauhhik Thakkar',
-    jobTitle: 'Project Manager',
     url: SITE_URL,
+    image: `${SITE_URL}/images/mauhhik-thakkar.jpg`,
+    jobTitle: 'Project Manager, Service Implementation',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Waypoint Trading Solutions',
+    },
+    description:
+      'Project manager with 9+ years of experience, including 4+ years managing IT delivery for global exchanges and fintech, moving into Product Manager and Technical Product Owner roles.',
     sameAs: [
       'https://www.linkedin.com/in/mauhhikthakkar/',
+      'https://thepmtransition.substack.com',
+      'https://github.com/MauhhikThakkar',
     ],
     address: {
       '@type': 'PostalAddress',
+      addressRegion: 'Gujarat',
       addressCountry: 'IN',
-      addressRegion: 'India',
     },
     knowsAbout: [
-      'Product Management',
-      'Product Strategy',
-      'AI Products',
-      'SaaS',
+      'Project management',
+      'Product management',
+      'Secure SD-WAN deployment',
+      'Financial market infrastructure',
       'FinTech',
-      'Enterprise Software',
+      'Data analytics',
+      'AI products',
     ],
-    description: 'Project manager with 9+ years of experience, including 4+ years managing IT delivery for global exchanges and fintech, moving into product management. Concept work across FinTech, SaaS, and AI products.',
+    hasCredential: [
+      'ICPM Product Management Certification',
+      'IBM AI Product Manager Professional Certificate',
+      'Google Project Management Professional Certificate',
+    ].map((name) => ({ '@type': 'EducationalOccupationalCredential', name })),
   }
 
   return (

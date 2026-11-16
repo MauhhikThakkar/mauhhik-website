@@ -12,6 +12,8 @@ import {
 import PortableText from "@/components/PortableText"
 import { urlFor } from "@/sanity/lib/image"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+import JsonLd, { breadcrumbSchema } from "@/components/site/JsonLd"
+import { SITE_URL } from "@/lib/constants"
 import PortfolioBreadcrumb from "@/components/portfolio/PortfolioBreadcrumb"
 import CaseStudyBottomBar from "@/components/portfolio/CaseStudyBottomBar"
 import CollapsibleImprovements from "@/components/portfolio/CollapsibleImprovements"
@@ -209,6 +211,13 @@ export default async function ProjectPage({
 
   return (
     <main className="bg-charcoal text-white min-h-screen">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'Work', url: `${SITE_URL}/portfolio` },
+          { name: project.title, url: `${SITE_URL}/portfolio/${slug}` },
+        ])}
+      />
       {/* 1. Hero Section */}
       <section className="border-b border-zinc-900">
         <div className={CONTAINER_CLASS}>

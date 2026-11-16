@@ -10,6 +10,9 @@ import AuthorAttribution from "@/components/AuthorAttribution"
 import InlineCTA from "@/components/InlineCTA"
 import { urlFor } from "@/sanity/lib/image"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
+import JsonLd, { breadcrumbSchema } from "@/components/site/JsonLd"
+import { PERSON_ID } from "@/components/PersonSchema"
+import { SITE_URL } from "@/lib/constants"
 
 interface BlogPost {
   _id: string
@@ -141,6 +144,30 @@ export default async function BlogPostPage({
 
   return (
     <main className="bg-charcoal text-white min-h-screen">
+      {/* Structured data: tells search engines and AI assistants who wrote this and when */}
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.shortDescription,
+          datePublished: post.publishedAt,
+          mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+          url: `${SITE_URL}/blog/${post.slug}`,
+          ...(imageUrl && { image: imageUrl }),
+          ...(post.tags && post.tags.length > 0 && { keywords: post.tags.join(', ') }),
+          author: { '@type': 'Person', '@id': PERSON_ID, name: 'Mauhhik Thakkar', url: `${SITE_URL}/about` },
+          publisher: { '@id': PERSON_ID },
+        }}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: 'Home', url: SITE_URL },
+          { name: 'Writing', url: `${SITE_URL}/blog` },
+          { name: post.title, url: `${SITE_URL}/blog/${post.slug}` },
+        ])}
+      />
+
       {/* Reading Progress Indicator */}
       <ReadingProgress />
 

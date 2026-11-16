@@ -11,6 +11,9 @@ interface NowItem {
  * What Mauhhik is working on at present. Keep this list short and current:
  * remove an item when it is finished or parked.
  */
+/** Change this date whenever the list below is edited */
+const NOW_UPDATED = 'November 2026'
+
 const NOW: NowItem[] = [
   {
     status: 'In progress',
@@ -44,6 +47,9 @@ export default function NowSection() {
             <h2 id="now-heading" className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
               What I&apos;m working on
             </h2>
+            <p className="mt-4 font-mono text-xs uppercase tracking-[0.14em] text-zinc-500">
+              Updated {NOW_UPDATED}
+            </p>
           </div>
 
           <ul className="grid gap-5 md:grid-cols-3">
