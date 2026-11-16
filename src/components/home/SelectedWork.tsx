@@ -40,9 +40,12 @@ const WORK: WorkItem[] = [
 /**
  * SelectedWork
  *
- * One real delivery case study, then two concept case studies. The first card is the lead and spans
+ * Real delivery case studies first, then two concept case studies. The first card is the lead and spans
  * the full width on desktop.
  */
+/** The first card spans the full width only when that leaves complete rows beneath it */
+const isLead = (index: number): boolean => index === 0 && WORK.length % 2 === 1
+
 export default function SelectedWork() {
   return (
     <section className="border-b border-line" aria-labelledby="work-heading">
@@ -63,7 +66,7 @@ export default function SelectedWork() {
           {WORK.map((item, index) => (
             <article
               key={item.slug}
-              className={`card group flex flex-col p-6 sm:p-8 ${index === 0 ? 'md:col-span-2' : ''}`}
+              className={`card group flex flex-col p-6 sm:p-8 ${isLead(index) ? 'md:col-span-2' : ''}`}
             >
               <div className="mb-6 flex items-start justify-between gap-4">
                 <p className="pt-1.5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-zinc-500">
@@ -74,13 +77,13 @@ export default function SelectedWork() {
 
               <h3
                 className={`font-semibold tracking-tight text-white ${
-                  index === 0 ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-2xl sm:text-3xl'
+                  isLead(index) ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-xl sm:text-2xl'
                 }`}
               >
                 {item.title}
               </h3>
 
-              <p className={`mt-4 text-base leading-relaxed text-zinc-400 ${index === 0 ? 'max-w-2xl sm:text-lg' : ''}`}>
+              <p className={`mt-4 text-base leading-relaxed text-zinc-400 ${isLead(index) ? 'max-w-2xl sm:text-lg' : ''}`}>
                 {item.summary}
               </p>
 
