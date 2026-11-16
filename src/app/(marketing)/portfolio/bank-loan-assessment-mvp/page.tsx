@@ -17,7 +17,7 @@ const TITLE = 'A loan-assessment tool for small banks, shaped by interviewing br
 export const metadata = generateSEOMetadata({
   title: 'Case study: loan-assessment MVP for small banks',
   description:
-    'How in-person interviews with bank managers shaped a B2B fintech MVP that was delivered in two months and piloted in three branches. A case study by Mauhhik Thakkar.',
+    'How in-person interviews with bank managers shaped a B2B fintech MVP delivered in two months, with two of three pilot branches willing to adopt it. A case study by Mauhhik Thakkar.',
   url: `/portfolio/${SLUG}`,
   type: 'article',
 })
@@ -97,7 +97,8 @@ export default function BankLoanAssessmentCaseStudy() {
           </h1>
           <p className="mt-6 max-w-3xl text-base leading-relaxed text-zinc-300 sm:text-lg">
             I interviewed bank managers in person, turned what I learned into the shape of the product,
-            and coordinated an MVP that was delivered in two months and piloted in three branches.
+            and coordinated an MVP that was delivered in two months. Two of the three pilot branches
+            were willing to adopt it, and phase one finished a month ahead of its four-month plan.
           </p>
 
           <dl className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
@@ -131,7 +132,7 @@ export default function BankLoanAssessmentCaseStudy() {
         </p>
         <p className={P}>
           I advised the founder, who made the final product decisions. I had no authority over lending
-          policy or loan decisions, and the product informed a bank&apos;s assessment; it did not approve loans.
+          policy or loan decisions.
         </p>
       </Section>
 
@@ -175,10 +176,15 @@ export default function BankLoanAssessmentCaseStudy() {
         <CaseStudySteps steps={ACTIONS} />
       </Section>
 
-      <Section eyebrow="Result" title="MVP in two months, piloted in three branches" id="result">
+      <Section eyebrow="Result" title="Two of three branches ready to adopt; phase one a month early" id="result">
         <p className={P}>
-          We delivered the MVP within the planned two months and tested it in three branches. Two of
-          the three said they were willing to proceed.
+          We delivered the MVP within the planned two months and showed it to three branches. Two
+          were happy with it and willing to adopt it. The third asked us to come back after a quarter,
+          citing a budget constraint.
+        </p>
+        <p className={P}>
+          Phase one was planned for four months. We delivered it in three, testing included, at about
+          20% below the planned cost.
         </p>
         <p className={P}>
           Processing time, as I observed it, was about two and a half hours in the MVP and about 70

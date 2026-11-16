@@ -26,7 +26,7 @@ const PRINCIPLES: OperatingPrinciple[] = [
     statement:
       'When time is short, I reduce what ships. I do not lower the standard for what does ship.',
     evidence:
-      'Delivery timelines at Waypoint came down 30% with 100% compliance with Operational Readiness standards. A fintech project at Inventam finished ahead of schedule, saving 15% of time and 20% of cost.',
+      'Delivery timelines at Waypoint came down 30% with 100% compliance with Operational Readiness standards. A fintech product phase at Inventam finished a month ahead of its four-month plan, at about 20% below planned cost.',
   },
   {
     title: 'Use AI for speed, keep the judgment',

@@ -12,6 +12,8 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 import JsonLd, { breadcrumbSchema } from "@/components/site/JsonLd"
 import { PERSON_ID } from "@/components/PersonSchema"
 import { SITE_URL } from "@/lib/constants"
+import LocalArticle from "@/components/blog/LocalArticle"
+import { LOCAL_POSTS, getLocalPost } from "@/content/posts"
 
 interface BlogPost {
   _id: string
@@ -112,10 +114,13 @@ interface BlogPost {
 }
 
 export async function generateStaticParams() {
-  const posts = await client.fetch(BLOG_SLUGS_QUERY)
-  return posts.map((post: { slug: string }) => ({
-    slug: post.slug,
-  }))
+  let posts: { slug: string }[] = []
+  try {
+    posts = await client.fetch(BLOG_SLUGS_QUERY)
+  } catch (error) {
+    console.error('Blog: could not fetch Sanity slugs', error)
+  }
+  return [...LOCAL_POSTS, ...posts].map((post) => ({ slug: post.slug }))
 }
 
 // ISR: Revalidate blog posts every hour
@@ -129,6 +134,13 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+
+  // Posts written in code take priority over Sanity posts with the same slug
+  const localPost = getLocalPost(slug)
+  if (localPost) {
+    return <LocalArticle post={localPost} />
+  }
+
   const post: BlogPost | null = await client.fetch(BLOG_POST_BY_SLUG_QUERY, {
     slug,
   })
@@ -362,6 +374,20 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+
+  const localPost = getLocalPost(slug)
+  if (localPost) {
+    return generateSEOMetadata({
+      title: localPost.metaTitle,
+      description: localPost.description,
+      url: `/blog/${localPost.slug}`,
+      type: 'article',
+      publishedTime: localPost.publishedAt,
+      authors: ['Mauhhik Thakkar'],
+      tags: localPost.tags,
+    })
+  }
+
   const post: BlogPost | null = await client.fetch(BLOG_POST_BY_SLUG_QUERY, {
     slug,
   })

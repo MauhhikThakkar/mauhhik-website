@@ -24,7 +24,7 @@ export const DELIVERY_WORK: DeliveryWork[] = [
     title: 'A loan-assessment tool for small banks, shaped by interviewing branch managers',
     domain: 'Inventam Tech Solution · B2B fintech',
     summary:
-      'A fintech MVP that brought an applicant\u2019s financial information into one workbook for branch staff. Delivered in two months and piloted in three branches.',
+      'A fintech MVP that brought an applicant\u2019s financial information into one workbook for branch staff. Two of three pilot branches were willing to adopt it; phase one finished a month early.',
     shows: 'Discovery with real users, and letting what they said decide the format of the product.',
   },
 ]
