@@ -26,7 +26,7 @@ export default function PortfolioHeader() {
         Case studies
       </h1>
       <p className="text-base sm:text-lg text-zinc-400 leading-relaxed">
-        Delivery work from my role at Waypoint, then concept projects across fintech, enterprise AI
+        Delivery work from my current role, then concept projects across fintech, enterprise AI
         and founder tools. Each one shows the options considered and the trade-off behind the decision.
       </p>
     </motion.header>

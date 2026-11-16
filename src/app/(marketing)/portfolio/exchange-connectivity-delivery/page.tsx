@@ -10,13 +10,13 @@ const TITLE = 'Multi-exchange connectivity build, delivered through scarce chang
 export const metadata = generateSEOMetadata({
   title: 'Case study: multi-exchange connectivity delivery',
   description:
-    'How a three-rack infrastructure and market-data connectivity build was re-sequenced to depend less on limited on-site change windows. A delivery case study by Mauhhik Thakkar.',
+    'How a three-rack infrastructure and market-data connectivity build was re-sequenced to depend less on limited on-site change windows, and delivered about 30% faster than the agreed baseline.',
   url: `/portfolio/${SLUG}`,
   type: 'article',
 })
 
 const FACTS = [
-  { label: 'Employer', value: 'Waypoint Trading Solutions' },
+  { label: 'Employer', value: 'My current employer (financial infrastructure)' },
   { label: 'My role', value: 'Project Manager' },
   { label: 'Client', value: 'U.S.-based financial-services firm (not named)' },
   { label: 'Site', value: 'Southeast Asian data centre, three racks' },
@@ -118,7 +118,7 @@ export default function ExchangeConnectivityCaseStudy() {
           <p className="mt-6 max-w-3xl text-base leading-relaxed text-zinc-300 sm:text-lg">
             By overlapping readiness activities, accelerating the equipment shipment and moving
             configuration work before dispatch, I reduced the build&apos;s dependence on limited on-site
-            installation windows and brought it into client testing within the target delivery period.
+            installation windows and delivered about 30% faster than the agreed baseline timeline.
           </p>
 
           <dl className="mt-10 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
@@ -218,14 +218,15 @@ export default function ExchangeConnectivityCaseStudy() {
         </ol>
       </Section>
 
-      <Section eyebrow="Result" title="Into client testing within the target period" id="result">
+      <Section eyebrow="Result" title="About 30% faster than the agreed baseline" id="result">
         <p className={P}>
-          The implementation reached client testing within the target delivery period, with less of
-          the work tied to on-site change windows than the original sequence required.
+          The implementation was delivered about 30% faster than the baseline timeline agreed for the
+          project, which covered implementation and client testing. Less of the work was tied to
+          on-site change windows than the original sequence required.
         </p>
         <p className="mt-6 rounded-xl border border-line bg-charcoal-light/60 p-5 text-sm leading-relaxed text-zinc-400">
-          I have not put a percentage on this result. The project dates are being reconciled against
-          the original plan, and I will add a figure only with its baseline.
+          This is one project, measured against its own agreed baseline. I do not publish the
+          week-by-week schedule here; I am glad to walk through it in conversation.
         </p>
       </Section>
 

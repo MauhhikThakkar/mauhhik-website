@@ -43,8 +43,8 @@ export const PROOF_POINTS: ProofPoint[] = [
   },
   {
     value: '30%',
-    label: 'Shorter delivery timelines',
-    detail: 'With 100% compliance with Operational Readiness standards',
+    label: 'Faster delivery',
+    detail: 'On a multi-exchange build, against the agreed baseline timeline',
   },
   {
     value: '3',
