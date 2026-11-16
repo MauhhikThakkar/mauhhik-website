@@ -23,11 +23,11 @@ export default function PortfolioHeader() {
     >
       <p className="eyebrow mb-5">Work</p>
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 leading-[1.1] tracking-tight">
-        Product case studies
+        Case studies
       </h1>
       <p className="text-base sm:text-lg text-zinc-400 leading-relaxed">
-        Concept projects across fintech, enterprise AI and founder tools. Each one shows the
-        problem framing, the options considered and the trade-off behind every decision.
+        Delivery work from my role at Waypoint, then concept projects across fintech, enterprise AI
+        and founder tools. Each one shows the options considered and the trade-off behind the decision.
       </p>
     </motion.header>
   )

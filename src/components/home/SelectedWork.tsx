@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import StatusChip, { type WorkStatus } from '@/components/site/StatusChip'
+import { DELIVERY_WORK } from '@/content/deliveryWork'
 
 interface WorkItem {
   title: string
@@ -13,6 +14,7 @@ interface WorkItem {
 }
 
 const WORK: WorkItem[] = [
+  ...DELIVERY_WORK.map((item) => ({ ...item, prototype: '', status: 'delivered' as const })),
   {
     title: 'RemitFlow',
     domain: 'Fintech · Cross-border payments',
@@ -33,22 +35,12 @@ const WORK: WorkItem[] = [
     prototype: 'https://triage-genius-hub.lovable.app',
     status: 'concept',
   },
-  {
-    title: 'Founder OS',
-    domain: 'AI strategy · Founder tools',
-    summary:
-      'An operating framework concept for solo founders that ties weekly priorities to strategy and metrics.',
-    shows: 'Choosing an opinionated structure over a configurable dashboard.',
-    slug: 'founder-os',
-    prototype: 'https://founder-os-hub.lovable.app',
-    status: 'concept',
-  },
 ]
 
 /**
  * SelectedWork
  *
- * Three case studies on the home page. The first card is the lead and spans
+ * One real delivery case study, then two concept case studies. The first card is the lead and spans
  * the full width on desktop.
  */
 export default function SelectedWork() {
@@ -59,7 +51,7 @@ export default function SelectedWork() {
           <div>
             <p className="eyebrow mb-4">Selected work</p>
             <h2 id="work-heading" className="section-title">
-              Product concepts, with the reasoning shown
+              Real delivery first, then product concepts
             </h2>
           </div>
           <Link href="/portfolio" className="text-link text-sm">
@@ -112,22 +104,24 @@ export default function SelectedWork() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-6-6l6 6-6 6" />
                   </svg>
                 </Link>
-                <a
-                  href={item.prototype}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-[44px] items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white"
-                >
-                  Open prototype
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
+                {item.prototype && (
+                  <a
+                    href={item.prototype}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-[44px] items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white"
+                  >
+                    Open prototype
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
+                )}
               </div>
             </article>
           ))}
