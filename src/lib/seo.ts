@@ -128,6 +128,9 @@ export function generateMetadata(config: SEOConfig = {}): Metadata {
     robots,
     alternates: {
       canonical: canonicalUrl,
+      types: {
+        'application/rss+xml': `${SITE_URL}/blog/rss.xml`,
+      },
     },
   }
 }

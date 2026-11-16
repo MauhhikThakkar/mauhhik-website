@@ -167,6 +167,14 @@ export const metadata = generateSEOMetadata({
 
 const FEATURED_ITEMS = [
   {
+    id: 'remitflow',
+    title: 'RemitFlow',
+    positioning: 'Remittance concept for the UAE to India corridor, designed around showing the fee and the exchange rate before the sender commits.',
+    caseStudySlug: 'remitflow',
+    prototypeLink: 'https://flow-dubai-mumbai.lovable.app',
+    filterCategory: 'Fintech' as const,
+  },
+  {
     id: 'founder-os',
     title: 'Founder OS',
     positioning: 'AI-powered operating system for founders. Streamlines decision-making, prioritization, and execution across product, growth, and operations.',
