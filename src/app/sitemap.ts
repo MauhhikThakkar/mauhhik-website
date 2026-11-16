@@ -39,10 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/resume`, changeFrequency: 'monthly', priority: 0.8 },
   ]
 
-  // The blog index is listed only once there is something to read
-  if (posts.length > 0) {
-    staticPages.push({ url: `${SITE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 })
-  }
+  staticPages.push({ url: `${SITE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 })
 
   return [
     ...staticPages,
