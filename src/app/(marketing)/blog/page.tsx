@@ -6,6 +6,7 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 import Reveal from "@/components/Reveal"
 import BlogCard from "@/components/BlogCard"
+import { LOCAL_POSTS } from "@/content/posts"
 
 interface BlogCategory {
   _id: string
@@ -39,17 +40,42 @@ interface BlogPost {
 
 export default async function BlogPage() {
   try {
-    const [posts, categories] = await Promise.all([
-      client.fetch<BlogPost[]>(BLOG_POSTS_QUERY),
-      client.fetch<BlogCategory[]>(BLOG_CATEGORIES_QUERY),
-    ])
+    // Posts from Sanity. If the CMS cannot be reached, the posts written in code still show.
+    let posts: BlogPost[] = []
+    let categories: BlogCategory[] = []
+    try {
+      ;[posts, categories] = await Promise.all([
+        client.fetch<BlogPost[]>(BLOG_POSTS_QUERY),
+        client.fetch<BlogCategory[]>(BLOG_CATEGORIES_QUERY),
+      ])
+    } catch (error) {
+      console.error('Blog: could not fetch Sanity posts', error)
+    }
+
+    // Posts written in code (src/content/posts)
+    const localPosts: BlogPost[] = LOCAL_POSTS.map((post) => ({
+      _id: `local-${post.slug}`,
+      title: post.title,
+      slug: post.slug,
+      shortDescription: post.description,
+      category: { title: post.category, slug: post.category.toLowerCase() },
+      readingTime: post.readingTime,
+      publishedAt: post.publishedAt,
+      isFeatured: false,
+      tags: post.tags,
+    }))
+    const localSlugs = new Set(localPosts.map((post) => post.slug))
 
     // Filter out posts with missing required fields
-    const validPosts = (posts || []).filter(post => 
-      post.title && 
-      post.slug && 
-      post.shortDescription
-    )
+    const validPosts = [
+      ...localPosts,
+      ...(posts || []).filter(post => 
+        post.title && 
+        post.slug && 
+        post.shortDescription &&
+        !localSlugs.has(post.slug)
+      ),
+    ]
 
     // Separate posts into groups
     const featuredPosts = validPosts.filter(post => post.isFeatured).slice(0, 2)

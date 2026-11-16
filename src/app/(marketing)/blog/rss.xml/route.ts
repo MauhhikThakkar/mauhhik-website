@@ -1,5 +1,6 @@
 import { client } from '@/sanity/lib/client'
 import { SITE_URL } from '@/lib/constants'
+import { LOCAL_POSTS } from '@/content/posts'
 
 export const revalidate = 3600
 
@@ -35,7 +36,15 @@ export async function GET() {
     console.error('RSS: could not fetch posts', error)
   }
 
-  const items = posts
+  const localPosts: FeedPost[] = LOCAL_POSTS.map((post) => ({
+    title: post.title,
+    slug: post.slug,
+    shortDescription: post.description,
+    publishedAt: post.publishedAt,
+  }))
+  const localSlugs = new Set(localPosts.map((post) => post.slug))
+
+  const items = [...localPosts, ...posts.filter((post) => !localSlugs.has(post.slug))]
     .filter((post) => post.title && post.slug)
     .map((post) => {
       const url = `${SITE_URL}/blog/${post.slug}`

@@ -10,7 +10,7 @@ import { urlFor } from "@/sanity/lib/image"
 const components: PortableTextComponents = {
   block: {
     normal: ({ children }) => (
-      <p className="text-[17px] leading-[1.8] text-zinc-400 mb-8 max-w-2xl">
+      <p className="text-[18px] leading-[1.75] text-zinc-300 mb-7 max-w-2xl">
         {children}
       </p>
     ),
@@ -43,12 +43,12 @@ const components: PortableTextComponents = {
 
   list: {
     bullet: ({ children }) => (
-      <ul className="space-y-4 mb-10 text-zinc-400 max-w-2xl">
+      <ul className="space-y-3 mb-9 text-zinc-300 max-w-2xl">
         {children}
       </ul>
     ),
     number: ({ children }) => (
-      <ol className="space-y-4 mb-10 text-zinc-400 max-w-2xl">
+      <ol className="space-y-3 mb-9 text-zinc-300 max-w-2xl">
         {children}
       </ol>
     ),
@@ -74,7 +74,7 @@ const components: PortableTextComponents = {
     ),
     em: ({ children }) => <em className="italic text-zinc-300">{children}</em>,
     code: ({ children }) => (
-      <code className="bg-zinc-900 text-emerald-400 px-2 py-1 rounded text-[15px] font-mono border border-zinc-800">
+      <code className="bg-zinc-900 text-accent px-2 py-1 rounded text-[15px] font-mono border border-zinc-800">
         {children}
       </code>
     ),
@@ -132,19 +132,43 @@ const components: PortableTextComponents = {
   },
 }
 
+/**
+ * Blog posts use real h2 and h3 headings, so readers, search engines and AI
+ * assistants can see the structure of the article. Case studies keep the
+ * quieter treatment above because their section titles come from the page.
+ */
+const articleComponents: PortableTextComponents = {
+  ...components,
+  block: {
+    ...(components.block as Record<string, unknown>),
+    h2: ({ children }) => (
+      <h2 className="mt-14 mb-5 max-w-2xl text-2xl font-semibold leading-snug tracking-tight text-white first:mt-0 sm:text-[28px]">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="mt-10 mb-4 max-w-2xl text-xl font-semibold leading-snug text-white">
+        {children}
+      </h3>
+    ),
+  },
+}
+
 interface PortableTextProps {
   value: unknown
   className?: string
+  /** Set on blog posts to render real section headings */
+  article?: boolean
 }
 
-export default function PortableText({ value, className = "" }: PortableTextProps) {
+export default function PortableText({ value, className = "", article = false }: PortableTextProps) {
   if (!value || !Array.isArray(value) || value.length === 0) {
     return null
   }
 
   return (
     <div className={`prose-custom ${className}`}>
-      <PortableTextReact value={value} components={components} />
+      <PortableTextReact value={value} components={article ? articleComponents : components} />
     </div>
   )
 }

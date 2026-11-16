@@ -94,7 +94,7 @@ export const CAREER: CareerEntry[] = [
     outcomes: [
       'Managed 3 client projects across FinTech, Gaming and AI/ML, along with multiple SaaS initiatives.',
       'Supported in-house product development for habit-tracking applications and CRM platforms.',
-      'Delivered a FinTech project ahead of schedule, saving 15% of project time and 20% of cost.',
+      'Delivered a fintech product phase in three months against a four-month plan, at about 20% below planned cost.',
     ],
   },
   {

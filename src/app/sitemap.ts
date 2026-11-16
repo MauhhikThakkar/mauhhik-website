@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { client } from '@/sanity/lib/client'
 import { SITE_URL } from '@/lib/constants'
+import { LOCAL_POSTS } from '@/content/posts'
 
 export const revalidate = 3600
 
@@ -34,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/portfolio/exchange-connectivity-delivery`, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${SITE_URL}/portfolio/bank-loan-assessment-mvp`, changeFrequency: 'monthly', priority: 0.9 },
     { url: SITE_URL, changeFrequency: 'monthly', priority: 1 },
     { url: `${SITE_URL}/portfolio`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${SITE_URL}/about`, changeFrequency: 'monthly', priority: 0.8 },
@@ -49,6 +51,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: project._updatedAt,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
+    })),
+    ...LOCAL_POSTS.map((post) => ({
+      url: `${SITE_URL}/blog/${post.slug}`,
+      lastModified: post.publishedAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
     })),
     ...posts.map((post) => ({
       url: `${SITE_URL}/blog/${post.slug}`,

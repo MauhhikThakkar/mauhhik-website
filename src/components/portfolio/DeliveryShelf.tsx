@@ -16,17 +16,17 @@ export default function DeliveryShelf() {
       <p id="delivery-heading" className="eyebrow mb-6">
         Delivery work
       </p>
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         {DELIVERY_WORK.map((item) => (
-          <Link key={item.slug} href={`/portfolio/${item.slug}`} className="card group block p-6 sm:p-8 md:p-10">
+          <Link key={item.slug} href={`/portfolio/${item.slug}`} className="card group block p-6 sm:p-8">
             <div className="mb-6 flex items-start justify-between gap-4">
               <p className="pt-1.5 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-zinc-500">
                 {item.domain}
               </p>
               <StatusChip status="delivered" />
             </div>
-            <h2 className="max-w-3xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">{item.title}</h2>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">{item.summary}</p>
+            <h2 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">{item.title}</h2>
+            <p className="mt-4 text-base leading-relaxed text-zinc-400">{item.summary}</p>
             <p className="mt-5 max-w-2xl border-l-2 border-accent/40 pl-4 text-sm leading-relaxed text-zinc-300">
               {item.shows}
             </p>
