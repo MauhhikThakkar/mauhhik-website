@@ -1,5 +1,7 @@
 import Image from "next/image"
 import CareerTimeline from "@/components/about/CareerTimeline"
+import OperatingPrinciples from "@/components/about/OperatingPrinciples"
+import NowSection from "@/components/about/NowSection"
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo"
 
 export const metadata = generateSEOMetadata({
@@ -73,75 +75,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-b border-line" aria-labelledby="philosophy-heading">
-        <div className="site-container py-16 md:py-24">
-          <div className="grid gap-10 lg:grid-cols-[14rem_1fr] lg:gap-16">
-            <div>
-              <p className="eyebrow mb-4">Principles</p>
-              <h2 id="philosophy-heading" className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                Operating philosophy
-              </h2>
-            </div>
-            <div className="max-w-2xl">
-              <div className="divide-y divide-line border-y border-line">
-                <div className="py-6">
-                  <h3 className="text-lg font-medium text-white">Decision Discipline</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-zinc-400">
-                    I make trade-offs explicit, discuss them openly, and choose intentionally based on constraints and goals. The goal isn&apos;t avoiding trade-offs; it&apos;s making them consciously and documenting the reasoning so future decisions can reference that context. I structure ambiguity rather than waiting for clarity—defaulting to explicit hypotheses, defined success criteria, and learning loops that validate or invalidate assumptions quickly.
-                  </p>
-                </div>
-                <div className="py-6">
-                  <h3 className="text-lg font-medium text-white">Metrics Rigor</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-zinc-400">
-                    I use data to inform judgment, not replace it. Quantitative signals validate direction, but I don&apos;t wait for perfect data to make decisions. I establish clear success metrics upfront and build tight feedback loops with users and stakeholders. The discipline to change course when evidence demands it matters more than being right initially.
-                  </p>
-                </div>
-                <div className="py-6">
-                  <h3 className="text-lg font-medium text-white">AI Leverage</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-zinc-400">
-                    I leverage AI tools (Cursor, Claude, ChatGPT, Perplexity, Gamma) to accelerate development while maintaining quality and strategic focus. AI-first execution means using AI to handle routine tasks, generate options, and validate assumptions—freeing cognitive capacity for judgment, trade-off evaluation, and strategic decision-making. The goal isn&apos;t replacing human judgment; it&apos;s amplifying it.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <OperatingPrinciples />
 
-      <section className="border-b border-line" aria-labelledby="exploring-heading">
-        <div className="site-container py-16 md:py-24">
-          <div className="grid gap-10 lg:grid-cols-[14rem_1fr] lg:gap-16">
-            <div>
-              <p className="eyebrow mb-4">Now</p>
-              <h2 id="exploring-heading" className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                What I&apos;m exploring
-              </h2>
-            </div>
-            <div className="max-w-2xl">
-              <div className="divide-y divide-line border-y border-line">
-                <div className="py-6">
-                  <h3 className="text-lg font-medium text-white">AI-First Product Workflows</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-zinc-400">
-                    How do product workflows change when AI is a first-class tool, not an afterthought? I&apos;m exploring how AI can accelerate discovery, validation, and execution—while maintaining the rigor and judgment required in high-trust environments. The question isn&apos;t whether AI will change product management; it&apos;s how to integrate it thoughtfully.
-                  </p>
-                </div>
-                <div className="py-6">
-                  <h3 className="text-lg font-medium text-white">PM + AI Integration</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-zinc-400">
-                    What does product management look like when AI handles routine tasks and humans focus on judgment? I&apos;m experimenting with AI-assisted problem framing, assumption validation, and trade-off evaluation. The goal is to amplify product judgment, not replace it—using AI to generate options and validate assumptions, while humans make the strategic decisions.
-                  </p>
-                </div>
-                <div className="py-6">
-                  <h3 className="text-lg font-medium text-white">Strategic Experimentation</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-zinc-400">
-                    How do you experiment strategically in high-trust environments where the cost of being wrong is high? I&apos;m exploring minimal viable experiments that validate assumptions without compromising trust or reliability. The challenge is balancing learning speed with risk management—testing hypotheses quickly while maintaining the rigor required in regulated or trust-heavy domains.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <NowSection />
     </main>
   )
 }
