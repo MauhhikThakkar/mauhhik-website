@@ -4,7 +4,6 @@ import Image from "next/image"
 import { client } from "@/sanity/lib/client"
 import { BLOG_POST_BY_SLUG_QUERY, BLOG_SLUGS_QUERY } from "@/sanity/lib/blogQueries"
 import PortableText from "@/components/PortableText"
-import EmailCapture from "@/components/EmailCapture"
 import ReadingProgress from "@/components/ReadingProgress"
 import AuthorAttribution from "@/components/AuthorAttribution"
 import InlineCTA from "@/components/InlineCTA"
@@ -173,100 +172,66 @@ export default async function BlogPostPage({
 
       {/* Hero Section */}
       <article>
-        <header className="border-b border-zinc-900">
-          <div className="max-w-4xl mx-auto px-6 sm:px-8 pt-20 pb-12 md:pt-24 md:pb-16">
-            {/* Back Link */}
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-300 transition-colors mb-8"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back to Blog
+        <header className="relative overflow-hidden border-b border-line">
+          <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
+          <div className="relative mx-auto max-w-3xl px-5 pb-12 pt-32 sm:px-8 sm:pt-40 md:pb-16">
+            <Link href="/blog" className="text-link text-sm">
+              All writing
             </Link>
 
-            {/* Category */}
-            {post.category && (
-              <div className="mb-6">
-                <span
-                  className="inline-block px-4 py-2 rounded-full text-sm font-medium"
-                  style={{
-                    backgroundColor: post.category.color ? post.category.color + '20' : '#27272a',
-                    color: post.category.color || '#a1a1aa',
-                    borderWidth: '1px',
-                    borderColor: post.category.color ? post.category.color + '40' : '#3f3f46',
-                  }}
-                >
-                  {post.category.title}
-                </span>
-              </div>
-            )}
-
-            {/* Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-[1.05] tracking-tight max-w-4xl">
-              {post.title}
-            </h1>
-
-            {/* Author Attribution (Compact) */}
-            {post.author && <AuthorAttribution author={post.author} variant="compact" />}
-
-            {/* Meta */}
-            <div className="flex items-center gap-4 text-base text-zinc-400 mb-8">
+            <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+              {post.category && <span className="text-accent">{post.category.title}</span>}
+              {post.category && <span aria-hidden="true">·</span>}
               <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                  month: 'long',
+                {new Date(post.publishedAt).toLocaleDateString('en-GB', {
                   day: 'numeric',
+                  month: 'long',
                   year: 'numeric',
                 })}
               </time>
-              <span className="text-zinc-700">•</span>
+              <span aria-hidden="true">·</span>
               <span>{post.readingTime} min read</span>
             </div>
 
-            {/* Description */}
-            <p className="text-xl sm:text-2xl text-zinc-300 leading-[1.5] font-normal max-w-3xl">
+            <h1 className="mt-5 text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+              {post.title}
+            </h1>
+
+            <p className="mt-6 text-lg leading-relaxed text-zinc-300 sm:text-xl">
               {post.shortDescription}
             </p>
+
+            <div className="mt-8 flex items-center gap-3">
+              <Image
+                src="/images/mauhhik-thakkar.jpg"
+                alt="Mauhhik Thakkar"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full border border-line-strong object-cover"
+              />
+              <div className="text-sm">
+                <Link href="/about" className="font-medium text-white hover:underline">
+                  Mauhhik Thakkar
+                </Link>
+                <p className="text-zinc-500">Project manager, moving into product</p>
+              </div>
+            </div>
           </div>
         </header>
 
-        {/* TL;DR - Prominent */}
+        {/* Short answer: the direct answer first, for readers and for search and AI summaries */}
         {post.tldr && (
-          <div className="border-b border-zinc-900/50 bg-charcoal-light/30">
-            <div className="max-w-4xl mx-auto px-6 sm:px-8 py-12">
-              <div className="max-w-3xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20">
-                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <span className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">
-                    TL;DR
-                  </span>
-                </div>
-                <p className="text-lg text-zinc-200 leading-relaxed font-medium">
-                  {post.tldr}
-                </p>
-              </div>
+          <div className="border-b border-line bg-charcoal-dark/60">
+            <div className="mx-auto max-w-3xl px-5 py-10 sm:px-8">
+              <p className="eyebrow mb-3 text-accent">Short answer</p>
+              <p className="text-lg leading-relaxed text-zinc-100">{post.tldr}</p>
             </div>
           </div>
         )}
 
         {/* Hero Image */}
         {imageUrl && (
-          <div className="border-b border-zinc-900">
+          <div className="border-b border-line">
             <div className="max-w-5xl mx-auto px-6 sm:px-8 py-12 md:py-16">
               <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-charcoal-light">
                 <Image
@@ -283,9 +248,9 @@ export default async function BlogPostPage({
         )}
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-6 sm:px-8 py-16 md:py-24">
-          <div className="prose-custom text-zinc-300 text-[19px] leading-[1.7] max-w-2xl mx-auto">
-            <PortableText value={post.content} />
+        <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8 md:py-20">
+          <div className="prose-custom mx-auto max-w-2xl text-[18px] leading-[1.75] text-zinc-300">
+            <PortableText value={post.content} article />
           </div>
 
           {/* Inline CTA - Appears after 40-50% scroll */}
@@ -293,30 +258,17 @@ export default async function BlogPostPage({
             <InlineCTA cta={post.ctas.inlineContent} />
           )}
 
-          {/* PM Takeaway - Optional Section */}
+          {/* Key takeaway */}
           {post.pmTakeaway && (
-            <div className="mt-20 max-w-2xl mx-auto">
-              <div className="border-l-4 border-blue-500/30 bg-blue-950/10 rounded-r-xl p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20">
-                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-base font-semibold text-blue-300 uppercase tracking-wider">
-                    How I apply this as a Product Manager
-                  </h3>
-                </div>
-                <p className="text-lg text-zinc-200 leading-relaxed">
-                  {post.pmTakeaway}
-                </p>
-              </div>
+            <div className="mx-auto mt-16 max-w-2xl rounded-2xl border border-accent/25 bg-accent-muted p-6 sm:p-8">
+              <p className="eyebrow mb-3 text-accent">Key takeaway</p>
+              <p className="text-lg leading-relaxed text-zinc-100">{post.pmTakeaway}</p>
             </div>
           )}
 
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-20 pt-12 border-t border-zinc-900 max-w-2xl mx-auto">
+            <div className="mt-20 pt-12 border-t border-line max-w-2xl mx-auto">
               <div className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-4">
                 Topics
               </div>
@@ -333,8 +285,27 @@ export default async function BlogPostPage({
             </div>
           )}
 
-          {/* Email Capture */}
-          <EmailCapture />
+          {/* Follow and contact */}
+          <div className="card mx-auto mt-16 max-w-2xl p-6 sm:p-8">
+            <p className="eyebrow mb-3">Keep reading</p>
+            <p className="text-base leading-relaxed text-zinc-300">
+              I send new posts through my newsletter, The PM Transition. If you are hiring for a
+              product role in the UAE or Singapore, I would like to hear from you.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="https://thepmtransition.substack.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                Subscribe on Substack
+              </a>
+              <a href="mailto:hello@mauhhik.com" className="btn-secondary">
+                Email me
+              </a>
+            </div>
+          </div>
 
           {/* Author Attribution */}
           <AuthorAttribution author={post.author} />
@@ -342,12 +313,12 @@ export default async function BlogPostPage({
 
         {/* Related Projects */}
         {post.relatedProjects && post.relatedProjects.length > 0 && (
-          <div className="border-t border-zinc-900 bg-charcoal-light/20">
+          <div className="border-t border-line bg-charcoal-light/20">
             <div className="max-w-4xl mx-auto px-6 sm:px-8 py-20 md:py-24">
               <div className="mb-10">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Related Case Studies</h2>
                 <p className="text-base text-zinc-400 leading-relaxed">
-                  Related work where I&apos;ve applied this thinking
+                  Work that connects to this post
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
