@@ -8,16 +8,15 @@ const NAV_LINKS = [
   { href: '/portfolio', label: 'Work' },
   { href: '/blog', label: 'Writing' },
   { href: '/about', label: 'About' },
-  { href: '/resume', label: 'Resume' },
+  { href: '/#faq', label: 'FAQ' },
   // Products is hidden until it has content. The route still works.
 ]
 
-const CONTACT_EMAIL = 'mailto:hello@mauhhik.com'
 
 /**
  * SiteNav
  *
- * Fixed top navigation. Three links and one contact button on desktop,
+ * Fixed top navigation. Four links and the resume button on desktop,
  * a full-width sheet on phones.
  */
 export default function SiteNav() {
@@ -38,22 +37,16 @@ export default function SiteNav() {
   }, [isOpen])
 
   const isActive = (href: string): boolean =>
-    pathname === href || pathname.startsWith(`${href}/`)
+    !href.includes('#') && (pathname === href || pathname.startsWith(`${href}/`))
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-charcoal/80 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-md">
       <nav aria-label="Main navigation" className="site-container flex h-16 items-center justify-between">
         <Link
           href="/"
           aria-label="Mauhhik Thakkar, home"
-          className="flex items-center gap-3 rounded text-[15px] font-semibold tracking-tight text-white"
+          className="flex min-h-[44px] items-center rounded text-[17px] font-semibold tracking-tight text-white"
         >
-          <span
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-line-strong bg-white/5 font-mono text-xs text-accent"
-            aria-hidden="true"
-          >
-            MT
-          </span>
           Mauhhik Thakkar
         </Link>
 
@@ -64,21 +57,18 @@ export default function SiteNav() {
               key={link.href}
               href={link.href}
               aria-current={isActive(link.href) ? 'page' : undefined}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${
+              className={`px-3.5 py-2 text-[15px] transition-colors ${
                 isActive(link.href)
-                  ? 'bg-white/5 text-white'
+                  ? 'font-medium text-white'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <a
-            href={CONTACT_EMAIL}
-            className="ml-3 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-zinc-200"
-          >
-            Contact
-          </a>
+          <Link href="/resume" className="btn-primary ml-4 min-h-[44px] py-2.5">
+            Download resume
+          </Link>
         </div>
 
         {/* Phone menu button */}
@@ -103,7 +93,7 @@ export default function SiteNav() {
 
       {/* Phone menu */}
       {isOpen && (
-        <div id="mobile-menu" className="border-t border-line bg-charcoal md:hidden">
+        <div id="mobile-menu" className="border-t border-line bg-paper md:hidden">
           <ul className="site-container flex flex-col py-4">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -119,9 +109,9 @@ export default function SiteNav() {
               </li>
             ))}
             <li className="pt-5">
-              <a href={CONTACT_EMAIL} className="btn-primary w-full">
-                Contact
-              </a>
+              <Link href="/resume" className="btn-primary w-full">
+                Download resume
+              </Link>
             </li>
           </ul>
         </div>

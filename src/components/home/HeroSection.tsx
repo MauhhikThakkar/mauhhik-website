@@ -1,97 +1,78 @@
 import Image from 'next/image'
-import Link from 'next/link'
-import TrackedLink from '@/components/site/TrackedLink'
 import { PROFILE_FACTS } from '@/content/profile'
+import { ReadingModeToggle } from './ReadingMode'
+
+/** Facts shown in the hero card (experience is already in the intro) */
+const CARD_FACTS = PROFILE_FACTS.filter((fact) => fact.label !== 'Experience')
 
 /**
  * HeroSection
  *
- * Server-rendered, so the headline and facts are in the HTML that recruiters'
- * link previews and search engines read. Entrance motion is CSS only and is
- * switched off for people who ask for reduced motion.
+ * Server-rendered statement, intro and fact card, plus the reading-mode
+ * switch. Entrance motion is CSS only and off for reduced-motion users.
  */
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b border-line">
-      <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
+    <section className="site-container pb-14 pt-32 sm:pt-36 md:pb-16">
+      <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-14">
+        <div className="min-w-0 flex-1">
+          <p className="animate-fade-up mb-6 inline-flex items-center gap-3 rounded-full bg-accent-muted px-3.5 py-2 font-mono text-[13px] text-accent">
+            <span className="animate-pulse-dot h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
+            Open to product roles in the UAE and Singapore
+          </p>
 
-      <div className="site-container relative pb-16 pt-32 sm:pt-40 md:pb-24 md:pt-44">
-        <div className="grid items-end gap-12 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] lg:gap-16">
-          {/* Statement */}
-          <div>
-            <p
-              className="animate-fade-up mb-6 inline-flex items-center gap-2.5 rounded-full border border-accent/25 bg-accent-muted px-4 py-1.5 text-xs font-medium text-accent sm:text-sm"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
-              Open to product roles in the UAE and Singapore
-            </p>
+          <h1
+            className="animate-fade-up text-balance text-[38px] font-semibold leading-[1.05] tracking-[-0.025em] text-white sm:text-5xl lg:text-[62px]"
+            style={{ animationDelay: '80ms' }}
+          >
+            Project manager in financial infrastructure,{' '}
+            <span className="text-accent">moving into product management.</span>
+          </h1>
 
-            <h1
-              className="animate-fade-up text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl"
-              style={{ animationDelay: '80ms' }}
-            >
-              Project manager in financial infrastructure,{' '}
-              <span className="text-zinc-400">moving into product management.</span>
-            </h1>
+          <p
+            className="animate-fade-up mt-7 max-w-xl text-lg leading-relaxed text-zinc-400 sm:text-[19px]"
+            style={{ animationDelay: '160ms' }}
+          >
+            9+ years of experience, including 4+ managing IT delivery. I currently deliver secure
+            network deployments for tier-1 global exchanges across 10+ countries, and build product
+            concepts in payments and AI.
+          </p>
 
-            <p
-              className="animate-fade-up mt-6 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg"
-              style={{ animationDelay: '160ms' }}
-            >
-              9+ years of experience, including 4+ managing IT delivery. I currently deliver secure
-              network deployments for tier-1 global exchanges across 10+ countries, and build product
-              concepts in payments and AI.
-            </p>
+          <div className="animate-fade-up mt-10" style={{ animationDelay: '220ms' }}>
+            <ReadingModeToggle />
+          </div>
+        </div>
 
-            <div
-              className="animate-fade-up mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
-              style={{ animationDelay: '240ms' }}
-            >
-              <TrackedLink href="/portfolio" label="View work" className="btn-primary">
-                View work
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-6-6l6 6-6 6" />
-                </svg>
-              </TrackedLink>
-              <Link href="/resume" className="btn-secondary">
-                Download resume
-              </Link>
+        <aside
+          aria-label="Profile at a glance"
+          className="animate-fade-up card w-full lg:max-w-[380px]"
+          style={{ animationDelay: '280ms' }}
+        >
+          <div className="flex items-center gap-4 border-b border-line p-6">
+            <Image
+              src="/images/mauhhik-thakkar.jpg"
+              alt="Mauhhik Thakkar"
+              width={72}
+              height={72}
+              priority
+              className="h-[72px] w-[72px] rounded-lg object-cover"
+            />
+            <div>
+              <p className="text-[17px] font-semibold text-white">Mauhhik Thakkar</p>
+              <p className="mt-1 text-sm text-zinc-400">Gujarat, India</p>
             </div>
           </div>
-
-          {/* Fact card */}
-          <aside
-            aria-label="Profile at a glance"
-            className="animate-fade-up card p-6 sm:p-7"
-            style={{ animationDelay: '320ms' }}
-          >
-            <div className="mb-6 flex items-center gap-4">
-              <Image
-                src="/images/mauhhik-thakkar.jpg"
-                alt="Mauhhik Thakkar"
-                width={64}
-                height={64}
-                priority
-                className="h-16 w-16 rounded-full border border-line-strong object-cover"
-              />
-              <div>
-                <p className="text-base font-medium text-white">Mauhhik Thakkar</p>
-                <p className="text-sm text-zinc-400">Gujarat, India</p>
+          <dl className="divide-y divide-line px-6 pb-4 pt-2">
+            {CARD_FACTS.map((fact) => (
+              <div key={fact.label} className="grid grid-cols-[6rem_1fr] gap-4 py-3">
+                <dt className="pt-0.5 font-mono text-xs uppercase tracking-[0.08em] text-zinc-500">
+                  {fact.label}
+                </dt>
+                <dd className="text-[14.5px] leading-relaxed text-zinc-200">{fact.value}</dd>
               </div>
-            </div>
-            <dl className="divide-y divide-line">
-              {PROFILE_FACTS.map((fact) => (
-                <div key={fact.label} className="grid grid-cols-[6.5rem_1fr] gap-4 py-3 first:pt-0 last:pb-0">
-                  <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-500 pt-0.5">
-                    {fact.label}
-                  </dt>
-                  <dd className="text-sm leading-relaxed text-zinc-200">{fact.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
-        </div>
+            ))}
+          </dl>
+        </aside>
       </div>
     </section>
   )
