@@ -32,6 +32,16 @@ export default function CareerTimeline() {
                 <p className="font-mono text-xs uppercase tracking-[0.14em] text-zinc-500">{entry.period}</p>
                 <h3 className="mt-2 text-lg font-medium text-white">{entry.title}</h3>
                 <p className="text-sm text-zinc-400">{entry.employer}</p>
+                {entry.roles && entry.roles.length > 1 && (
+                  <ul className="mt-3 space-y-1 text-sm text-zinc-400" aria-label="Roles at this employer">
+                    {entry.roles.map((role) => (
+                      <li key={role.title}>
+                        <span className="text-zinc-300">{role.title}</span>
+                        <span className="font-mono text-xs text-zinc-500"> · {role.period}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <ul className="mt-4 space-y-2">
                   {entry.outcomes.map((outcome) => (
                     <li key={outcome} className="flex gap-3 text-[15px] leading-relaxed text-zinc-300">

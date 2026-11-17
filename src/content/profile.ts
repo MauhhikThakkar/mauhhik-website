@@ -103,6 +103,8 @@ export interface CareerEntry {
   employer: string
   /** Two or three outcomes, each one sentence */
   outcomes: string[]
+  /** Titles held within this employer, newest first, when there was an internal move */
+  roles?: { title: string; period: string }[]
 }
 
 /**
@@ -111,8 +113,12 @@ export interface CareerEntry {
 export const CAREER: CareerEntry[] = [
   {
     period: 'Jan 2024 to present',
-    title: 'Project Manager, FSD PMO, Service Implementation',
+    title: 'FIN Infrastructure Project Manager',
     employer: 'Waypoint Trading Solutions (formerly Transaction Network Services)',
+    roles: [
+      { title: 'FIN Infrastructure Project Manager', period: 'May 2026 to present' },
+      { title: 'Project Manager, FSD PMO, Service Implementation', period: 'Jan 2024 to Apr 2026' },
+    ],
     outcomes: [
       'Deliver Secure SD-WAN solutions for tier-1 global exchanges across 10+ countries, from planning through deployment.',
       'Reduced project delivery timelines by 30% while achieving 100% compliance with Operational Readiness standards.',
