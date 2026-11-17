@@ -10,21 +10,28 @@
   }
   body {
     @apply bg-charcoal text-white antialiased font-sans;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
   h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
   }
   ::selection {
-    background-color: rgba(127, 221, 187, 0.25);
-    color: white;
+    background-color: rgba(29, 63, 191, 0.16);
+    color: #0F1B2D;
   }
   *:focus {
     outline: none;
   }
   *:focus-visible {
-    outline: 2px solid rgba(127, 221, 187, 0.7);
+    outline: 2px solid #1D3FBF;
     outline-offset: 2px;
+  }
+  /* Disclosure rows (work board, FAQ) draw their own marker */
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
   }
 }
 
@@ -35,25 +42,40 @@
   }
   /* Small mono label that sits above a heading */
   .eyebrow {
-    @apply font-mono text-xs uppercase tracking-[0.18em] text-zinc-500;
+    @apply font-mono text-xs uppercase tracking-[0.12em] text-accent;
   }
   .section-title {
-    @apply text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-white;
+    @apply text-[28px] sm:text-[34px] font-semibold leading-tight tracking-tight text-white;
   }
   .card {
-    @apply bg-charcoal-light/60 border border-line rounded-2xl transition-colors duration-300;
+    @apply bg-paper border border-line rounded-lg transition-colors duration-300;
   }
   .card:hover {
     @apply border-line-strong;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-full bg-white text-black text-sm sm:text-base font-semibold transition-colors duration-200 hover:bg-zinc-200;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] rounded bg-ink text-paper text-[15px] font-medium transition-colors duration-200 hover:bg-[#1C2B44];
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] rounded-full border border-line-strong text-white text-sm sm:text-base font-medium transition-colors duration-200 hover:bg-white/5 hover:border-white/30;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] rounded border border-ink text-ink text-[15px] font-medium transition-colors duration-200 hover:bg-ink/5;
+  }
+  /* Buttons that sit on a dark navy band */
+  .btn-on-dark {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] rounded bg-paper text-ink text-[15px] font-medium transition-colors duration-200 hover:bg-[#E6EBF5];
+  }
+  .btn-outline-on-dark {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[48px] rounded border border-ink-muted text-paper text-[15px] font-medium transition-colors duration-200 hover:bg-paper/10;
   }
   .text-link {
-    @apply text-zinc-300 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white hover:decoration-accent;
+    @apply text-accent underline decoration-accent/30 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink;
+  }
+  /* Amber "Delivered" tag */
+  .tag-delivered {
+    @apply inline-flex items-center whitespace-nowrap rounded bg-highlight px-2.5 py-1 font-mono text-xs font-medium uppercase tracking-[0.06em] text-ink;
+  }
+  /* Outline tag for concepts and prototypes */
+  .tag-concept {
+    @apply inline-flex items-center whitespace-nowrap rounded border border-zinc-500 px-2.5 py-1 font-mono text-xs uppercase tracking-[0.06em] text-zinc-400;
   }
 }
 
@@ -61,26 +83,66 @@
   .text-balance {
     text-wrap: balance;
   }
-  /* Faint grid behind the hero, fading out towards the edges */
-  .hero-grid {
-    background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 75%);
-  }
+  /* Kept so older pages that still use them render cleanly on the light theme */
+  .hero-grid,
   .hero-glow {
-    background: radial-gradient(ellipse 60% 50% at 30% 0%, rgba(127, 221, 187, 0.10), transparent 70%);
+    background: none;
+  }
+
+  /* Disclosure rotations */
+  details[open] > summary .chev {
+    transform: rotate(90deg);
+  }
+  details[open] > summary .plus {
+    transform: rotate(45deg);
+  }
+
+  /*
+   * Lines and steps that animate once they scroll into view
+   * (components/site/InView.tsx). Without JavaScript the attribute is never
+   * set to "false", so everything stays visible.
+   */
+  .draw-x,
+  .draw-y {
+    transition: transform 1.4s cubic-bezier(0.3, 0.7, 0.2, 1);
+  }
+  .draw-x {
+    transform-origin: left;
+  }
+  .draw-y {
+    transform-origin: top;
+  }
+  [data-inview='false'] .draw-x {
+    transform: scaleX(0);
+  }
+  [data-inview='false'] .draw-y {
+    transform: scaleY(0);
+  }
+  /* Set --i on each item to stagger them */
+  .stagger {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: calc(var(--i, 0) * 120ms + 200ms);
+  }
+  [data-inview='false'] .stagger {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 
-/* Entrance animations never run for people who ask for reduced motion */
+/* Motion never runs for people who ask for reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .animate-fade-up {
+  .animate-fade-up,
+  .animate-pulse-dot {
     animation: none !important;
+  }
+  .draw-x,
+  .draw-y,
+  .stagger {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }

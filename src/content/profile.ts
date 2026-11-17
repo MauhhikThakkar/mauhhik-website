@@ -1,7 +1,7 @@
 /**
  * Profile content
  *
- * Every fact shown in the hero card, the proof strip and the career timeline
+ * Every fact shown in the hero card, the evidence table, the FAQ and the career timeline
  * lives in this one file. Edit here; the pages update themselves.
  *
  * Rule for this file: only facts you can defend in an interview.
@@ -21,35 +21,76 @@ export const PROFILE_FACTS: ProfileFact[] = [
   { label: 'Open to', value: 'Technical Product Manager and Technical Product Owner roles in the UAE and Singapore' },
 ]
 
-export interface ProofPoint {
+export interface EvidenceRow {
   value: string
-  label: string
-  detail: string
+  measures: string
+  source: string
+  /** Where the evidence lives on this site, if anywhere */
+  href?: string
+}
+
+/** The headline figure, shown as the large tile beside the evidence table */
+export const HEADLINE_EVIDENCE = {
+  value: '30%',
+  measures: 'Faster delivery on a multi-exchange build, against the agreed baseline timeline.',
+  href: '/portfolio/exchange-connectivity-delivery',
 }
 
 /**
- * Proof strip under the hero. Figures are taken from the resume.
+ * Evidence table on the home page. Every figure names where it comes from.
  */
-export const PROOF_POINTS: ProofPoint[] = [
-  {
-    value: '9+',
-    label: 'Years of professional experience',
-    detail: 'Including 4+ years managing IT delivery',
-  },
+export const EVIDENCE: EvidenceRow[] = [
   {
     value: '10+',
-    label: 'Countries delivered into',
-    detail: 'Secure SD-WAN deployments for tier-1 global exchanges',
+    measures: 'Countries delivered into: Secure SD-WAN deployments for tier-1 global exchanges',
+    source: 'Current role',
   },
   {
-    value: '30%',
-    label: 'Faster delivery',
-    detail: 'On a multi-exchange build, against the agreed baseline timeline',
+    value: '1 month',
+    measures: 'Early on a four-month fintech product phase, at about 20% below planned cost',
+    source: 'Loan MVP case study',
+    href: '/portfolio/bank-loan-assessment-mvp',
   },
   {
-    value: '3',
-    label: 'Product and project certifications',
-    detail: 'ICPM, IBM AI Product Manager, Google Project Management',
+    value: '2 of 3',
+    measures: 'Pilot bank branches willing to adopt the loan-assessment tool',
+    source: 'Loan MVP case study',
+    href: '/portfolio/bank-loan-assessment-mvp',
+  },
+  {
+    value: '9+ years',
+    measures: 'Professional experience, including 4+ years managing IT delivery',
+    source: 'Resume',
+    href: '/resume',
+  },
+]
+
+export interface FaqEntry {
+  question: string
+  answer: string
+}
+
+/** Recruiter FAQ on the home page. Also published as FAQPage structured data. */
+export const RECRUITER_FAQ: FaqEntry[] = [
+  {
+    question: 'Are you a product manager today?',
+    answer:
+      'No. My title is Project Manager. I manage delivery of secure network deployments for exchanges. The product work on this site is either discovery done inside a delivery role, or a concept that is labelled as a concept.',
+  },
+  {
+    question: 'What is your strongest evidence?',
+    answer:
+      'A multi-exchange build delivered about 30% faster than its agreed baseline, and a loan-assessment MVP shaped by interviewing branch managers, where two of three pilot branches were willing to adopt it.',
+  },
+  {
+    question: 'Which roles, and where?',
+    answer:
+      'Technical Product Manager and Technical Product Owner roles in the UAE and Singapore. I am based in Gujarat, India.',
+  },
+  {
+    question: 'What product training do you have?',
+    answer:
+      'ICPM from the Institute of Product Leadership, IBM AI Product Manager, and Google Project Management.',
   },
 ]
 

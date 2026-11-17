@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^4.22.0",
@@ -27,9 +29,9 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pg": "^8.10.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/pg": "^8.10.0",
     "eslint": "^8",
     "eslint-config-next": "^15.1.0",
     "postcss": "^8",

@@ -1,5 +1,10 @@
 import type { Metadata } from "next"
-import localFont from "next/font/local"
+import "@fontsource/ibm-plex-sans/400.css"
+import "@fontsource/ibm-plex-sans/500.css"
+import "@fontsource/ibm-plex-sans/600.css"
+import "@fontsource/ibm-plex-sans/700.css"
+import "@fontsource/ibm-plex-mono/400.css"
+import "@fontsource/ibm-plex-mono/500.css"
 import "./globals.css"
 import { SITE_URL, ANALYTICS_ENABLED, PLAUSIBLE_DOMAIN, IS_PRODUCTION } from "@/lib/constants"
 import { defaultMetadata } from "@/lib/seo"
@@ -8,18 +13,6 @@ import PlausibleAnalytics from "@/components/PlausibleAnalytics"
 import GlobalUtmInitializer from "@/components/GlobalUtmInitializer"
 import ScrollDepthTracker from "@/components/ScrollDepthTracker"
 import PersonSchema from "@/components/PersonSchema"
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-})
-
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -52,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-charcoal`} suppressHydrationWarning>
+    <html lang="en" className="bg-charcoal" suppressHydrationWarning>
       <body className="antialiased flex flex-col min-h-screen bg-charcoal" suppressHydrationWarning>
         {/* JSON-LD Person Schema - structured data for search engines */}
         <PersonSchema />

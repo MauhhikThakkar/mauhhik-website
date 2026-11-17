@@ -90,10 +90,10 @@ export default function BlogCard({ post, imageUrl = null, imageAlt, variant = 's
               <span
                 className={`${isFeatured ? 'px-3' : 'px-2.5'} py-1 rounded-full ${isFeatured ? 'text-xs' : ''} font-medium`}
                 style={{
-                  backgroundColor: post.category.color ? post.category.color + '20' : '#27272a',
-                  color: post.category.color || '#a1a1aa',
+                  backgroundColor: post.category.color ? post.category.color + '20' : '#EDF0F5',
+                  color: post.category.color || '#3B4658',
                   borderWidth: '1px',
-                  borderColor: post.category.color ? post.category.color + '40' : '#3f3f46',
+                  borderColor: post.category.color ? post.category.color + '40' : '#DDE2EA',
                 }}
               >
                 {post.category.title}
