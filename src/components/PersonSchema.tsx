@@ -18,7 +18,7 @@ export default function PersonSchema() {
     name: 'Mauhhik Thakkar',
     url: SITE_URL,
     image: `${SITE_URL}/images/mauhhik-thakkar.jpg`,
-    jobTitle: 'Project Manager, Service Implementation',
+    jobTitle: 'FIN Infrastructure Project Manager',
     worksFor: {
       '@type': 'Organization',
       name: 'Waypoint Trading Solutions',
