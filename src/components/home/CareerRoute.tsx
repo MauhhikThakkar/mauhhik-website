@@ -41,6 +41,14 @@ export default function CareerRoute() {
                   </p>
                   <p className="mb-1.5 text-base font-semibold leading-snug text-white">{entry.title}</p>
                   <p className="text-sm leading-normal text-zinc-400">{entry.employer}</p>
+                  {entry.roles && entry.roles.length > 1 && (
+                    <p className="mt-1.5 text-[13px] leading-normal text-zinc-500">
+                      {entry.roles
+                        .slice(1)
+                        .map((role) => `Earlier: ${role.title}, ${role.period}`)
+                        .join('. ')}
+                    </p>
+                  )}
                 </div>
               </li>
             )
