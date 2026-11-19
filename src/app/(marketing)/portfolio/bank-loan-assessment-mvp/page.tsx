@@ -71,7 +71,8 @@ const ACTIONS = [
   'Turned those findings into product and design requirements, including the multi-tab Excel output with visual summaries.',
   'Worked with the founder and the technical team on data-provider access, bank-statement processing and bringing the information into one consolidated assessment.',
   'Coordinated designers and frontend and backend developers to deliver the MVP within the two-month target, followed by testing in three branches.',
-  'Continued into phase-one development after the pilot, coordinating further improvements to the product and its processing time.',
+  'Took the pilot feedback into phase one: branch staff asked for the applicant\u2019s past GST payment records, and for dashboards and analytics inside the same workbook.',
+  'Coordinated phase one, which added those dashboards, three years of history, and checks for defaults or late payments on GST and on existing loans, including car, two-wheeler and mobile-phone loans.',
 ]
 
 const TOC = [
@@ -160,7 +161,8 @@ export default function BankLoanAssessmentCaseStudy() {
           </p>
           <p className={P}>
             Phase one was planned for four months. We delivered it in three, testing included, at about 20%
-            below the planned cost.
+            below the planned cost. It answered the pilot&apos;s two main requests: payment history (GST, India&apos;s
+            goods and services tax, and existing loans over three years) and dashboards in the workbook itself.
           </p>
           <p className={P}>
             Processing time, as I observed it, was about two and a half hours in the MVP and about 70
@@ -183,6 +185,9 @@ export default function BankLoanAssessmentCaseStudy() {
           <p className={P}>
             I would also identify specialist technical needs earlier, since external integrations and
             bank-statement processing were central to the product.
+          </p>
+          <p className={P}>
+            I left Inventam after phase one, so I cannot speak to what was built after it.
           </p>
         </Section>
 

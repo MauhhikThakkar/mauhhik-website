@@ -19,6 +19,8 @@ export const PROFILE_FACTS: ProfileFact[] = [
   { label: 'Domains', value: 'Exchange network infrastructure, fintech, SaaS' },
   { label: 'Certified', value: 'ICPM, IBM AI Product Manager, Google Project Management' },
   { label: 'Open to', value: 'Technical Product Manager and Technical Product Owner roles in the UAE and Singapore' },
+  { label: 'Relocation', value: 'Ready to relocate; needs visa sponsorship' },
+  { label: 'Notice', value: '30 days' },
 ]
 
 export interface EvidenceRow {
