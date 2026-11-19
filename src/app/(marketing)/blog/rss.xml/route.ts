@@ -65,7 +65,7 @@ export async function GET() {
   <channel>
     <title>Mauhhik Thakkar — Writing</title>
     <link>${SITE_URL}/blog</link>
-    <description>Notes on payments infrastructure, delivery and moving from project to product management.</description>
+    <description>Notes on delivering exchange infrastructure, payments as a product problem, and moving from project to product management.</description>
     <language>en</language>
     <atom:link href="${SITE_URL}/blog/rss.xml" rel="self" type="application/rss+xml" />
 ${items}
