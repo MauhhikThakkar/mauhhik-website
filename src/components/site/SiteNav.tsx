@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 const NAV_LINKS = [
   { href: '/portfolio', label: 'Work' },
   { href: '/blog', label: 'Writing' },
+  { href: '/tools', label: 'Tools' },
   { href: '/about', label: 'About' },
   { href: '/#faq', label: 'FAQ' },
   // Products is hidden until it has content. The route still works.
