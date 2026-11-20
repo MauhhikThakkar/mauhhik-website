@@ -1,8 +1,8 @@
 /* eslint-disable */
 // PM Planning Toolkit engine.
 // Framework-free on purpose: it binds to the static markup in toolkitMarkup.ts,
-// keeps each visitor's inputs in localStorage, and never sends data anywhere.
-// Tested with a 72-check Playwright suite (two or more datasets per tool).
+// draws its charts as inline SVG, keeps each visitor's inputs in localStorage
+// and never sends data anywhere. Covered by a 94-check Playwright suite.
 
 export function initToolkit() {
   "use strict";
@@ -45,6 +45,181 @@ export function initToolkit() {
     }
     try { navigator.clipboard.writeText(text).then(function(){ flash(statusId, "Copied"); }, fallback); } catch(e){ fallback(); }
   }
+  /* ---------- chart helpers ---------- */
+  var charts = {};
+  function chartW(el){ var w = el && el.clientWidth; return Math.max(280, Math.min(760, w || 340)); }
+  function lin(d0, d1, r0, r1){ var k = (r1 - r0) / ((d1 - d0) || 1); return function(v){ return r0 + (v - d0) * k; }; }
+  function niceStep(range, n){ var raw = range / n, mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), f = raw / mag; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag; }
+  function tipText(s){ return esc(s).replace(/\n/g, "&#10;"); }
+  function trunc(s, n){ s = String(s); return s.length > n ? s.slice(0, Math.max(1, n - 1)) + "…" : s; }
+  function svgOpen(W, H, label){ return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(label) + '">'; }
+  function host(id){
+    var box = $(id); if(!box) return null;
+    if(!box._plot){
+      box._plot = document.createElement("div"); box.appendChild(box._plot);
+      var tip = document.createElement("div"); tip.className = "tip"; tip.setAttribute("aria-hidden", "true"); box.appendChild(tip);
+      var show = function(m, x, y){ tip.textContent = m.getAttribute("data-tip"); tip.style.display = "block"; var tw = tip.offsetWidth, bw = box.clientWidth; tip.style.left = Math.min(Math.max(x, tw / 2 + 2), bw - tw / 2 - 2) + "px"; tip.style.top = y + "px"; };
+      var at = function(m){ var r = box.getBoundingClientRect(), mr = m.getBoundingClientRect(); show(m, mr.left - r.left + mr.width / 2, mr.top - r.top); };
+      box.addEventListener("mousemove", function(e){ var m = e.target.closest("[data-tip]"); if(!m){ tip.style.display = "none"; return; } var r = box.getBoundingClientRect(); show(m, e.clientX - r.left, e.clientY - r.top); });
+      box.addEventListener("mouseleave", function(){ tip.style.display = "none"; });
+      box.addEventListener("focusin", function(e){ var m = e.target.closest("[data-tip]"); if(m) at(m); });
+      box.addEventListener("focusout", function(){ tip.style.display = "none"; });
+      box.addEventListener("click", function(e){ var m = e.target.closest("[data-tip]"); if(m) at(m); });
+    }
+    return box;
+  }
+  function draw(name, fn, args){ charts[name] = [fn, args]; fn.apply(null, args); }
+  function redrawCharts(){ Object.keys(charts).forEach(function(k){ charts[k][0].apply(null, charts[k][1]); }); }
+  var rzT = null; function onResize(){ clearTimeout(rzT); rzT = setTimeout(redrawCharts, 150); }
+  window.addEventListener("resize", onResize);
+
+  // Capacity: one whole split into parts (tall segmented bar)
+  function capSplitChart(parts, total){
+    var box = host("cap-split"); if(!box) return;
+    var shown = parts.filter(function(p){ return p.v > 0.05; });
+    box._plot.innerHTML = total > 0 ? '<div class="segbar" role="img" aria-label="' + esc(shown.map(function(p){ return p.name + " " + fmt(p.v) + " hours"; }).join(", ")) + '">' + shown.map(function(p){
+      var share = p.v / total;
+      return '<div tabindex="0" style="flex:' + p.v.toFixed(3) + ' 1 0;background:' + p.c + '" class="' + (p.dark ? "dark" : "") + '" data-tip="' + tipText(p.name + "\n" + fmt(p.v) + " h · " + pct(share) + " of paid hours") + '">' + (share >= 0.1 ? pct(share) : "") + '</div>';
+    }).join("") + '</div>' : '<p class="hint">Add people to see the split.</p>';
+    $("cap-legend").innerHTML = shown.map(function(p){ return '<span><i style="background:' + p.c + '"></i>' + p.name + ' · ' + fmt(p.v) + ' h</span>'; }).join("");
+    $("cap-split-total").textContent = fmt(total) + " paid hours";
+  }
+
+  // Forecast: cumulative chance of finishing by each Sprint (step line)
+  function forecastChart(d){
+    var box = host("f-chart"); if(!box) return;
+    if(!d){ box._plot.innerHTML = ""; return; }
+    var W = chartW(box), H = 230, m = {l:40, r:14, t:18, b:40};
+    var x = lin(d.lo - 0.5, d.hi + 0.5, m.l, W - m.r), y = lin(0, 1, H - m.b, m.t);
+    var o = svgOpen(W, H, "Cumulative chance of finishing by Sprint. 85% by " + d.d85 + ", 50% by " + d.d50);
+    [0, .25, .5, .75, 1].forEach(function(v){ o += '<line class="axis" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text x="' + (m.l - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + (v * 100) + '%</text>'; });
+    var path = "M" + x(d.lo - 0.5) + "," + y(d.base), area = path;
+    d.pts.forEach(function(p){ var seg = " L" + x(p.s - 0.5) + "," + y(p.p) + " L" + x(p.s + 0.5) + "," + y(p.p); path += seg; area += seg; });
+    area += " L" + x(d.hi + 0.5) + "," + y(0) + " L" + x(d.lo - 0.5) + "," + y(0) + " Z";
+    o += '<path d="' + area + '" fill="var(--accent-soft)"/>';
+    if(d.target != null && d.target >= d.lo - 0.5 && d.target <= d.hi + 0.5){
+      var tx = x(d.target + 0.5); o += '<line x1="' + tx + '" x2="' + tx + '" y1="' + m.t + '" y2="' + (H - m.b) + '" stroke="var(--ink)" stroke-width="1.5"/><text x="' + (tx + 4) + '" y="' + (H - m.b - 6) + '" text-anchor="start" style="fill:var(--ink);font-weight:600">Target</text>';
+    }
+    o += '<line class="ref" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y(.85) + '" y2="' + y(.85) + '" stroke-dasharray="3 3"/>';
+    o += '<path d="' + path + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>';
+    var every = Math.max(1, Math.ceil(d.pts.length / Math.floor((W - m.l - m.r) / 52)));
+    d.pts.forEach(function(p, i){
+      var cx = x(p.s), cy = y(p.p), is85 = p.s === d.p85;
+      o += '<g tabindex="0" data-tip="' + tipText("Sprint " + p.s + " · ends " + p.date + "\n" + pct(p.p) + " chance it's all done") + '"><circle cx="' + cx + '" cy="' + cy + '" r="14" fill="transparent"/><circle class="mk" cx="' + cx + '" cy="' + cy + '" r="' + (is85 ? 5.5 : 4) + '" fill="' + (is85 ? "var(--accent)" : "var(--surface)") + '" stroke="var(--accent)" stroke-width="2"/></g>';
+      if(i % every === 0 || is85) o += '<text x="' + cx + '" y="' + (H - m.b + 15) + '" text-anchor="middle"' + (is85 ? ' style="fill:var(--ink);font-weight:600"' : '') + '>' + p.s + '</text><text x="' + cx + '" y="' + (H - m.b + 29) + '" text-anchor="middle">' + p.short + '</text>';
+      if(is85){ var lx = Math.min(cx + 8, W - m.r - 4); o += '<text x="' + lx + '" y="' + (p.p > 0.6 ? cy + 18 : cy - 10) + '" text-anchor="' + (cx > W - 90 ? "end" : "start") + '" style="fill:var(--ink);font-weight:600">85% · ' + p.short + '</text>'; }
+    });
+    o += '<text x="' + (m.l + 4) + '" y="' + (y(.85) - 4) + '">85%</text>';
+    box._plot.innerHTML = o + '</svg>';
+  }
+
+  // PERT: Gantt of the expected schedule
+  function ganttChart(P, chain, T, s80){
+    var box = host("p-gantt"); if(!box) return;
+    if(!P.length){ box._plot.innerHTML = ""; return; }
+    var W = chartW(box), rowH = 28, m = {t:10, b:30, r:14}, lw = Math.min(170, Math.round(W * 0.36)), H = m.t + P.length * rowH + m.b;
+    var maxX = Math.max.apply(null, P.map(function(t){ return t.ef + t.float; }).concat([T || 0, s80 || 0])) * 1.04;
+    var x = lin(0, maxX, lw, W - m.r), step = niceStep(maxX, Math.max(3, Math.floor((W - lw) / 60)));
+    var o = svgOpen(W, H, "Gantt chart of the expected schedule. Critical path: tasks " + chain.slice().reverse().map(function(i){ return i + 1; }).join(", "));
+    for(var v = 0; v <= maxX; v += step){ o += '<line class="axis" x1="' + x(v) + '" x2="' + x(v) + '" y1="' + m.t + '" y2="' + (H - m.b) + '"/><text x="' + x(v) + '" y="' + (H - m.b + 16) + '" text-anchor="middle">' + fmt(v) + '</text>'; }
+    o += '<text x="' + (W - m.r) + '" y="' + (H - 2) + '" text-anchor="end">working days</text>';
+    var chars = Math.floor((lw - 10) / 6.2);
+    P.forEach(function(t, i){
+      var cy = m.t + i * rowH + rowH / 2, crit = chain.indexOf(t.i) >= 0;
+      o += '<text x="0" y="' + (cy + 4) + '"' + (crit ? ' style="fill:var(--ink);font-weight:600"' : '') + '>' + esc(trunc((t.i + 1) + ". " + t.name, chars)) + '</text>';
+      if(t.float > 0.05) o += '<rect x="' + x(t.ef) + '" y="' + (cy - 6) + '" width="' + Math.max(0, x(t.ef + t.float) - x(t.ef)) + '" height="12" rx="3" fill="var(--grey-soft)"/>';
+      o += '<g tabindex="0" data-tip="' + tipText((t.i + 1) + ". " + t.name + "\nDay " + fmt(t.es, 1) + " → " + fmt(t.ef, 1) + " (expected " + fmt(t.e, 1) + " d)\n" + (crit ? "On the critical path" : "Float " + fmt(t.float, 1) + " d")) + '"><rect x="' + x(t.es) + '" y="' + (cy - 11) + '" width="' + Math.max(8, x(t.ef) - x(t.es)) + '" height="22" fill="transparent"/><rect class="mk" x="' + x(t.es) + '" y="' + (cy - 6) + '" width="' + Math.max(3, x(t.ef) - x(t.es) - 2) + '" height="12" rx="3" fill="' + (crit ? "var(--accent)" : "var(--grey)") + '"/></g>';
+    });
+    if(T > 0){ var tx = x(T); o += '<line x1="' + tx + '" x2="' + tx + '" y1="' + (m.t - 4) + '" y2="' + (H - m.b) + '" stroke="var(--ink)" stroke-width="1.5"/>'; }
+    if(s80){ var sx = x(s80); o += '<line x1="' + sx + '" x2="' + sx + '" y1="' + (m.t - 4) + '" y2="' + (H - m.b) + '" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3"/><text x="' + (sx + 4) + '" y="' + (H - m.b - 4) + '" style="fill:var(--accent);font-weight:600">P80</text>'; }
+    box._plot.innerHTML = o + '</svg>';
+  }
+
+  // PERT: cumulative probability, simulated vs classic
+  function pertCurveChart(totals, E, sd, T){
+    var box = host("p-curve"); if(!box) return;
+    if(!totals.length){ box._plot.innerHTML = ""; return; }
+    var W = chartW(box), H = 220, m = {l:40, r:14, t:14, b:34};
+    var lo = Math.min(totals[0], sd > 0 ? E - 3 * sd : E), hi = Math.max(totals[totals.length - 1], sd > 0 ? E + 3 * sd : E, T || 0);
+    if(hi - lo < 1){ lo -= 1; hi += 1; }
+    var x = lin(lo, hi, m.l, W - m.r), y = lin(0, 1, H - m.b, m.t), N = 70;
+    function simAt(v){ var a = 0, b = totals.length; while(a < b){ var c = (a + b) >> 1; if(totals[c] <= v) a = c + 1; else b = c; } return a / totals.length; }
+    function clsAt(v){ return sd > 0 ? normCdf((v - E) / sd) : (v >= E ? 1 : 0); }
+    var o = svgOpen(W, H, "Chance of finishing by working day, simulated against classic PERT");
+    [0, .5, .8, 1].forEach(function(v){ o += '<line class="axis" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text x="' + (m.l - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + (v * 100) + '%</text>'; });
+    var step = niceStep(hi - lo, Math.max(3, Math.floor((W - m.l) / 60)));
+    for(var v = Math.ceil(lo / step) * step; v <= hi; v += step) o += '<text x="' + x(v) + '" y="' + (H - m.b + 16) + '" text-anchor="middle">' + fmt(v) + '</text>';
+    o += '<text x="' + (W - m.r) + '" y="' + (H - 2) + '" text-anchor="end">working days</text>';
+    var ps = "", pc = "";
+    for(var i = 0; i <= N; i++){ var vv = lo + (hi - lo) * i / N; ps += (i ? " L" : "M") + x(vv).toFixed(1) + "," + y(simAt(vv)).toFixed(1); pc += (i ? " L" : "M") + x(vv).toFixed(1) + "," + y(clsAt(vv)).toFixed(1); }
+    o += '<path d="' + pc + '" fill="none" stroke="var(--grey)" stroke-width="2"/><path d="' + ps + '" fill="none" stroke="var(--accent)" stroke-width="2"/>';
+    if(T > 0 && T >= lo && T <= hi){
+      var tx = x(T), sp = simAt(T), cp = clsAt(T);
+      o += '<line x1="' + tx + '" x2="' + tx + '" y1="' + m.t + '" y2="' + (H - m.b) + '" stroke="var(--ink)" stroke-width="1.5"/>';
+      o += '<g tabindex="0" data-tip="' + tipText("Target: day " + fmt(T) + "\nSimulated " + pct(sp) + " · classic PERT " + pct(cp)) + '"><circle cx="' + tx + '" cy="' + y(sp) + '" r="14" fill="transparent"/><circle class="mk" cx="' + tx + '" cy="' + y(sp) + '" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><circle cx="' + tx + '" cy="' + y(cp) + '" r="4.5" fill="var(--grey)" stroke="var(--surface)" stroke-width="2"/></g>';
+      var left = tx > W * 0.6;
+      o += '<text x="' + (tx + (left ? -8 : 8)) + '" y="' + (y(sp) + (sp < cp ? 14 : -8)) + '" text-anchor="' + (left ? "end" : "start") + '" style="fill:var(--ink);font-weight:600">' + pct(sp) + ' simulated</text>';
+      o += '<text x="' + (tx + (left ? -8 : 8)) + '" y="' + (y(cp) + (sp < cp ? -8 : 14)) + '" text-anchor="' + (left ? "end" : "start") + '">' + pct(cp) + ' classic</text>';
+    }
+    box._plot.innerHTML = o + '</svg>';
+  }
+
+  // Prioritise: value against effort (RICE/WSJF) or rank shift (Compare)
+  function priChart(mode, rows){
+    var box = host("pri-chart"); if(!box) return;
+    if(!rows.length){ box._plot.innerHTML = ""; return; }
+    var W = chartW(box), o;
+    if(mode === "compare"){
+      var n = rows.length, H = 34 + n * 30, lw = Math.min(160, Math.round(W * 0.42)), x1 = lw + 20, x2 = W - 40, y = function(r){ return 26 + (r - 1) * 30; };
+      o = svgOpen(W, H, "Rank under RICE against rank under WSJF");
+      o += '<text x="' + x1 + '" y="12" text-anchor="middle" style="font-weight:600">RICE</text><text x="' + x2 + '" y="12" text-anchor="middle" style="font-weight:600">WSJF</text>';
+      rows.slice().sort(function(a, b){ return Math.abs(a.w - a.r) - Math.abs(b.w - b.r); }).forEach(function(rw){
+        var big = Math.abs(rw.w - rw.r) >= 3, col = big ? "var(--accent)" : "var(--grey)";
+        o += '<g tabindex="0" data-tip="' + tipText(rw.name + "\nRICE #" + rw.r + " · WSJF #" + rw.w + (big ? "\nMethods disagree" : "")) + '"><line x1="' + x1 + '" x2="' + x2 + '" y1="' + y(rw.r) + '" y2="' + y(rw.w) + '" stroke="transparent" stroke-width="14"/><line class="mk" x1="' + x1 + '" x2="' + x2 + '" y1="' + y(rw.r) + '" y2="' + y(rw.w) + '" stroke="' + col + '" stroke-width="2"/>' +
+          '<circle cx="' + x1 + '" cy="' + y(rw.r) + '" r="5" fill="' + col + '" stroke="var(--surface)" stroke-width="2"/><circle cx="' + x2 + '" cy="' + y(rw.w) + '" r="5" fill="' + col + '" stroke="var(--surface)" stroke-width="2"/></g>' +
+          '<text x="' + (x1 - 12) + '" y="' + (y(rw.r) + 4) + '" text-anchor="end"' + (big ? ' style="fill:var(--ink);font-weight:600"' : '') + '>' + esc(trunc(rw.name, Math.floor(lw / 6.4))) + '</text><text x="' + (x2 + 12) + '" y="' + (y(rw.w) + 4) + '">#' + rw.w + '</text>';
+      });
+      box._plot.innerHTML = o + '</svg>';
+      $("pri-chart-title").textContent = "How the rank shifts between methods";
+      $("pri-chart-note").textContent = "Blue lines mark items whose rank moves three or more places. Those are the ones to discuss.";
+      return;
+    }
+    var H = 270, m = {l:46, r:16, t:16, b:40};
+    var maxX = Math.max.apply(null, rows.map(function(r){ return r.x; }).concat([1])) * 1.15, maxY = Math.max.apply(null, rows.map(function(r){ return r.y; }).concat([1])) * 1.15;
+    var x = lin(0, maxX, m.l, W - m.r), y = lin(0, maxY, H - m.b, m.t);
+    var med = function(a){ var s = a.slice().sort(function(p, q){ return p - q; }), k = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[k] : (s[k] + s[k + 1]) / 2; };
+    var mx = med(rows.map(function(r){ return r.x; })), my = med(rows.map(function(r){ return r.y; }));
+    o = svgOpen(W, H, (mode === "rice" ? "Value against effort" : "Cost of delay against job size") + " for " + rows.length + " items");
+    o += '<rect x="' + m.l + '" y="' + m.t + '" width="' + (x(mx) - m.l) + '" height="' + (y(my) - m.t) + '" fill="var(--good-soft)" opacity=".6"/>';
+    o += '<line class="axis" x1="' + x(mx) + '" x2="' + x(mx) + '" y1="' + m.t + '" y2="' + (H - m.b) + '"/><line class="axis" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y(my) + '" y2="' + y(my) + '"/>';
+    o += '<line class="axis" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + (H - m.b) + '" y2="' + (H - m.b) + '"/><line class="axis" x1="' + m.l + '" x2="' + m.l + '" y1="' + m.t + '" y2="' + (H - m.b) + '"/>';
+    var q = mode === "rice" ? ["Quick wins", "Big bets", "Fill-ins", "Time sinks"] : ["Do first", "Plan carefully", "Batch together", "Question it"];
+    o += '<text x="' + (m.l + 6) + '" y="' + (m.t + 13) + '" style="fill:var(--good);font-weight:600">' + q[0] + '</text><text x="' + (W - m.r - 6) + '" y="' + (m.t + 13) + '" text-anchor="end">' + q[1] + '</text>';
+    o += '<text x="' + (m.l + 6) + '" y="' + (y(my) + 14) + '">' + q[2] + '</text><text x="' + (W - m.r - 6) + '" y="' + (y(my) + 14) + '" text-anchor="end">' + q[3] + '</text>';
+    var xl = mode === "rice" ? "Effort (person-months) →" : "Job size →", yl = mode === "rice" ? "Value (reach × impact × confidence) →" : "Cost of delay →";
+    o += '<text x="' + (W - m.r) + '" y="' + (H - 8) + '" text-anchor="end">' + xl + '</text><text transform="translate(12,' + (H - m.b) + ') rotate(-90)">' + yl + '</text>';
+    rows.forEach(function(r){
+      var cx = x(r.x), cy = y(r.y);
+      o += '<g tabindex="0" data-tip="' + tipText("#" + r.rank + " " + r.name + "\n" + r.detail) + '"><circle cx="' + cx + '" cy="' + cy + '" r="15" fill="transparent"/><circle class="mk" cx="' + cx + '" cy="' + cy + '" r="10" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle" style="fill:#fff;font-weight:600;pointer-events:none">' + r.rank + '</text></g>';
+    });
+    box._plot.innerHTML = o + '</svg>';
+    $("pri-chart-title").textContent = mode === "rice" ? "Value against effort" : "Cost of delay against job size";
+    $("pri-chart-note").textContent = "Numbers match the ranking above. The lines split the backlog at the median; top left is where the best ratio sits.";
+  }
+
+  // Poker: spread of revealed votes across the deck
+  function pokerChart(nd, counts, suggest){
+    var W = 340, H = 120, m = {l:4, r:4, t:16, b:22}, n = nd.length, bw = (W - m.l - m.r) / n, max = Math.max.apply(null, nd.map(function(c){ return counts[c] || 0; }).concat([1]));
+    var o = svgOpen(W, H, "Vote spread: " + nd.filter(function(c){ return counts[c]; }).map(function(c){ return counts[c] + " × " + c; }).join(", "));
+    o += '<line class="axis" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + (H - m.b) + '" y2="' + (H - m.b) + '"/>';
+    nd.forEach(function(c, i){
+      var v = counts[c] || 0, h = v / max * (H - m.t - m.b), bx = m.l + i * bw + 3;
+      if(v) o += '<rect x="' + bx + '" y="' + (H - m.b - h) + '" width="' + (bw - 6) + '" height="' + h + '" rx="4" fill="' + (c === suggest ? "var(--accent)" : "var(--grey)") + '"/><text x="' + (bx + (bw - 6) / 2) + '" y="' + (H - m.b - h - 4) + '" text-anchor="middle" style="fill:var(--ink);font-weight:600">' + v + '</text>';
+      o += '<text x="' + (bx + (bw - 6) / 2) + '" y="' + (H - 6) + '" text-anchor="middle"' + (c === suggest ? ' style="fill:var(--accent);font-weight:600"' : '') + '>' + esc(c) + '</text>';
+    });
+    return '<div class="chart" style="max-width:520px">' + o + '</svg></div>';
+  }
+
   function csvCell(v){ v = String(v == null ? "" : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
 
   /* ---------- state ---------- */
@@ -108,6 +283,7 @@ export function initToolkit() {
     if(location.hash !== "#" + t){ try { history.replaceState(null, "", "#" + t); } catch(e){} }
     if(t === "forecast") runForecast();
     if(t === "pert") runPert();
+    redrawCharts();
   }
   document.querySelector(".tabs").addEventListener("click", function(e){ var b = e.target.closest("[data-tab]"); if(b){ showTab(b.dataset.tab); b.scrollIntoView({block:"nearest", inline:"nearest"}); } });
   document.querySelector(".tabs").addEventListener("keydown", function(e){
@@ -159,6 +335,17 @@ export function initToolkit() {
       rows.push({name: p.name || "Unnamed", h: h.net, f: f.net, paid: h.paid});
     });
     var ratio = full > 0 ? hours / full : 0;
+    var sp = {focus:0, events:0, other:0, buffer:0, leave:0}, buf = Math.max(0, Math.min(90, num(c.buffer))) / 100;
+    c.team.forEach(function(p){
+      var a = Math.max(0, Math.min(100, num(p.alloc))) / 100, fullPaid = Math.max(0, num(c.days)) * num(c.hpd) * a;
+      var lv = Math.min(fullPaid, Math.max(0, num(c.holidays) + num(p.leave)) * num(c.hpd) * a), avail = fullPaid - lv;
+      var ev = Math.min(avail, num(c.events) * a), ot = Math.min(avail - ev, Math.max(0, num(p.other))), rest = avail - ev - ot;
+      sp.leave += lv; sp.events += ev; sp.other += ot; sp.buffer += rest * buf; sp.focus += rest * (1 - buf);
+    });
+    draw("cap", capSplitChart, [[
+      {name:"Focus time", v:sp.focus, c:"var(--s1)"}, {name:"Scrum events", v:sp.events, c:"var(--s2)"},
+      {name:"Other duties", v:sp.other, c:"var(--s3)", dark:true}, {name:"Buffer", v:sp.buffer, c:"var(--s4)", dark:true},
+      {name:"Leave and holidays", v:sp.leave, c:"var(--s5)", dark:true}], sp.focus + sp.events + sp.other + sp.buffer + sp.leave]);
     $("t-hours").textContent = fmt(hours);
     $("t-hours-sub").textContent = c.team.length + (c.team.length === 1 ? " person" : " people") + ", after events, duties and buffer";
     $("t-pct").textContent = pct(ratio);
@@ -244,7 +431,7 @@ export function initToolkit() {
       $("f85-sub").textContent = !v.length ? "add velocity history" : "add remaining backlog";
       $("f50-sub").textContent = ""; $("ftarget-sub").textContent = "";
       $("f-hist").innerHTML = ""; $("f-naive").textContent = ""; $("f-statement").textContent = "Add your velocity history and remaining backlog to see a forecast.";
-      $("f-flags").innerHTML = ""; lastF = null; return;
+      $("f-flags").innerHTML = ""; lastF = null; draw("f", forecastChart, [null]); return;
     }
     var res = new Array(RUNS), never = 0;
     for(var i = 0; i < RUNS; i++){
@@ -289,6 +476,11 @@ export function initToolkit() {
       html += '<div class="hrow' + mark + '"><span class="num" style="text-align:left">' + s2 + (s2 === p85 ? " ◂" : "") + '</span><span class="d">' + shortDate(sprintEnd(start, weeks, s2)) + '</span><span class="track"><span class="fill' + (s2 <= p85 ? "" : " alt") + '" style="width:' + (maxC ? c / maxC * 100 : 0).toFixed(1) + '%"></span></span><span class="num">' + pct(c / RUNS) + '</span><span class="num">' + pct(cum / RUNS) + '</span></div>';
     }
     $("f-hist").innerHTML = html;
+    var pts = [], cum2 = 0; for(var k1 = res[0]; k1 < lo; k1++) cum2 += counts[k1] || 0;
+    var base = cum2 / RUNS;
+    for(var s3 = lo; s3 <= hi; s3++){ cum2 += counts[s3] || 0; var de = sprintEnd(start, weeks, s3); pts.push({s:s3, p:cum2 / RUNS, date:fmtDate(de), short:shortDate(de)}); }
+    var tgtS = null; if(target){ tgtS = 0; while(tgtS < CAP && sprintEnd(start, weeks, tgtS + 1) <= target) tgtS++; }
+    draw("f", forecastChart, [{lo:lo, hi:hi, base:base, pts:pts, p85:p85, d85:fmtDate(d85), d50:fmtDate(d50), target:tgtS}]);
 
     var naive = avg > add ? Math.max(1, Math.round(B / (avg - add))) : null;
     if(naive){
@@ -336,7 +528,7 @@ export function initToolkit() {
   function runPert(){
     var tasks = S.pert.tasks, n = tasks.length, start = parseISO(S.pert.start) || nextMonday(), T = num(S.pert.target);
     var flags = [];
-    if(!n){ ["p80","pexp","ptarget"].forEach(function(id){ $(id).textContent = "–"; }); $("p-table").innerHTML = ""; $("p-flags").innerHTML = ""; lastP = null; return; }
+    if(!n){ draw("gantt", ganttChart, [[], [], 0, 0]); draw("pcurve", pertCurveChart, [[], 0, 0, 0]); ["p80","pexp","ptarget"].forEach(function(id){ $(id).textContent = "–"; }); $("p-table").innerHTML = ""; $("p-flags").innerHTML = ""; lastP = null; return; }
     var P = tasks.map(function(t, i){
       var o = num(t.o), m = num(t.m), p = num(t.p);
       var bad = !(o <= m && m <= p);
@@ -388,6 +580,8 @@ export function initToolkit() {
     }).join("");
     $("p-table").innerHTML = '<thead><tr><th>Task</th><th class="n">Expected</th><th class="n">±</th><th class="n">Float</th><th class="n">Critical in</th></tr></thead><tbody>' + rows + '</tbody>' +
       '<tfoot><tr><td><b>Finish</b> (P50 / P80 / P95, simulated)</td><td class="n" colspan="4">' + fmt(s50,1) + ' / ' + fmt(s80,1) + ' / ' + fmt(s95,1) + ' d</td></tr></tfoot>';
+    draw("gantt", ganttChart, [P, chain, T, s80]);
+    draw("pcurve", pertCurveChart, [totals, E, sdCP, T]);
     lastP = {P:P, crit:critCount, runs:RUNS, s50:s50, s80:s80, s95:s95, E:E, sd:sdCP, start:start};
   }
   document.querySelectorAll("#pert [data-p]").forEach(function(el){
@@ -475,7 +669,9 @@ export function initToolkit() {
       $("ranking").innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Item</th><th class="n">RICE</th><th class="n">WSJF</th><th class="n">Δ</th></tr></thead><tbody>' +
         list.map(function(x){ var dlt = x.w - x.r; return '<tr><td>' + esc(x.name) + '</td><td class="n">#' + x.r + '</td><td class="n">#' + x.w + '</td><td class="n">' + (dlt > 0 ? "+" : "") + dlt + (Math.abs(dlt) >= 3 ? " ⚑" : "") + '</td></tr>'; }).join("") + '</tbody></table></div>';
       list.filter(function(x){ return Math.abs(x.w - x.r) >= 3; }).forEach(function(x){ flags.push('<span class="chip warn">' + esc(x.name) + ': methods disagree by ' + Math.abs(x.w - x.r) + ' places. Discuss what kind of value it brings.</span>'); });
-      $("pri-flags").innerHTML = flags.join(""); return;
+      $("pri-flags").innerHTML = flags.join("");
+      draw("pri", priChart, ["compare", list.map(function(x){ return {name:x.name, r:x.r, w:x.w}; })]);
+      return;
     }
     var l = S.pri.items.map(function(it, i){ return {i:i, it:it, name: it.name || "Untitled item", s: score(it)}; });
     l.forEach(function(r){ var b = $("s-" + r.i); if(b) b.textContent = scoreText(r.s); });
@@ -494,6 +690,12 @@ export function initToolkit() {
       });
     }
     $("pri-flags").innerHTML = flags.join("");
+    draw("pri", priChart, [m, l.map(function(r, k){
+      var it = r.it;
+      return m === "rice"
+        ? {name:r.name, rank:k + 1, x:num(it.effort), y:num(it.reach) * num(it.impact) * num(it.conf) / 100, detail:"Effort " + fmt(num(it.effort), 1) + " pm · value " + fmt(num(it.reach) * num(it.impact) * num(it.conf) / 100) + " · RICE " + fmt(r.s)}
+        : {name:r.name, rank:k + 1, x:num(it.size), y:num(it.bv) + num(it.tc) + num(it.rr), detail:"Job size " + num(it.size) + " · cost of delay " + (num(it.bv) + num(it.tc) + num(it.rr)) + " · WSJF " + fmt(r.s, 1)};
+    })]);
     return l;
   }
   document.querySelectorAll("#prioritise [data-m]").forEach(function(b){ b.addEventListener("click", function(){ S.pri.method = b.dataset.m; save(); renderItems(); }); });
@@ -572,6 +774,8 @@ export function initToolkit() {
         if(isNumericDeck() && cardVal(a.mx) >= 20) msg += '<span class="chip warn">Someone sees this as 20 or more. Consider splitting it.</span>';
       }
       var sel = '<label class="sr" for="k-accept-val">Estimate to record</label><select id="k-accept-val" style="width:auto">' + numericDeck().map(function(c){ return '<option' + (a.suggest === c ? " selected" : "") + '>' + esc(c) + '</option>'; }).join("") + '</select>';
+      var cnt = {}; a.nums.forEach(function(p){ cnt[K.votes[p]] = (cnt[K.votes[p]] || 0) + 1; });
+      if(a.nums.length) body += pokerChart(numericDeck(), cnt, a.suggest);
       body += '<div class="flags">' + msg + '</div><div class="actions"><button class="btn" type="button" id="k-revote">Re-vote</button>' + sel + '<button class="btn primary" type="button" id="k-accept">Record estimate</button></div>' +
         (a.nums.length ? '<p class="hint">Suggested: ' + esc(a.suggest) + ' (the median vote, rounded up to a card). The team can record any value it agrees on.</p>' : "");
     }
@@ -687,13 +891,23 @@ export function initToolkit() {
       : r.rag === "Red" ? "Too many gaps for the time left." : r.rag === "Amber" ? "Deliverable, with gaps that need owners this week." : "In good shape. Keep checking weekly.";
     var urgency = r.weeks <= 4 && r.rag !== "Green" ? '<span class="chip bad">' + r.weeks + ' weeks to go: fix the top item before anything else</span>' : "";
     var areas = Object.keys(r.area).map(function(k){ var x = r.area[k], v = x.t ? x.g / x.t : 0; return '<div class="bar"><span class="name">' + k + '</span><span class="track"><span class="fill" style="width:' + (v * 100).toFixed(0) + '%;background:' + (v < 0.5 ? "var(--bad)" : v < 0.8 ? "var(--warn)" : "var(--good)") + '"></span></span><span class="num">' + pct(v) + '</span></div>'; }).join("");
+    var mapCells = QS.map(function(q, i){
+      var a = S.risk.answers[q.id], cls = a === 2 ? "y" : a === 1 ? "p" : a === 0 ? "n" : a === -1 ? "n" : "u", ic = a === 2 ? "✓" : a === 1 ? "~" : a === 0 ? "✕" : a === -1 ? "?" : "–";
+      var lab = a === 2 ? "Yes" : a === 1 ? "Partly" : a === 0 ? "No" : a === -1 ? "Not sure" : "Not answered";
+      return '<button type="button" class="' + cls + '" data-goto="q-' + q.id + '" aria-label="Question ' + (i + 1) + ', ' + q.area + ': ' + lab + '" title="' + esc(q.area + ": " + lab) + '">' + ic + ' ' + (i + 1) + '<small>' + ({Scope:"Scope", Dependencies:"Deps", Schedule:"Sched", Environments:"Env", Team:"Team", Quality:"QA", Release:"Release", Governance:"Gov"}[q.area] || q.area) + (q.crit ? " ★" : "") + '</small></button>';
+    }).join("");
     var fixes = r.gaps.slice(0, 3).map(function(g){ return '<li><b>' + g.q.area + (g.q.crit ? " (gate)" : "") + (g.a === -1 ? " · not sure" : "") + '</b>' + g.q.fix + '</li>'; }).join("");
     $("r-summary").innerHTML = '<div class="rag"><span class="ragpill ' + r.rag + '">' + r.rag + '</span><span class="tile" style="border:0;padding:0"><span class="value">' + pct(r.score) + '</span></span><span class="hint" style="flex:1;min-width:180px">' + why + ' ' + r.answered + ' of ' + QS.length + ' answered.</span></div>' +
       (urgency ? '<div class="flags">' + urgency + '</div>' : '') +
-      '<div class="bars risk-bars">' + areas + '</div>' +
+      '<h3>Readiness map</h3><div class="rmap">' + mapCells + '</div><div class="legend"><span>✓ Yes</span><span>~ Partly</span><span>✕ No</span><span>? Not sure</span><span>★ Gate</span></div>' +
+      '<h3>By area</h3><div class="bars risk-bars">' + areas + '</div>' +
       (fixes ? '<h3>Fix these first</h3><ol class="fixes">' + fixes + '</ol>' : '<p class="hint">No gaps found.</p>');
     return r;
   }
+  $("r-summary").addEventListener("click", function(e){
+    var b = e.target.closest("[data-goto]"); if(!b) return;
+    var t = $(b.dataset.goto); if(t){ t.scrollIntoView({behavior:"smooth", block:"center"}); }
+  });
   $("r-qs").addEventListener("click", function(e){
     var b = e.target.closest("[data-q]"); if(!b) return;
     S.risk.answers[b.dataset.q] = +b.dataset.a; save();
@@ -724,6 +938,7 @@ export function initToolkit() {
 
   return function cleanup(){
     window.removeEventListener("hashchange", onHash);
-    clearTimeout(fTimer); clearTimeout(pTimer);
+    window.removeEventListener("resize", onResize);
+    clearTimeout(fTimer); clearTimeout(pTimer); clearTimeout(rzT);
   };
 }
