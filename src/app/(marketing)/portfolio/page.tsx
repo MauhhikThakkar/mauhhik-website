@@ -6,6 +6,7 @@ import type { FilterCategory } from '@/lib/portfolioCategories'
 import PortfolioHeader from '@/components/portfolio/PortfolioHeader'
 import PortfolioFilterableGrid from '@/components/portfolio/PortfolioFilterableGrid'
 import DeliveryShelf from '@/components/portfolio/DeliveryShelf'
+import WorkSamplesShelf from '@/components/portfolio/WorkSamplesShelf'
 
 // Enhanced query for portfolio index page
 const PORTFOLIO_INDEX_QUERY = `
@@ -249,6 +250,7 @@ export default async function PortfolioPage() {
         {hasContent ? (
           <div className="mt-16 sm:mt-20">
             <DeliveryShelf />
+            <WorkSamplesShelf />
             <section>
               <p className="eyebrow mb-6">Product concepts</p>
               <div className="mb-8 sm:mb-10">

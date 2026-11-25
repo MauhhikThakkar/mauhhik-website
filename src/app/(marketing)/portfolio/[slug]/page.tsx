@@ -17,6 +17,7 @@ import { SITE_URL } from "@/lib/constants"
 import PortfolioBreadcrumb from "@/components/portfolio/PortfolioBreadcrumb"
 import CaseStudyBottomBar from "@/components/portfolio/CaseStudyBottomBar"
 import CollapsibleImprovements from "@/components/portfolio/CollapsibleImprovements"
+import { workSampleFor } from "@/content/workSamples"
 
 // Type guard for Portable Text
 function isValidPortableText(value: unknown): value is unknown[] {
@@ -248,6 +249,14 @@ export default async function ProjectPage({
             )}
 
             <div className="flex flex-wrap gap-3">
+              {workSampleFor(slug) && (
+                <Link
+                  href={`/portfolio/${workSampleFor(slug)?.slug}`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-zinc-700 text-white font-medium rounded-lg hover:border-zinc-500 transition-colors"
+                >
+                  Read the spec excerpt
+                </Link>
+              )}
               {project.prototypeLink && (
                 <a
                   href={project.prototypeLink}
