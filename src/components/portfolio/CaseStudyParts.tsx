@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import InView from '@/components/site/InView'
-import StatusChip from '@/components/site/StatusChip'
+import StatusChip, { type WorkStatus } from '@/components/site/StatusChip'
 
 /**
  * Building blocks for delivery case studies (design concept D):
@@ -24,7 +24,11 @@ export function CaseHeader({
   summary,
   result,
   facts,
+  status = 'delivered',
+  actions,
 }: {
+  status?: WorkStatus
+  actions?: ReactNode
   kicker: string
   title: string
   summary: ReactNode
@@ -40,7 +44,7 @@ export function CaseHeader({
         <div className="mt-5 flex flex-col gap-10 lg:flex-row lg:items-stretch lg:gap-14">
           <div className="min-w-0 flex-1">
             <p className="animate-fade-up mb-5 flex flex-wrap items-center gap-3">
-              <StatusChip status="delivered" />
+              <StatusChip status={status} />
               <span className="font-mono text-[13px] text-zinc-500">{kicker}</span>
             </p>
             <h1
@@ -55,6 +59,11 @@ export function CaseHeader({
             >
               {summary}
             </p>
+            {actions && (
+              <div className="animate-fade-up mt-8 flex flex-wrap gap-3" style={{ animationDelay: '200ms' }}>
+                {actions}
+              </div>
+            )}
           </div>
           <div
             className="animate-fade-up flex flex-col justify-between gap-6 rounded-xl bg-ink p-7 text-paper lg:w-[340px] lg:flex-none"
