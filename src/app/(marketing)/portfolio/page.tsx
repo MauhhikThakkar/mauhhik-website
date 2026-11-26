@@ -6,6 +6,7 @@ import type { FilterCategory } from '@/lib/portfolioCategories'
 import PortfolioHeader from '@/components/portfolio/PortfolioHeader'
 import PortfolioFilterableGrid from '@/components/portfolio/PortfolioFilterableGrid'
 import DeliveryShelf from '@/components/portfolio/DeliveryShelf'
+import { prototypeLinkFor } from '@/lib/prototypeLinks'
 
 // Enhanced query for portfolio index page
 const PORTFOLIO_INDEX_QUERY = `
@@ -170,9 +171,9 @@ const FEATURED_ITEMS = [
   {
     id: 'remitflow',
     title: 'RemitFlow',
-    positioning: 'Remittance concept for the UAE to India corridor, designed around showing the fee and the exchange rate before the sender commits.',
+    positioning: 'Remittance concept for the UAE to India corridor, rebuilt around certainty: the sender knows what arrives, when, and what happens if a transfer goes wrong.',
     caseStudySlug: 'remitflow',
-    prototypeLink: 'https://flow-dubai-mumbai.lovable.app',
+    prototypeLink: prototypeLinkFor('remitflow') ?? '',
     filterCategory: 'Fintech' as const,
   },
   {
@@ -217,7 +218,7 @@ function toFeaturedItem(project: PortfolioProject): {
     title: project.title,
     positioning: project.shortDescription ?? '',
     caseStudySlug: project.slug,
-    prototypeLink: project.prototypeLink ?? '',
+    prototypeLink: prototypeLinkFor(project.slug, project.prototypeLink) ?? '',
     filterCategory,
   }
 }

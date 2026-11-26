@@ -17,6 +17,7 @@ import { SITE_URL } from "@/lib/constants"
 import PortfolioBreadcrumb from "@/components/portfolio/PortfolioBreadcrumb"
 import CaseStudyBottomBar from "@/components/portfolio/CaseStudyBottomBar"
 import CollapsibleImprovements from "@/components/portfolio/CollapsibleImprovements"
+import { prototypeLinkFor } from '@/lib/prototypeLinks'
 
 // Type guard for Portable Text
 function isValidPortableText(value: unknown): value is unknown[] {
@@ -203,6 +204,8 @@ export default async function ProjectPage({
   if (!project) {
     notFound()
   }
+
+  project.prototypeLink = prototypeLinkFor(slug, project.prototypeLink)
 
   const wireframes =
     project.wireframes?.length
