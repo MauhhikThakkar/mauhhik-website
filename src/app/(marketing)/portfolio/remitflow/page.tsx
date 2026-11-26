@@ -233,7 +233,7 @@ export default function RemitFlowCaseStudy() {
           <p className={P}>
             The headline measure is the share of transfers that arrive by the promised time. Alongside it:
             &ldquo;where is my money&rdquo; contacts per 1,000 transfers, time to resolve an exception, and
-            whether a sender transfers again within 60 days.
+            whether a first-time sender transfers again within 35 days.
           </p>
           <p className={P}>
             Two guardrails stop the promise becoming expensive: the cost of fee refunds for late transfers,
