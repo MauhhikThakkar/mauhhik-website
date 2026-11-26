@@ -150,9 +150,14 @@ function SectionWrapper({
   )
 }
 
+const CODED_CASE_STUDIES = new Set(['remitflow'])
+
 export async function generateStaticParams() {
   const projects = await client.fetch(PROJECT_SLUGS_QUERY)
-  return projects.map((project: { slug: string }) => ({ slug: project.slug }))
+  // Slugs with their own page under /portfolio are left out here
+  return projects
+    .filter((project: { slug: string }) => !CODED_CASE_STUDIES.has(project.slug))
+    .map((project: { slug: string }) => ({ slug: project.slug }))
 }
 
 export const revalidate = 86400
