@@ -35,9 +35,9 @@ export const CONCEPT_ITEMS: BoardItem[] = [
     title: 'RemitFlow',
     domain: 'UAE to India remittance',
     summary:
-      'A remittance concept for the UAE to India corridor, designed around showing the fee and the exchange rate before the sender commits.',
+      'A remittance concept for the UAE to India corridor, rebuilt around certainty: what arrives, when, and what happens if a transfer goes wrong.',
     kind: 'concept',
-    prototype: 'https://flow-dubai-mumbai.lovable.app',
+    prototype: 'https://remitflow-v2.vercel.app',
   },
   {
     slug: 'ai-enterprise-support-triage',
