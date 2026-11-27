@@ -192,6 +192,14 @@ const FEATURED_ITEMS = [
     prototypeLink: prototypeLinkFor('ai-enterprise-support-triage') ?? '',
     filterCategory: 'Enterprise AI' as const,
   },
+  {
+    id: 'routeminds',
+    title: 'RouteMinds',
+    positioning: 'Last-mile concept for a courier\'s hub: prevents failed cash-on-delivery attempts, checks failure claims, reconciles rider cash and gives each merchant a statement line for every parcel.',
+    caseStudySlug: 'routeminds-ai',
+    prototypeLink: prototypeLinkFor('routeminds-ai') ?? '',
+    filterCategory: 'Logistics' as const,
+  },
 ]
 
 /** Slugs used by hardcoded flagship cards — exclude these from the general grid to avoid duplicates */
@@ -237,7 +245,7 @@ export default async function PortfolioPage() {
 
   const featuredItems = [
     ...FEATURED_ITEMS,
-    ...flagshipProjects.map(toFeaturedItem),
+    ...flagshipProjects.filter((p) => !FEATURED_CASE_STUDY_SLUGS.has(p.slug)).map(toFeaturedItem),
   ]
 
   const hasContent = featuredItems.length > 0 || regularProjects.length > 0
