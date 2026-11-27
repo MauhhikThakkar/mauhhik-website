@@ -55,7 +55,7 @@ export const CONCEPT_ITEMS: BoardItem[] = [
     summary:
       'A courier concept that follows each cash-on-delivery parcel from the doorstep to the deposit: failed attempts prevented and recovered, rider cash reconciled, and a statement line for every parcel.',
     kind: 'concept',
-    prototype: 'https://routeminds-v2.vercel.app',
+    prototype: 'https://route-joy-flow.vercel.app',
   },
   {
     slug: 'founder-os',

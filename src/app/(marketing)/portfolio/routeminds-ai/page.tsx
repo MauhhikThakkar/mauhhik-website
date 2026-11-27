@@ -18,7 +18,7 @@ import { prototypeLinkFor } from '@/lib/prototypeLinks'
 
 const SLUG = 'routeminds-ai'
 const TITLE = 'RouteMinds: following each cash-on-delivery parcel from the doorstep to the deposit'
-const PROTOTYPE = prototypeLinkFor(SLUG) ?? 'https://routeminds-v2.vercel.app'
+const PROTOTYPE = prototypeLinkFor(SLUG) ?? 'https://route-joy-flow.vercel.app'
 
 export const metadata = generateSEOMetadata({
   title: 'Case study: RouteMinds, from a route optimiser to COD parcels and cash',
