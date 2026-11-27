@@ -150,7 +150,7 @@ function SectionWrapper({
   )
 }
 
-const CODED_CASE_STUDIES = new Set(['remitflow'])
+const CODED_CASE_STUDIES = new Set(['remitflow', 'ai-enterprise-support-triage'])
 
 export async function generateStaticParams() {
   const projects = await client.fetch(PROJECT_SLUGS_QUERY)

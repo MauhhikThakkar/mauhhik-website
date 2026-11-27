@@ -44,9 +44,9 @@ export const CONCEPT_ITEMS: BoardItem[] = [
     title: 'Triage Genius',
     domain: 'Support triage',
     summary:
-      'A support triage concept that ranks tickets by business impact and leaves the final call with a person.',
+      'A support concept that decides which tickets an AI agent may resolve, hands the rest to a person with a brief, and checks what the AI called resolved.',
     kind: 'concept',
-    prototype: 'https://triage-genius-hub.lovable.app',
+    prototype: 'https://triage-genius-v2.vercel.app',
   },
   {
     slug: 'founder-os',
