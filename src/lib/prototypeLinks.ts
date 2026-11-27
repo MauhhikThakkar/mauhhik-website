@@ -9,6 +9,7 @@
 export const PROTOTYPE_LINKS: Record<string, string> = {
   remitflow: 'https://remitflow-v2.vercel.app',
   'ai-enterprise-support-triage': 'https://triage-genius-v2.vercel.app',
+  'routeminds-ai': 'https://route-joy-flow.vercel.app',
 }
 
 export function prototypeLinkFor(slug: string, fallback?: string | null): string | undefined {
