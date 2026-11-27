@@ -187,9 +187,9 @@ const FEATURED_ITEMS = [
   {
     id: 'triage-genius',
     title: 'Triage Genius',
-    positioning: 'Enterprise AI support triage concept. Routes tickets by business impact and keeps humans in control of the final decision.',
+    positioning: 'B2B support concept for teams running an AI agent: decides which tickets the AI may resolve, hands the rest to a person with a brief, and checks what it called resolved.',
     caseStudySlug: 'ai-enterprise-support-triage',
-    prototypeLink: 'https://triage-genius-hub.lovable.app',
+    prototypeLink: prototypeLinkFor('ai-enterprise-support-triage') ?? '',
     filterCategory: 'Enterprise AI' as const,
   },
 ]
