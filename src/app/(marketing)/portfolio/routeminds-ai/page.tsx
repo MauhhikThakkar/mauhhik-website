@@ -107,15 +107,20 @@ const EDGE_CASES = [
     title: 'A suspected counterfeit note',
     text: 'Held and logged; the rider is not charged until it is verified, and the merchant’s statement shows the amount as held.',
   },
+  {
+    title: 'New bank details arrive by email',
+    text: 'The payout waits until the controller calls the number on file. A confirmed change applies after 48 hours; a rejected one goes to security.',
+  },
 ]
 
 const STEPS = [
   'Reviewed my February 2026 version’s code. The prototype sat behind a login, its “AI engine” sorted orders by latitude, its savings were the optimised figure × 1.25, and its own sample data produced a 1,142 km route for an 8-hour shift.',
   'Checked the market in November. Google sells route optimisation per shipment, Routific is free under 100 orders a month, and FarEye, Shipsy and Locus all pitch AI agents for dispatch.',
   'Considered a planner that learns from drivers’ deviations, and dropped it: Locus already markets learned service times and OptimoRoute ships a planned-versus-actual report.',
+  'Read what sellers and couriers have published on Reddit, the same desk research v1 had relied on: payouts weeks late or sent to the wrong account, failure statuses sellers can’t check, and returns that come back with the wrong contents. Almost nothing came from hub managers.',
   'Compared 22 logistics product ideas on eight weighted criteria, including the gap still open, fit with my payments background and whether I could gather evidence. A chain from failed attempts to merchant payouts ranked first.',
   'Chose a setting, a mid-size Dubai courier, with India as a second market profile, because I can gather field evidence in Surat.',
-  'Wrote a PRD covering local rules, the RBI and CBUAE positions on cash on delivery, 15 edge cases, metrics without invented targets and an evidence plan.',
+  'Wrote a PRD covering local rules, the RBI and CBUAE positions on cash on delivery, 16 edge cases, metrics without invented targets and an evidence plan.',
   'Rebuilt the prototype in React and TypeScript: eight screens on one simulated hub day and a nine-step guided walkthrough that cites the evidence behind each decision.',
 ]
 
@@ -128,6 +133,9 @@ const SOURCES = [
   { label: 'Khaleej Times: delivery riders and the UAE midday break', href: 'https://www.khaleejtimes.com/uae/delivery-drivers-cannot-be-forced-work-midday-break' },
   { label: 'Google Maps Platform: Route Optimization API billing', href: 'https://developers.google.com/maps/documentation/route-optimization/usage-and-billing' },
   { label: 'Locus: service time learned per driver feeds the next plan', href: 'https://locus.sh/blogs/driver-app-workarounds-service-time-data/' },
+  { label: 'r/dubai, November 2026: a courier’s COD payment sent to a different company', href: 'https://www.reddit.com/r/dubai/comments/1y0b15p/any_businesses_here_that_filed_a_complaint/' },
+  { label: 'r/AmazonSeller, April 2026: COD held 50 days, five payout references that never arrived', href: 'https://www.reddit.com/r/AmazonSeller/comments/1sm62pv/amazon_shipping_has_been_holding_rs_7618_of_my/' },
+  { label: 'r/StartUpIndia, April 2025: sellers on “customer refused” statuses they cannot check', href: 'https://www.reddit.com/r/StartUpIndia/comments/1jy9375/shiprocket_and_kartrocket_are_pulling_off_indias/' },
 ]
 
 const TOC = [
@@ -208,6 +216,13 @@ export default function RouteMindsCaseStudy() {
             recovered within about 36 hours usually becomes a return. And published UAE payout cycles run from twice a week to
             monthly, with no per-parcel trail for the merchant to check.
           </p>
+          <p className={P}>
+            Sellers say the same in public. On Reddit, Indian and UAE sellers describe COD payouts that arrive weeks late, payout
+            references that never reach their bank and, in one Dubai case, a courier&apos;s payment sent to a different company. They
+            also describe failed deliveries marked &ldquo;customer refused&rdquo; that they have no way to check. These are complaints,
+            not rates, but they changed the statement: it now shows the payout reference and the verified payee, and holds a payout
+            when bank details change by email.
+          </p>
         </Section>
 
         <Section id="decision" number={3} title="The decisions">
@@ -225,7 +240,7 @@ export default function RouteMindsCaseStudy() {
         <Section id="edges" number={5} title="Edge cases I designed for">
           <ConstraintGrid items={EDGE_CASES} />
           <p className="mt-5 text-base leading-relaxed text-zinc-400">
-            The PRD lists 15 in total, from a merchant editing the COD after dispatch to Ramadan iftar windows, each with the
+            The PRD lists 16 in total, from a merchant editing the COD after dispatch to Ramadan iftar windows, each with the
             expected behaviour.
           </p>
         </Section>
@@ -249,7 +264,9 @@ export default function RouteMindsCaseStudy() {
 
         <Section id="limits" number={8} title="Limits">
           <p className={P}>
-            I have not interviewed couriers or merchants for this concept yet. Most of the Indian failure figures come from ClickPost,
+            I have not interviewed couriers or merchants for this concept yet. v1 was built from desk research, including Reddit
+            threads and end users&apos; complaints, with no conversations with dispatchers or fleet owners, and v2 adds published
+            seller evidence, not interviews. Most of the Indian failure figures come from ClickPost,
             which sells software for this problem, and the UAE share of COD depends on how it is measured. Every number in the
             prototype is simulated.
           </p>
